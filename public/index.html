@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <!-- DEPENDENCIES -->
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-csv/src/jquery.csv.js"></script>
+    <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.css">
+    <script src="components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="components/d3/d3.js"></script>
+    <script src="components/d3-tip/index.js"></script>
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <title>Microscopium</title>
+</head>
+<body>
+<!-- TOP NAVBAR -->
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="navbar-header">
+    <a class="navbar-brand" href="#">Microscopium</a>
+    </div>
+    <div class="navbar navbar-nav">
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    Select Screen <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" id="screen-menu" role="menu">
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <!-- TAB NAVIGATION -->
+    <ul id="tabNav" class="nav nav-tabs nav-justified">
+        <li class="active">
+            <a href="#home" data-toggle="tab">
+                Screen Summary
+            </a>
+        </li>
+        <li>
+            <a href="#featurexplorer" data-toggle="tab">
+                Feature Explorer
+            </a>
+        </li>
+        <li>
+            <a href="#clusterexplorer" data-toggle="tab">
+                Cluster Explorer
+            </a>
+        </li>
+        <li>
+            <a href="#imageexplorer" data-toggle="tab">
+                Image Explorer
+            </a>
+        </li>
+        <li>
+            <a href="#importexport" data-toggle="tab">
+                Export Data
+            </a>
+        </li>
+    </ul>
+    <!-- TAB CONTENT -->
+    <div id="tabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="home">
+            <p>
+                <span class="header">Name: </span>
+                <span id="name">Screen 1</span>
+            </p>
+            <p>
+                <span class="header">Description: </span>
+                <span id="desc">Default description.</span>
+            </p>
+            <p>
+                <span class="header">Samples: </span>
+                <span id="samples">123456</span>
+            </p>
+            <p>
+                <span class="header">Clusters: </span>
+                <span id="clusters">12</span>
+            </p>
+        </div>
+        <div class="tab-pane fade" id="featurexplorer">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row plotbox" id="linebox">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row plotbox" id="histbox">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="clusterexplorer">
+            <div class="row">
+                <div class="row plotbox" id="graphbox">
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="imageexplorer">
+            <div class="row">
+                <p>Image Explorer -- Browse images files.</p>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="importexport">
+            <div class="row">
+                <p>Export Options -- Export charts, datasets.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!-- CUSTOM D3 -->
+<script src="js/viz-hist.js"></script>
+<script src="js/viz-scatterplot.js"></script>
+<script src="js/viz-lineplot.js"></script>
+<script src="js/script.js"></script>
+</html>

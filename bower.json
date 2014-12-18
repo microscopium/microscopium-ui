@@ -1,0 +1,12 @@
+{
+    "name": "huscinterface",
+    "version": "0.0.1",
+    "directory": "public/bower_components",
+    "dependencies": {
+        "bootstrap": "latest",
+        "d3": "latest",
+        "d3-tip": "latest",
+        "jquery": "latest",
+        "jquery-csv": "latest"
+    }
+}

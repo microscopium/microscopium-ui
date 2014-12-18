@@ -1,4 +1,1 @@
-microscopium-ui
-===============
-
-Microscopium web interface.
+Interface mockup

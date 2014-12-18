@@ -1,0 +1,54 @@
+.container {
+    width: 90%;
+}
+
+.navbar-inverse {
+    border-radius: 0 !important;
+}
+
+.tab-pane {
+    margin-top: 10px;
+}
+
+.header {
+    font-weight: bold;
+}
+
+.plotbox {
+    text-align: center;
+}
+
+#graphbox {
+    text-align: left;
+}
+
+.bar rect {
+    fill: steelblue;
+    shape-rendering: crispEdges;
+}
+
+.bar text {
+    font: 10px sans-serif;
+    fill: #fff;
+}
+
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
