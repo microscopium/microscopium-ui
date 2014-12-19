@@ -2,13 +2,15 @@
 var colSlice = function(array, k) {
     var slice = [];
     var N = array.length;
-    for(var i = 0; i <= N; i++) {
-        slice.push(slice[i][k]);
+    console.log(N);
+    for(var i = 0; i < N; i++) {
+        slice.push(array[i][k]);
     }
     return slice;
 };
 
 // update summary tab on page load
+// TODO - do I need jquery? probably, may as well use it..
 var updateTab = function() {
     $('#name').text('MYORES');
     $('#desc').text('MYORES');
@@ -26,15 +28,12 @@ $.ajax({
     dataType: "text"
 });
 
-for(var i = 1; i <= 271; i++) {
-    var newPoint = [];
-    newPoint.push(i);
-    newPoint.push(Number(sample_data[1][i]));
-    values.push(newPoint);
-}
+// sample_data[0][:] = feature titles
+// sample_data[:][0] = sample indices
+
+console.log(colSlice(sample_data, 1));
 
 // TODO angular controller to better manage scope?
 updateTab();
-renderLinePlot(values, feature_data);
-renderHistogram(feature_data, 1);
-
+renderLinePlot(sample_data, 3);
+renderHistogram(sample_data, 1);
