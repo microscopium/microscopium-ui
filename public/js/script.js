@@ -1,3 +1,13 @@
+// simple function to subset a single column
+var colSlice = function(array, k) {
+    var slice = [];
+    var N = array.length;
+    for(var i = 0; i <= N; i++) {
+        slice.push(slice[i][k]);
+    }
+    return slice;
+};
+
 // update summary tab on page load
 var updateTab = function() {
     $('#name').text('MYORES');
@@ -6,23 +16,9 @@ var updateTab = function() {
     $('#clusters').text(30);
 };
 
-// TODO investigate crossfilter for efficient column slicing of arrays -- no need for two CSVs
-var feature_data = [];
-$.ajax({
-    url: "../temp_csv/full_data_feature.csv",
-    async: false,
-    success: function (csvd) {
-        feature_data = $.csv.toArrays(csvd);
-    },
-    dataType: "text",
-    complete: function () {
-        // TODO add CSV parsing here!
-    }
-});
-
 var sample_data = [];
 $.ajax({
-    url: "../temp_csv/full_data_sample.csv",
+    url: "../temp_csv/sample_data.csv",
     async: false,
     success: function (csvd) {
         sample_data = $.csv.toArrays(csvd);
@@ -30,8 +26,6 @@ $.ajax({
     dataType: "text"
 });
 
-var title = sample_data[1][0];
-var values = [];
 for(var i = 1; i <= 271; i++) {
     var newPoint = [];
     newPoint.push(i);
