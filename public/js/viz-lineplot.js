@@ -1,7 +1,23 @@
 // TODO rewrite me as an object!
-var renderLinePlot = function(values, feature_data) {
+var renderLinePlot = function(sample_data, sample) {
 
     var activeFeature;
+
+    // get column size of data (so selected feature line doesn't
+    // fall off the edge
+    var col_size = sample_data[0].length - 1;
+
+    // get row data for sample of interest
+    // parse string numbers to Number
+    var row_data = sample_data[sample];
+    var sample_title = row_data.shift();
+    var pair_data = [];
+    for(var i = 0; i < row_data.length; i++) {
+        var pair = [];
+        pair.push(i+1);
+        pair.push(Number(row_data[i]));
+        pair_data.push(pair);
+    }
 
     // update 'active feature' line
     var updateActiveLine = function(feature) {
@@ -22,10 +38,10 @@ var renderLinePlot = function(values, feature_data) {
     var onclickUpdate = function(d3Mouse) {
         var x_coord = d3Mouse[0];
         var clicked_feature = Math.round(xScale.invert(x_coord));
-        if(clicked_feature <= feature_data.length-1 && clicked_feature > 0) {
+        if(clicked_feature <= sample_data.length-1 && clicked_feature > 0) {
             activeFeature = clicked_feature;
             updateActiveLine(activeFeature);
-            renderHistogram(feature_data, activeFeature);
+            renderHistogram(sample_data, activeFeature);
         }
     };
 
@@ -33,24 +49,24 @@ var renderLinePlot = function(values, feature_data) {
     var keypressUpdate = function(keyCode) {
         var x_coord = xScale(activeFeature);
         if(activeFeature) {
-            if(keyCode === 39 && activeFeature < feature_data.length-1) {
+            if(keyCode === 39 && activeFeature < col_size) {
                 activeFeature++;
-                renderHistogram(feature_data, activeFeature);
+                renderHistogram(sample_data, activeFeature);
                 updateActiveLine(activeFeature);
             }
             else if(keyCode === 37 && activeFeature > 1) {
                 activeFeature--;
-                renderHistogram(feature_data, activeFeature);
+                renderHistogram(sample_data, activeFeature);
                 updateActiveLine(activeFeature);
             }
         }
     };
 
     // get min/max x/y values -- needed for scaling axis/data
-    var xMin = d3.min(values, function(d) { return d[0]; });
-    var yMin = d3.min(values, function(d) { return d[1]; });
-    var xMax = d3.max(values, function(d) { return d[0]; });
-    var yMax = d3.max(values, function(d) { return d[1]; });
+    var xMin = d3.min(pair_data, function(d) { return d[0]; });
+    var yMin = d3.min(pair_data, function(d) { return d[1]; });
+    var xMax = d3.max(pair_data, function(d) { return d[0]; });
+    var yMax = d3.max(pair_data, function(d) { return d[1]; });
 
     // define size and margins
     var margin = {top: 20, right: 30, bottom: 20, left: 45},
@@ -120,7 +136,7 @@ var renderLinePlot = function(values, feature_data) {
 
     // add line graphic
     svg.append('path')
-        .datum(values)
+        .datum(pair_data)
         .attr('class', 'line')
         .attr('d', line);
 
@@ -128,6 +144,6 @@ var renderLinePlot = function(values, feature_data) {
     svg.append('text')
         .attr('x', width/2 - 50)
         .attr('y', -5)
-        .text(title)
+        .text(sample_title)
 };
 

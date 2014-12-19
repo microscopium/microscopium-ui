@@ -1,14 +1,14 @@
 // TODO rewrite me as an object!
-var renderHistogram = function(feature_data, feature) {
+var renderHistogram = function(sample_data, feature) {
 
     // delete any histograms already plotted
     d3.select('#histbox > svg').remove();
 
-    // get values from feature data frame
-    var values = [];
-    var title = feature_data[feature][0];
-    for(var i = 1; i < feature_data[0].length; i++) {
-        values.push(Number(feature_data[feature][i]));
+    // column data for sample of interest
+    var column_data = colSlice(sample_data, feature);
+    var title = column_data.shift();
+    for(var i = 0; i < column_data.length; i++) {
+        column_data[i] = Number(column_data[i]);
     }
 
     // define canvas margins
@@ -18,7 +18,7 @@ var renderHistogram = function(feature_data, feature) {
 
     // define xScale and xAxis
     var xScale = d3.scale.linear()
-        .domain([d3.min(values), d3.max(values)])
+        .domain([d3.min(column_data), d3.max(column_data)])
         .range([0, width]);
     var xAxis = d3.svg.axis()
         .scale(xScale)
@@ -27,7 +27,7 @@ var renderHistogram = function(feature_data, feature) {
     // find bins for histogram, fit bins to x scale
     var data = d3.layout.histogram()
         .bins(xScale.ticks(10))
-    (values);
+    (column_data);
 
     // define y Scale and y axis
     var yScale = d3.scale.linear()
