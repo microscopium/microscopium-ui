@@ -2,7 +2,6 @@
 var colSlice = function(array, k) {
     var slice = [];
     var N = array.length;
-    console.log(N);
     for(var i = 0; i < N; i++) {
         slice.push(array[i][k]);
     }
@@ -27,11 +26,6 @@ $.ajax({
     },
     dataType: "text"
 });
-
-// sample_data[0][:] = feature titles
-// sample_data[:][0] = sample indices
-
-console.log(colSlice(sample_data, 1));
 
 // TODO angular controller to better manage scope?
 updateTab();
