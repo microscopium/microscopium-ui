@@ -37,9 +37,6 @@ $.ajax({
     dataType: "text"
 });
 
-console.log(sample_data);
-console.log(sample_pca);
-
 // TODO angular controller to better manage scope?
 updateTab();
 renderLinePlot(sample_data, 1);

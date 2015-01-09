@@ -109,9 +109,6 @@ var renderScatterplot = function(data) {
       renderHistogram(sample_data, 1)
     };
 
-    // set first datapoint as active
-    console.log(d3.select('.scatterpt'));
-
     // append axis
     svg.append('g')
         .attr('class', 'x axis')
