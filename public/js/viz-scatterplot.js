@@ -44,7 +44,7 @@ var renderScatterplot = function(data) {
     var tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
-        .html(function(d) {
+        .html(function(d, i) {
             return "<p><strong>ID: </strong>" + d[0] + "</span></p>";
         });
 
@@ -70,8 +70,28 @@ var renderScatterplot = function(data) {
         .attr('r', 5)
         .attr('fill', 'steelblue')
         .attr('stroke', 'white')
+        .classed('activept', false)
         .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
+        .on('mouseout', tip.hide)
+        .on('click', function() {
+          // reset class and attr of prev active point
+          d3.selectAll('.activept')
+            .classed('activept', false)
+            .transition()
+            .duration(125)
+            .attr('r', 5)
+            .attr('fill', 'steelblue')
+            .attr('stroke', 'white');
+
+          // set class and attr of new active point
+          d3.select(this)
+            .classed('activept', true)
+            .transition()
+            .duration(125)
+            .attr('r', 7)
+            .attr('fill', 'red')
+            .attr('stroke', 'white');
+        });
 
     // append axis
     svg.append('g')

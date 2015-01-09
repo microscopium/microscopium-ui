@@ -44,6 +44,8 @@
     stroke-width: 1.5px;
 }
 
+/* Tooltip CSS */
+
 .d3-tip {
     font-weight: bold;
     padding: 8px;
