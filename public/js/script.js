@@ -42,6 +42,6 @@ console.log(sample_pca);
 
 // TODO angular controller to better manage scope?
 updateTab();
-renderLinePlot(sample_data, 3);
+renderLinePlot(sample_data, 1);
 renderHistogram(sample_data, 1);
 renderScatterplot(sample_pca);

@@ -9,6 +9,7 @@ var renderScatterplot = function(data) {
         item.push(data[i][0]);
         item.push(Number(data[i][1]));
         item.push(Number(data[i][2]));
+        item.push(i); // add row index for updating other plots
         values.push(item);
     }
 
@@ -58,7 +59,7 @@ var renderScatterplot = function(data) {
 
     // add scatter points
     svg.selectAll('circle')
-        .data(data)
+        .data(values)
         .enter()
         .append('circle')
         .attr('cx', function(d) {
@@ -70,28 +71,46 @@ var renderScatterplot = function(data) {
         .attr('r', 5)
         .attr('fill', 'steelblue')
         .attr('stroke', 'white')
+        .classed('scatterpt', true)
         .classed('activept', false)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide)
         .on('click', function() {
-          // reset class and attr of prev active point
-          d3.selectAll('.activept')
-            .classed('activept', false)
-            .transition()
-            .duration(125)
-            .attr('r', 5)
-            .attr('fill', 'steelblue')
-            .attr('stroke', 'white');
-
-          // set class and attr of new active point
-          d3.select(this)
-            .classed('activept', true)
-            .transition()
-            .duration(125)
-            .attr('r', 7)
-            .attr('fill', 'red')
-            .attr('stroke', 'white');
+          var selection = d3.select(this);
+          // only update the active point if it's not already active
+          if(!selection.classed('activept')) {
+            updatePoint(selection);
+          }
         });
+
+    var updatePoint = function(selection) {
+      // reset class and attr of prev active point
+      d3.selectAll('.activept')
+        .classed('activept', false)
+        .transition()
+        .duration(125)
+        .attr('r', 5)
+        .attr('fill', 'steelblue')
+        .attr('stroke', 'white');
+
+      var pointIndex = selection.data()[0][3];
+
+      // set class and attr of new active point
+      selection
+        .classed('activept', true)
+        .transition()
+        .duration(125)
+        .attr('r', 7)
+        .attr('fill', 'red')
+        .attr('stroke', 'white');
+
+      // update plots in feature tab
+      renderLinePlot(sample_data, pointIndex);
+      renderHistogram(sample_data, 1)
+    };
+
+    // set first datapoint as active
+    console.log(d3.select('.scatterpt'));
 
     // append axis
     svg.append('g')
