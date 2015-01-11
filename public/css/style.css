@@ -1,3 +1,4 @@
+/* Main Page CSS */
 .container {
     width: 90%;
 }
@@ -14,12 +15,26 @@
     font-weight: bold;
 }
 
-.plotbox {
-    text-align: center;
+.thumb {
+    margin: 1px 1px -3px 1px;
+    padding: 0px 0px 0px 0px;
+    width: 150px;
+    height: 150px;
 }
 
-#graphbox {
-    text-align: left;
+.col-centered {
+    display:inline-block;
+    float:none;
+    text-align:left;
+    margin-right:-4px;
+}
+
+.row-centered {
+    text-align:center;
+}
+
+.plotbox {
+    text-align: center;
 }
 
 .bar rect {
