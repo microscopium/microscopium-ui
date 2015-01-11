@@ -21,13 +21,24 @@ var sample_data = [];
 $.ajax({
     url: "../temp_csv/sample_data.csv",
     async: false,
-    success: function (csvd) {
-        sample_data = $.csv.toArrays(csvd);
+    success: function (csv) {
+        sample_data = $.csv.toArrays(csv);
+    },
+    dataType: "text"
+});
+
+var sample_pca = [];
+$.ajax({
+    url: "../temp_csv/sample_pca.csv",
+    async: false,
+    success: function (csv) {
+        sample_pca = $.csv.toArrays(csv);
     },
     dataType: "text"
 });
 
 // TODO angular controller to better manage scope?
 updateTab();
-renderLinePlot(sample_data, 3);
+renderLinePlot(sample_data, 1);
 renderHistogram(sample_data, 1);
+renderScatterplot(sample_pca);

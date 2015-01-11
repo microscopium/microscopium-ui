@@ -3,6 +3,9 @@ var renderLinePlot = function(sample_data, sample) {
 
     var activeFeature;
 
+    // delete any histograms already plotted
+    d3.select('#linebox > svg').remove();
+
     // get column size of data (so selected feature line doesn't
     // fall off the edge
     var col_size = sample_data[0].length - 1;
