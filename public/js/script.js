@@ -8,37 +8,45 @@ var colSlice = function(array, k) {
     return slice;
 };
 
-// update summary tab on page load
-// TODO - do I need jquery? probably, may as well use it..
-var updateTab = function() {
-    $('#name').text('MYORES');
-    $('#desc').text('MYORES');
-    $('#samples').text(1780);
-    $('#clusters').text(30);
+// update dropdown menu
+var updateSelector = function(screen_data) {
+    console.log(screen_data);
+    for(var i = 0; i < screen_data.length; i++) {
+        $('#screen-menu')
+          .append('<li><a href="#" role="presenation">' + screen_data[i]['screen_name'] +
+            '</a></li>');
+    }
 };
 
-var sample_data = [];
+// update summary tab on page load
+var updateTab = function(screen_data) {
+    $('#name').text(screen_data['screen_name']);
+    $('#desc').text(screen_data['screen_desc']);
+    $('#samples').text(screen_data['number_samples']);
+};
+
 $.ajax({
-    url: "../temp_csv/sample_data.csv",
+    url: '/api/screens',
     async: false,
-    success: function (csv) {
-        sample_data = $.csv.toArrays(csv);
+    success: function (json) {
+        updateTab(json[0]);
+        updateSelector(json);
     },
-    dataType: "text"
+    dataType: 'json'
 });
 
-var sample_pca = [];
 $.ajax({
-    url: "../temp_csv/sample_pca.csv",
+    url: '/api/sample/feature_vector/MYORES',
     async: false,
-    success: function (csv) {
-        sample_pca = $.csv.toArrays(csv);
+    success: function (json) {
+        console.log(json.length);
+        console.log(json[0]);
+        renderLinePlot(json, 1);
     },
-    dataType: "text"
+    dataType: 'json'
 });
 
 // TODO angular controller to better manage scope?
-updateTab();
-renderLinePlot(sample_data, 1);
-renderHistogram(sample_data, 1);
-renderScatterplot(sample_pca);
+//renderLinePlot(sample_data, 1);
+//renderHistogram(sample_data, 1);
+//renderScatterplot(sample_pca);

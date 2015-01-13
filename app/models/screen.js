@@ -6,7 +6,6 @@ var screenSchema = mongoose.Schema(
       screen_name: String, // full screen name
       screen_desc: String,
       number_samples: Number,
-      samples: Array
   },
   {
         collection: "screens"
