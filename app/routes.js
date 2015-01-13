@@ -10,17 +10,19 @@ module.exports = function(app) {
 
     // get all screen documents
     app.get('/api/screens', function(req, res) {
-        Screen.find(function(err, data) {
+        Screen
+          .find()
+          .exec(function(err, data) {
             if (err) res.send(err);
             res.json(data);
-        });
+          });
     });
 
-    // get all feature vectors
-    app.get('/api/feature_vectors/:screen', function(req, res) {
+    // get all keys for samples in screen
+    app.get('/api/sample/:key/:screen', function(req, res) {
         Sample
           .find({ screen: req.params.screen })
-          .select('feature_vector')
+          .select(req.params.key)
           .exec(function(err, feature_vectors) {
               if (err) res.send(err);
               res.json(feature_vectors);
