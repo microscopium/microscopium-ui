@@ -1,7 +1,7 @@
-var feature_names = [];
+var featureNames = [];
 
 // parse feature info
-var featureRow = function(json, feature) {
+var getFeatureRow = function(json, feature) {
     var n_features = json.length;
     var feature_row = [];
     for(var i = 0; i < n_features; i++) {
@@ -24,6 +24,7 @@ var updateTab = function(screen_data) {
     $('#name').text(screen_data['screen_name']);
     $('#desc').text(screen_data['screen_desc']);
     $('#samples').text(screen_data['number_samples']);
+    featureNames = screen_data['screen_features'];
 };
 
 $.ajax({
@@ -41,9 +42,8 @@ $.ajax({
     url: '/api/sample/feature_vector/MYORES',
     async: false,
     success: function (json) {
-        console.log(json);
-        console.log(featureRow(json, 0));
-        renderLinePlot(json[0]);
+        renderLinePlot(json, featureNames, 0);
+        renderHistogram(json, featureNames, 0);
     },
     dataType: 'json'
 });

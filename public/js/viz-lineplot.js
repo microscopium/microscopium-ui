@@ -1,22 +1,25 @@
-// TODO rewrite me as an object!
-var renderLinePlot = function(sample_json) {
+var renderLinePlot = function(sampleData, featureNames, sample) {
 
-    var activeFeature;
+    var activeFeature = 1;
+
     // delete any histograms already plotted
     d3.select('#linebox > svg').remove();
 
+    // get sample feature vector
+    var featureVector = sampleData[sample]['feature_vector'];
+
     // get column size of data (so selected feature line doesn't
     // fall off the edge
-    var n_features = sample_json['feature_vector'].length;
+    var nFeatures = sampleData[sample]['feature_vector'].length;
 
     // update 'active feature' line
     var updateActiveLine = function(feature) {
-        var x_coord = xScale(feature);
+        var xCoord = xScale(feature);
         svg.selectAll('.selectedLine').remove();
         svg.append('line')
-            .attr('x1', x_coord)
+            .attr('x1', xCoord)
             .attr('y1', 0)
-            .attr('x2', x_coord)
+            .attr('x2', xCoord)
             .attr('y2', height)
             .attr('stroke', 'red')
             .attr('stroke-width', 0.75)
@@ -24,56 +27,62 @@ var renderLinePlot = function(sample_json) {
             .classed('selectedLine', true);
     };
 
+    /* Histograms are redrawn with activeFeature-1 as plot
+    uses [1, nFeatures] range for features, while JSON data
+    uses [0, nFeatures-1] range.
+     */
+
     // update graph on mouseclick
     var onclickUpdate = function(d3Mouse) {
-        var x_coord = d3Mouse[0];
-        var clicked_feature = Math.round(xScale.invert(x_coord));
-        if(clicked_feature <= n_features && clicked_feature > 0) {
-            activeFeature = clicked_feature;
+        var xCoord = d3Mouse[0];
+        var clickedFeature = Math.round(xScale.invert(xCoord));
+        console.log(clickedFeature);
+        console.log(d3Mouse);
+        if(clickedFeature <= nFeatures && clickedFeature >= 1) {
+            activeFeature = clickedFeature;
             updateActiveLine(activeFeature);
-            //renderHistogram(sample_json, activeFeature);
+            renderHistogram(sampleData, featureNames, activeFeature-1);
         }
     };
 
     // update graph on keypress
     var keypressUpdate = function(keyCode) {
-        var x_coord = xScale(activeFeature);
         if(activeFeature) {
-            if(keyCode === 39 && activeFeature < n_features) {
+            if(keyCode === 39 && activeFeature < nFeatures) {
                 activeFeature++;
-                //renderHistogram(sample_json, activeFeature);
+                renderHistogram(sampleData, featureNames, activeFeature-1);
                 updateActiveLine(activeFeature);
             }
             else if(keyCode === 37 && activeFeature > 1) {
                 activeFeature--;
-                //renderHistogram(sample_json, activeFeature);
+                renderHistogram(sampleData, featureNames, activeFeature-1);
                 updateActiveLine(activeFeature);
             }
         }
     };
 
     // get min/max x/y values -- needed for scaling axis/data
-    var yMin = d3.min(sample_json['feature_vector']);
-    var yMax = d3.max(sample_json['feature_vector']);
+    var yMin = d3.min(featureVector);
+    var yMax = d3.max(featureVector);
 
     // var create (x, y) pairs for plot
     var linePoints = [];
-    for(var i = 0; i < n_features; i++) {
+    for(var i = 0; i < nFeatures; i++) {
         var point = [];
         point.push(i+1);
-        point.push(sample_json['feature_vector'][i]);
+        point.push(featureVector[i]);
         linePoints.push(point);
     }
 
     // define size and margins
     var margin = {top: 20, right: 30, bottom: 20, left: 45},
-        width = 650 - margin.left - margin.right,
+        width = 600 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
     // define x-scale and x-axis
     var xScale = d3.scale.linear()
-        .domain([0, n_features])
-        .range([1, width]);
+        .domain([0, nFeatures])
+        .range([0, width]);
     var xAxis = d3.svg.axis()
         .scale(xScale)
         .orient('bottom');
@@ -142,6 +151,9 @@ var renderLinePlot = function(sample_json) {
         .attr('x', width/2)
         .attr('y', -5)
         .style('text-anchor', 'middle')
-        .text(sample_json['_id']);
+        .text(sampleData[sample]['_id']);
+
+    // draw activeLine
+    updateActiveLine(activeFeature);
 };
 
