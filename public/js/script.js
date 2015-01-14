@@ -1,16 +1,17 @@
-// simple function to subset a single column
-var colSlice = function(array, k) {
-    var slice = [];
-    var N = array.length;
-    for(var i = 0; i < N; i++) {
-        slice.push(array[i][k]);
+var feature_names = [];
+
+// parse feature info
+var featureRow = function(json, feature) {
+    var n_features = json.length;
+    var feature_row = [];
+    for(var i = 0; i < n_features; i++) {
+        feature_row.push(json[i]['feature_vector'][feature]);
     }
-    return slice;
+    return feature_row;
 };
 
 // update dropdown menu
 var updateSelector = function(screen_data) {
-    console.log(screen_data);
     for(var i = 0; i < screen_data.length; i++) {
         $('#screen-menu')
           .append('<li><a href="#" role="presenation">' + screen_data[i]['screen_name'] +
@@ -29,6 +30,7 @@ $.ajax({
     url: '/api/screens',
     async: false,
     success: function (json) {
+        feature_names = json[0]['screen_features'];
         updateTab(json[0]);
         updateSelector(json);
     },
@@ -39,11 +41,18 @@ $.ajax({
     url: '/api/sample/feature_vector/MYORES',
     async: false,
     success: function (json) {
-        console.log(json.length);
-        console.log(json[0]);
-        renderLinePlot(json, 1);
+        console.log(json);
+        console.log(featureRow(json, 0));
+        renderLinePlot(json[0]);
     },
     dataType: 'json'
+});
+
+$.ajax({
+    url: '/api/sample/pca/MYORES',
+    success: function(json) {
+        renderScatterplot(json);
+    }
 });
 
 // TODO angular controller to better manage scope?

@@ -1,23 +1,12 @@
 // generate scatterplot
 
-var renderScatterplot = function(data) {
-
-    // parse data
-    var values = [];
-    for(var i = 1; i < data.length; i++) {
-        var item = [];
-        item.push(data[i][0]);
-        item.push(Number(data[i][1]));
-        item.push(Number(data[i][2]));
-        item.push(i); // add row index for updating other plots
-        values.push(item);
-    }
+var renderScatterplot = function(pca_json) {
 
     // find min/max for each axis
-    var xMin = d3.min(values, function(d) { return d[1]; });
-    var yMin = d3.min(values, function(d) { return d[2]; });
-    var xMax = d3.max(values, function(d) { return d[1]; });
-    var yMax = d3.max(values, function(d) { return d[2]; });
+    var xMin = d3.min(pca_json, function(d) { return d['pca'][0]; });
+    var yMin = d3.min(pca_json, function(d) { return d['pca'][1]; });
+    var xMax = d3.max(pca_json, function(d) { return d['pca'][0]; });
+    var yMax = d3.max(pca_json, function(d) { return d['pca'][1]; });
 
     // define canvas margins
     var margin = {top: 10, right: 40, bottom: 30, left: 40},
@@ -46,7 +35,7 @@ var renderScatterplot = function(data) {
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d, i) {
-            return "<p><strong>ID: </strong>" + d[0] + "</span></p>";
+            return "<p><strong>ID: </strong>" + d['_id'] + "</span></p>";
         });
 
     // setup canvas
@@ -59,14 +48,14 @@ var renderScatterplot = function(data) {
 
     // add scatter points
     svg.selectAll('circle')
-        .data(values)
+        .data(pca_json)
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return xScale(d[1]);
+            return xScale(d['pca'][0]);
         })
         .attr('cy', function(d) {
-            return yScale(d[2]);
+            return yScale(d['pca'][1]);
         })
         .attr('r', 5)
         .attr('fill', 'steelblue')
@@ -105,8 +94,9 @@ var renderScatterplot = function(data) {
         .attr('stroke', 'white');
 
       // update plots in feature tab
-      renderLinePlot(sample_data, pointIndex);
-      renderHistogram(sample_data, 1)
+      // renderLinePlot(sample_data, pointIndex);
+      // renderHistogram(sample_data, 1)
+      alert('thanks for clicking on me!');
     };
 
     // append axis

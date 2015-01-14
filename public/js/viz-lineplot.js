@@ -1,26 +1,13 @@
 // TODO rewrite me as an object!
-var renderLinePlot = function(sample_data, sample) {
+var renderLinePlot = function(sample_json) {
 
     var activeFeature;
-
     // delete any histograms already plotted
     d3.select('#linebox > svg').remove();
 
     // get column size of data (so selected feature line doesn't
     // fall off the edge
-    var col_size = sample_data[0].length - 1;
-
-    // get row data for sample of interest
-    // parse string numbers to Number
-    var row_data = sample_data[sample];
-    var sample_title = row_data.shift();
-    var pair_data = [];
-    for(var i = 0; i < row_data.length; i++) {
-        var pair = [];
-        pair.push(i+1);
-        pair.push(Number(row_data[i]));
-        pair_data.push(pair);
-    }
+    var n_features = sample_json['feature_vector'].length;
 
     // update 'active feature' line
     var updateActiveLine = function(feature) {
@@ -41,10 +28,10 @@ var renderLinePlot = function(sample_data, sample) {
     var onclickUpdate = function(d3Mouse) {
         var x_coord = d3Mouse[0];
         var clicked_feature = Math.round(xScale.invert(x_coord));
-        if(clicked_feature <= sample_data.length-1 && clicked_feature > 0) {
+        if(clicked_feature <= n_features && clicked_feature > 0) {
             activeFeature = clicked_feature;
             updateActiveLine(activeFeature);
-            renderHistogram(sample_data, activeFeature);
+            //renderHistogram(sample_json, activeFeature);
         }
     };
 
@@ -52,24 +39,31 @@ var renderLinePlot = function(sample_data, sample) {
     var keypressUpdate = function(keyCode) {
         var x_coord = xScale(activeFeature);
         if(activeFeature) {
-            if(keyCode === 39 && activeFeature < col_size) {
+            if(keyCode === 39 && activeFeature < n_features) {
                 activeFeature++;
-                renderHistogram(sample_data, activeFeature);
+                //renderHistogram(sample_json, activeFeature);
                 updateActiveLine(activeFeature);
             }
             else if(keyCode === 37 && activeFeature > 1) {
                 activeFeature--;
-                renderHistogram(sample_data, activeFeature);
+                //renderHistogram(sample_json, activeFeature);
                 updateActiveLine(activeFeature);
             }
         }
     };
 
     // get min/max x/y values -- needed for scaling axis/data
-    var xMin = d3.min(pair_data, function(d) { return d[0]; });
-    var yMin = d3.min(pair_data, function(d) { return d[1]; });
-    var xMax = d3.max(pair_data, function(d) { return d[0]; });
-    var yMax = d3.max(pair_data, function(d) { return d[1]; });
+    var yMin = d3.min(sample_json['feature_vector']);
+    var yMax = d3.max(sample_json['feature_vector']);
+
+    // var create (x, y) pairs for plot
+    var linePoints = [];
+    for(var i = 0; i < n_features; i++) {
+        var point = [];
+        point.push(i+1);
+        point.push(sample_json['feature_vector'][i]);
+        linePoints.push(point);
+    }
 
     // define size and margins
     var margin = {top: 20, right: 30, bottom: 20, left: 45},
@@ -78,8 +72,8 @@ var renderLinePlot = function(sample_data, sample) {
 
     // define x-scale and x-axis
     var xScale = d3.scale.linear()
-        .domain([xMin-1, xMax+1])
-        .range([0, width]);
+        .domain([0, n_features])
+        .range([1, width]);
     var xAxis = d3.svg.axis()
         .scale(xScale)
         .orient('bottom');
@@ -95,8 +89,8 @@ var renderLinePlot = function(sample_data, sample) {
 
     // define lineplot function -- draws svg path with data
     var line = d3.svg.line()
-        .x(function(d) { return xScale(d[0]); })
-        .y(function(d) { return yScale(d[1]); });
+      .x(function(d) { return xScale(d[0]); })
+      .y(function(d) { return yScale(d[1]); });
 
     // append canvas
     var svg = d3.select('#linebox').append('svg')
@@ -139,14 +133,15 @@ var renderLinePlot = function(sample_data, sample) {
 
     // add line graphic
     svg.append('path')
-        .datum(pair_data)
+        .datum(linePoints)
         .attr('class', 'line')
         .attr('d', line);
 
     // add title
     svg.append('text')
-        .attr('x', width/2 - 50)
+        .attr('x', width/2)
         .attr('y', -5)
-        .text(sample_title)
+        .style('text-anchor', 'middle')
+        .text(sample_json['_id']);
 };
 

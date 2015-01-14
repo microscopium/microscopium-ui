@@ -1,4 +1,4 @@
 module.exports = {
     // the database url
-    url : 'mongodb://localhost/interfacetest'
+    url : 'mongodb://localhost/microscopium'
 }
