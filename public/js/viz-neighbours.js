@@ -21,7 +21,9 @@ function setThumbnails(query_ids) {
     async: false,
     success: function(json) {
       for(var i = 0; i < 25; i++) {
-        $('#nebula-' + i).attr("src", "data:image/jpg;base64," + json[i]['image_thumb']);
+        var nebula_selector = '#nebula-' + i;
+        $(nebula_selector).attr('src', 'data:image/jpg;base64,' + json[i]['image_thumb']);
+        $(nebula_selector).attr('title', json[i]['sample_name sample_id']);
       }
     }
   });

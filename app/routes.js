@@ -46,7 +46,7 @@ module.exports = function(app) {
         .find({
           'sample_id': { $in: req.query.sample_ids }
         })
-        .select('image_thumb')
+        .select('image_thumb sample_id')
         .exec(function(err, data){
           if (err) res.send(err);
           res.json(data)
