@@ -58,11 +58,9 @@ var renderScatterplot = function(sampleData, featureNames) {
             return yScale(d['pca'][1]);
         })
         .attr('r', 5)
-        .attr('fill', 'steelblue')
-        .attr('stroke', 'white')
         .classed('scatterpt', true)
         .classed('activept', false)
-        .classed('neighbour', false)
+        .classed('neighbourpt', false)
         .attr('id', function(d) {
           return d['_id'];
         })
@@ -84,30 +82,26 @@ var renderScatterplot = function(sampleData, featureNames) {
       // reset class and attr of prev active point
       d3.selectAll('.activept')
         .classed('activept', false)
-        .classed('neighbour', false)
+        .classed('neighbourpt', false)
         .transition()
         .duration(125)
-        .attr('r', 5)
-        .attr('fill', 'steelblue')
-        .attr('stroke', 'white');
+        .attr('r', 5);
 
-      d3.selectAll('.neighbour')
-        .classed('neighbour', false)
-        .transition()
-        .duration(125)
+      d3.selectAll('.neighbourpt')
+        .classed('neighbourpt', false)
         .attr('r', 5)
-        .attr('fill', 'steelblue')
-        .attr('stroke', 'white');
+        .transition()
+        .duration(125);
 
       // add neighbour class to all neighbours
       var neighbours = selection.data()[0]['neighbours'];
       for(var i = 1 ; i < neighbours.length; i++) {
         console.log(d3.select('[id=' + neighbours[i] + ']'));
         d3.select('[id=' + neighbours[i] + ']')
-          .classed('neighbour', true)
+          .classed('neighbourpt', true)
           .transition()
           .duration(125)
-          .attr('fill', 'yellow')
+          .attr('r', 5);
       }
 
       // set class and attr of new active point
@@ -115,10 +109,7 @@ var renderScatterplot = function(sampleData, featureNames) {
         .classed('activept', true)
         .transition()
         .duration(125)
-        .attr('r', 7)
-        .attr('fill', 'red')
-        .attr('stroke', 'white');
-
+        .attr('r', 7);
 
     };
 

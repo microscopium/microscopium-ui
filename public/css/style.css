@@ -8,6 +8,7 @@
     border-radius: 0 !important;
 }
 
+/* Create some space between tab and tab content */
 .tab-pane {
     margin-top: 10px;
 }
@@ -23,6 +24,7 @@
     height: 150px;
 }
 
+/* Centered colums for grid display in Nebula */
 .col-centered {
     display: inline-block;
     float: none;
@@ -30,10 +32,12 @@
     margin-right: -4px;
 }
 
+/* Centered rows for grid display in Nebula */
 .row-centered {
     text-align :center;
 }
 
+/* Plot all D3 SVGs to center of their divs */
 .plotbox {
     text-align: center;
 }
