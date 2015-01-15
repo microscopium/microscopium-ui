@@ -43,7 +43,6 @@ $.ajax({
     url: '/api/samples/MYORES',
     async: false,
     success: function (json) {
-        console.log(json);
         renderLinePlot(json, featureNames, 0);
         renderHistogram(json, featureNames, 0);
         renderScatterplot(json, featureNames)

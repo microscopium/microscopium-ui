@@ -1,5 +1,6 @@
 var Screen = require('./models/screen');
 var Sample = require('./models/sample');
+var Image = require('./models/image');
 
 module.exports = function(app) {
 
@@ -21,11 +22,24 @@ module.exports = function(app) {
     // get all samples
     app.get('/api/samples/:screen', function(req, res) {
         Sample
-          .find({ 'screen': req.params.screen })
-          .exec(function(err, json) {
-              if (err) res.send(err);
-              res.json(json);
-          });
+        .find({ 'screen': req.params.screen })
+        .exec(function(err, json) {
+            if (err) res.send(err);
+            res.json(json);
+        });
+    });
+
+    // get image thumbnails
+    app.get('/api/images/', function(req, res) {
+      Image
+        .find({
+          '_id': { $in: req.query.image_ids }
+        })
+        .select('image_thumb')
+        .exec(function(err, data){
+          if (err) res.send(err);
+          res.json(data)
+        });
     });
 
     // default route
