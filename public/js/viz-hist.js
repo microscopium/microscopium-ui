@@ -1,15 +1,10 @@
-// TODO rewrite me as an object!
-var renderHistogram = function(sample_data, feature) {
+var renderHistogram = function(sampleData, featureNames, feature) {
 
     // delete any histograms already plotted
     d3.select('#histbox > svg').remove();
 
     // column data for sample of interest
-    var column_data = colSlice(sample_data, feature);
-    var title = column_data.shift();
-    for(var i = 0; i < column_data.length; i++) {
-        column_data[i] = Number(column_data[i]);
-    }
+    var featureData = getFeatureRow(sampleData, feature);
 
     // define canvas margins
     var margin = {top: 20, right: 30, bottom: 20, left: 45},
@@ -18,7 +13,7 @@ var renderHistogram = function(sample_data, feature) {
 
     // define xScale and xAxis
     var xScale = d3.scale.linear()
-        .domain([d3.min(column_data), d3.max(column_data)])
+        .domain([d3.min(featureData), d3.max(featureData)])
         .range([0, width]);
     var xAxis = d3.svg.axis()
         .scale(xScale)
@@ -27,7 +22,7 @@ var renderHistogram = function(sample_data, feature) {
     // find bins for histogram, fit bins to x scale
     var data = d3.layout.histogram()
         .bins(xScale.ticks(10))
-    (column_data);
+    (featureData);
 
     // define y Scale and y axis
     var yScale = d3.scale.linear()
@@ -74,5 +69,6 @@ var renderHistogram = function(sample_data, feature) {
     svg.append('text')
         .attr('x', 20)
         .attr('y', -5)
-        .text(title)
+        .style('text-anchor', 'left')
+        .text(featureNames[feature]);
 };

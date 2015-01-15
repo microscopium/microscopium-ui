@@ -1,44 +1,51 @@
-// simple function to subset a single column
-var colSlice = function(array, k) {
-    var slice = [];
-    var N = array.length;
-    for(var i = 0; i < N; i++) {
-        slice.push(array[i][k]);
+var featureNames = [];
+
+// parse feature info
+var getFeatureRow = function(json, feature) {
+    var n_features = json.length;
+    var feature_row = [];
+    for(var i = 0; i < n_features; i++) {
+        feature_row.push(json[i]['feature_vector'][feature]);
     }
-    return slice;
+    return feature_row;
+};
+
+// update dropdown menu
+var updateSelector = function(screen_data) {
+    for(var i = 0; i < screen_data.length; i++) {
+        $('#screen-menu')
+          .append('<li><a href="#" role="presenation">' + screen_data[i]['screen_name'] +
+            '</a></li>');
+    }
 };
 
 // update summary tab on page load
-// TODO - do I need jquery? probably, may as well use it..
-var updateTab = function() {
-    $('#name').text('MYORES');
-    $('#desc').text('MYORES');
-    $('#samples').text(1780);
-    $('#clusters').text(30);
+var updateTab = function(screen_data) {
+    $('#name').text(screen_data['screen_name']);
+    $('#desc').text(screen_data['screen_desc']);
+    $('#samples').text(screen_data['number_samples']);
+    featureNames = screen_data['screen_features'];
 };
 
-var sample_data = [];
+// get screen data for dropdown tab
 $.ajax({
-    url: "../temp_csv/sample_data.csv",
+    url: '/api/screens',
     async: false,
-    success: function (csv) {
-        sample_data = $.csv.toArrays(csv);
+    success: function (json) {
+        updateTab(json[0]);
+        updateSelector(json);
     },
-    dataType: "text"
+    dataType: 'json'
 });
 
-var sample_pca = [];
+// get sample data
 $.ajax({
-    url: "../temp_csv/sample_pca.csv",
+    url: '/api/samples/MYORES',
     async: false,
-    success: function (csv) {
-        sample_pca = $.csv.toArrays(csv);
+    success: function (json) {
+        renderLinePlot(json, featureNames, 0);
+        renderHistogram(json, featureNames, 0);
+        renderScatterplot(json, featureNames)
     },
-    dataType: "text"
+    dataType: 'json'
 });
-
-// TODO angular controller to better manage scope?
-updateTab();
-renderLinePlot(sample_data, 1);
-renderHistogram(sample_data, 1);
-renderScatterplot(sample_pca);
