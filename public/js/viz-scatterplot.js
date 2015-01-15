@@ -72,6 +72,7 @@ var renderScatterplot = function(sampleData, featureNames) {
             // update line plot and histogram
             renderLinePlot(sampleData, featureNames, i);
             renderHistogram(sampleData, featureNames, 0);
+            updateNeighbours(d['_id']);
           }
         });
 

@@ -29,6 +29,17 @@ module.exports = function(app) {
         });
     });
 
+    // get value from sample document
+    app.get('/api/sample/:key/:id', function(req, res) {
+      Sample
+        .find({ '_id': req.params.id })
+        .select(req.params.key)
+        .exec(function(err, data) {
+          if (err) res.send(err);
+          res.json(data)
+        })
+    });
+
     // get image thumbnails
     app.get('/api/images/', function(req, res) {
       Image
