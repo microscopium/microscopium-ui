@@ -1,4 +1,4 @@
-function updateNeighbours(query_id) {
+function updateNebula(query_id) {
 
   // get neighbours for query ID
   $.ajax({

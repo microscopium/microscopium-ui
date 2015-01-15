@@ -19,7 +19,7 @@ module.exports = function(app) {
           });
     });
 
-    // get all samples
+    // get all samples beloning to screen
     app.get('/api/samples/:screen', function(req, res) {
         Sample
         .find({ 'screen': req.params.screen })
@@ -27,6 +27,16 @@ module.exports = function(app) {
             if (err) res.send(err);
             res.json(json);
         });
+    });
+
+    // get specific sample
+    app.get('/api/sample/:id', function(req, res) {
+      Sample
+        .find({ '_id': req.params.id })
+        .exec(function(err, json) {
+          if(err) res.send(json);
+          res.json(json);
+        })
     });
 
     // get value from sample document

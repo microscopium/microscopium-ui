@@ -62,6 +62,10 @@ var renderScatterplot = function(sampleData, featureNames) {
         .attr('stroke', 'white')
         .classed('scatterpt', true)
         .classed('activept', false)
+        .classed('neighbour', false)
+        .attr('id', function(d) {
+          return d['_id'];
+        })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide)
         .on('click', function(d, i) {
@@ -72,7 +76,7 @@ var renderScatterplot = function(sampleData, featureNames) {
             // update line plot and histogram
             renderLinePlot(sampleData, featureNames, i);
             renderHistogram(sampleData, featureNames, 0);
-            updateNeighbours(d['_id']);
+            updateNebula(d['_id']);
           }
         });
 
@@ -80,11 +84,31 @@ var renderScatterplot = function(sampleData, featureNames) {
       // reset class and attr of prev active point
       d3.selectAll('.activept')
         .classed('activept', false)
+        .classed('neighbour', false)
         .transition()
         .duration(125)
         .attr('r', 5)
         .attr('fill', 'steelblue')
         .attr('stroke', 'white');
+
+      d3.selectAll('.neighbour')
+        .classed('neighbour', false)
+        .transition()
+        .duration(125)
+        .attr('r', 5)
+        .attr('fill', 'steelblue')
+        .attr('stroke', 'white');
+
+      // add neighbour class to all neighbours
+      var neighbours = selection.data()[0]['neighbours'];
+      for(var i = 1 ; i < neighbours.length; i++) {
+        console.log(d3.select('[id=' + neighbours[i] + ']'));
+        d3.select('[id=' + neighbours[i] + ']')
+          .classed('neighbour', true)
+          .transition()
+          .duration(125)
+          .attr('fill', 'yellow')
+      }
 
       // set class and attr of new active point
       selection
@@ -94,6 +118,8 @@ var renderScatterplot = function(sampleData, featureNames) {
         .attr('r', 7)
         .attr('fill', 'red')
         .attr('stroke', 'white');
+
+
     };
 
     // append axis
