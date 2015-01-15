@@ -24,7 +24,7 @@
     height: 150px;
 }
 
-/* Centered colums for grid display in Nebula */
+/* Centered columns for grid display in Nebula */
 .col-centered {
     display: inline-block;
     float: none;
@@ -34,7 +34,7 @@
 
 /* Centered rows for grid display in Nebula */
 .row-centered {
-    text-align :center;
+    text-align: center;
 }
 
 /* Plot all D3 SVGs to center of their divs */
