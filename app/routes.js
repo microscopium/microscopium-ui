@@ -33,7 +33,7 @@ module.exports = function(app) {
     app.get('/api/images/', function(req, res) {
       Image
         .find({
-          '_id': { $in: req.query.image_ids }
+          'sample_id': { $in: req.query.sample_ids }
         })
         .select('image_thumb')
         .exec(function(err, data){
