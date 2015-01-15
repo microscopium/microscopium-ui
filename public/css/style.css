@@ -1,4 +1,5 @@
-/* Main Page CSS */
+/* MAIN PAGE CSS */
+
 .container {
     width: 95%;
 }
@@ -17,25 +18,35 @@
 
 .thumb {
     margin: 1px 1px -3px 1px;
-    padding: 0px 0px 0px 0px;
+    padding: 0 0 0 0;
     width: 150px;
     height: 150px;
 }
 
 .col-centered {
-    display:inline-block;
-    float:none;
-    text-align:left;
-    margin-right:-4px;
+    display: inline-block;
+    float: none;
+    text-align: left;
+    margin-right: -4px;
 }
 
 .row-centered {
-    text-align:center;
+    text-align :center;
 }
 
 .plotbox {
     text-align: center;
 }
+
+/* GENERAL PLOT CSS */
+
+.axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+/* HISTOGRAM CSS */
 
 .bar rect {
     fill: steelblue;
@@ -44,28 +55,45 @@
 
 .bar text {
     font: 10px sans-serif;
-    fill: #fff;
+    fill: white;
 }
+
+/* LINEPLOT CSS */
 
 .axis path, .axis line {
     fill: none;
-    stroke: #000;
+    stroke: black;
     shape-rendering: crispEdges;
 }
 
 .line {
     fill: none;
     stroke: steelblue;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
 }
 
-/* Tooltip CSS */
+/* SCATTERPLOT CSS */
+
+.scatterpt {
+    fill: steelblue;
+    stroke: white;
+}
+
+.activept {
+    fill: red;
+}
+
+.neighbourpt {
+    fill: yellow;
+}
+
+/* TOOLTIP CSS */
 
 .d3-tip {
     font-weight: bold;
     padding: 8px;
     background: rgba(0, 0, 0, 0.8);
-    color: #fff;
+    color: white;
     border-radius: 2px;
 }
 
@@ -82,7 +110,6 @@
     text-align: center;
 }
 
-/* Style northward tooltips differently */
 .d3-tip.n:after {
     margin: -3px 0 0 0;
     top: 100%;
