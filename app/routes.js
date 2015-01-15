@@ -11,21 +11,20 @@ module.exports = function(app) {
     // get all screen documents
     app.get('/api/screens', function(req, res) {
         Screen
-          .find()
+          .find({})
           .exec(function(err, data) {
             if (err) res.send(err);
             res.json(data);
           });
     });
 
-    // get all keys for samples in screen
-    app.get('/api/sample/:key/:screen', function(req, res) {
+    // get all samples
+    app.get('/api/samples/:screen', function(req, res) {
         Sample
-          .find({ screen: req.params.screen })
-          .select(req.params.key)
-          .exec(function(err, feature_vectors) {
+          .find({ 'screen': req.params.screen })
+          .exec(function(err, json) {
               if (err) res.send(err);
-              res.json(feature_vectors);
+              res.json(json);
           });
     });
 

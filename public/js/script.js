@@ -27,35 +27,26 @@ var updateTab = function(screen_data) {
     featureNames = screen_data['screen_features'];
 };
 
+// get screen data for dropdown tab
 $.ajax({
     url: '/api/screens',
     async: false,
     success: function (json) {
-        feature_names = json[0]['screen_features'];
         updateTab(json[0]);
         updateSelector(json);
     },
     dataType: 'json'
 });
 
+// get sample data
 $.ajax({
-    url: '/api/sample/feature_vector/MYORES',
+    url: '/api/samples/MYORES',
     async: false,
     success: function (json) {
+        console.log(json);
         renderLinePlot(json, featureNames, 0);
         renderHistogram(json, featureNames, 0);
+        renderScatterplot(json, featureNames)
     },
     dataType: 'json'
 });
-
-$.ajax({
-    url: '/api/sample/pca/MYORES',
-    success: function(json) {
-        renderScatterplot(json);
-    }
-});
-
-// TODO angular controller to better manage scope?
-//renderLinePlot(sample_data, 1);
-//renderHistogram(sample_data, 1);
-//renderScatterplot(sample_pca);

@@ -1,12 +1,12 @@
 // generate scatterplot
 
-var renderScatterplot = function(pca_json) {
+var renderScatterplot = function(sampleData, featureNames) {
 
     // find min/max for each axis
-    var xMin = d3.min(pca_json, function(d) { return d['pca'][0]; });
-    var yMin = d3.min(pca_json, function(d) { return d['pca'][1]; });
-    var xMax = d3.max(pca_json, function(d) { return d['pca'][0]; });
-    var yMax = d3.max(pca_json, function(d) { return d['pca'][1]; });
+    var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
+    var yMin = d3.min(sampleData, function(d) { return d['pca'][1]; });
+    var xMax = d3.max(sampleData, function(d) { return d['pca'][0]; });
+    var yMax = d3.max(sampleData, function(d) { return d['pca'][1]; });
 
     // define canvas margins
     var margin = {top: 10, right: 40, bottom: 30, left: 40},
@@ -34,7 +34,7 @@ var renderScatterplot = function(pca_json) {
     var tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
-        .html(function(d, i) {
+        .html(function(d) {
             return "<p><strong>ID: </strong>" + d['_id'] + "</span></p>";
         });
 
@@ -48,7 +48,7 @@ var renderScatterplot = function(pca_json) {
 
     // add scatter points
     svg.selectAll('circle')
-        .data(pca_json)
+        .data(sampleData)
         .enter()
         .append('circle')
         .attr('cx', function(d) {
@@ -64,11 +64,14 @@ var renderScatterplot = function(pca_json) {
         .classed('activept', false)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide)
-        .on('click', function() {
+        .on('click', function(d, i) {
           var selection = d3.select(this);
           // only update the active point if it's not already active
           if(!selection.classed('activept')) {
-            updatePoint(selection);
+            updatePoint(selection, i);
+            // update line plot and histogram
+            renderLinePlot(sampleData, featureNames, i);
+            renderHistogram(sampleData, featureNames, 0);
           }
         });
 
@@ -82,8 +85,6 @@ var renderScatterplot = function(pca_json) {
         .attr('fill', 'steelblue')
         .attr('stroke', 'white');
 
-      var pointIndex = selection.data()[0][3];
-
       // set class and attr of new active point
       selection
         .classed('activept', true)
@@ -92,11 +93,6 @@ var renderScatterplot = function(pca_json) {
         .attr('r', 7)
         .attr('fill', 'red')
         .attr('stroke', 'white');
-
-      // update plots in feature tab
-      // renderLinePlot(sample_data, pointIndex);
-      // renderHistogram(sample_data, 1)
-      alert('thanks for clicking on me!');
     };
 
     // append axis

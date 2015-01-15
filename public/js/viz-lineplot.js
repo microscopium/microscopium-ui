@@ -36,8 +36,6 @@ var renderLinePlot = function(sampleData, featureNames, sample) {
     var onclickUpdate = function(d3Mouse) {
         var xCoord = d3Mouse[0];
         var clickedFeature = Math.round(xScale.invert(xCoord));
-        console.log(clickedFeature);
-        console.log(d3Mouse);
         if(clickedFeature <= nFeatures && clickedFeature >= 1) {
             activeFeature = clickedFeature;
             updateActiveLine(activeFeature);
