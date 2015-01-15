@@ -46,6 +46,7 @@ $.ajax({
         renderLinePlot(json, featureNames, 0);
         renderHistogram(json, featureNames, 0);
         renderScatterplot(json, featureNames)
+        updateNebula(json[0]['_id']);
     },
     dataType: 'json'
 });
