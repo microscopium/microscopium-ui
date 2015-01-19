@@ -9,14 +9,25 @@ module.exports = function(app) {
         res.sendfile('index.html');
     });
 
-    // get all screen documents
-    app.get('/api/screens', function(req, res) {
+    // get all screen ids
+    app.get('/api/screen_ids', function(req, res) {
         Screen
-          .find({})
-          .exec(function(err, data) {
-            if (err) res.send(err);
-            res.json(data);
-          });
+            .find({})
+            .select('_id')
+            .exec(function(err, data) {
+                if (err) res.send(err);
+                res.json(data);
+            });
+    });
+
+    // get specific screen document
+    app.get('/api/screen/:id', function(req, res) {
+        Screen
+            .find({'_id': req.params.id})
+            .exec(function(err, data) {
+                if (err) res.send(err);
+                res.json(data);
+        });
     });
 
     // get all samples beloning to screen
@@ -31,12 +42,12 @@ module.exports = function(app) {
 
     // get specific sample
     app.get('/api/sample/:id', function(req, res) {
-      Sample
-        .find({ '_id': req.params.id })
-        .exec(function(err, json) {
-          if(err) res.send(json);
-          res.json(json);
-        })
+          Sample
+            .find({ '_id': req.params.id })
+            .exec(function(err, json) {
+              if(err) res.send(json);
+              res.json(json);
+            })
     });
 
     // get value from sample document

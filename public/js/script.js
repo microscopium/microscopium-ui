@@ -35,6 +35,9 @@ var selectScreen = function(screen_id) {
                 featureNames = json[0]['screen_features'];
                 updateTab(json[0]);
             },
+            error: function(err) {
+                alert('error!');
+            },
             dataType: 'json'
         }),
         $.ajax({
@@ -61,7 +64,7 @@ var updateTab = function(screen_data) {
 
 // ON PAGE LOAD -- setup screens dropdown menu
 $.ajax({
-    url: '/api/screens/',
+    url: '/api/screen_ids/',
     async: false,
     success: function (json) {
         updateSelector(json);
