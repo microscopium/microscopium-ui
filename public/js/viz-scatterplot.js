@@ -2,6 +2,9 @@
 
 var renderScatterplot = function(sampleData, featureNames) {
 
+    // delete any scatterplots already plotted
+    d3.select('#scatterbox > svg').remove();
+
     // find min/max for each axis
     var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
     var yMin = d3.min(sampleData, function(d) { return d['pca'][1]; });
