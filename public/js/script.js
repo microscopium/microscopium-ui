@@ -26,32 +26,41 @@ var updateSelector = function(screen_data) {
 
 var selectScreen = function(screen_id) {
     var featureNames = [];
-    // TODO start loading screen
+    var sampleData = [];
+    var screenData = [];
+    $('#page-overlay').spin('large', '#000');
+    $('#page-overlay').addClass('load-overlay');
     $.when(
         $.ajax({
             url: 'api/screen/' + screen_id,
-            async: false,
+            async: true,
             success: function(json) {
+                screenData = json[0];
                 featureNames = json[0]['screen_features'];
-                updateTab(json[0]);
             },
             error: function(err) {
-                alert('error!');
+                alert(err);
             },
             dataType: 'json'
         }),
         $.ajax({
             url: 'api/samples/' + screen_id,
-            async: false,
+            async: true,
             success: function (json) {
-                renderLinePlot(json, featureNames, 0);
-                renderHistogram(json, featureNames, 0);
-                renderScatterplot(json, featureNames);
-                updateNebula(json[0]['_id']);
+                sampleData = json;
+            },
+            error: function(err) {
+                alert(err);
             },
             dataType: 'json'
         }).then(function(res, status) {
-            // TODO close loading screen
+            renderLinePlot(sampleData, featureNames, 0);
+            renderHistogram(sampleData, featureNames, 0);
+            renderScatterplot(sampleData, featureNames);
+            updateNebula(sampleData[0]['_id']);
+            updateTab(screenData);
+            $('#page-overlay').spin(false);
+            $('#page-overlay').removeClass('load-overlay');
         }));
 };
 
