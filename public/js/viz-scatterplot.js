@@ -99,7 +99,6 @@ var renderScatterplot = function(sampleData, featureNames) {
       // add neighbour class to all neighbours
       var neighbours = selection.data()[0]['neighbours'];
       for(var i = 1 ; i < neighbours.length; i++) {
-        console.log(d3.select('[id=' + neighbours[i] + ']'));
         d3.select('[id=' + neighbours[i] + ']')
           .classed('neighbourpt', true)
           .transition()
