@@ -9,7 +9,12 @@ module.exports = function(grunt) {
             }
         },
         jshint: {
-            all: ['*.js', 'public/js/*.js']
+            all: ['*.js', 'public/js/*.js'],
+            options: {
+                white: false,
+                indent: 4,
+                force: true
+            }
         },
         watch: {
             scripts: {
@@ -22,8 +27,6 @@ module.exports = function(grunt) {
             }
         }
     });
-
-    grunt.option('force', true);
 
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-contrib-jshint');
