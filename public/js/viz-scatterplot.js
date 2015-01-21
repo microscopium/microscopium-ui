@@ -3,7 +3,7 @@
 var renderScatterplot = function(sampleData, featureNames) {
 
     // delete any scatterplots already plotted
-    d3.select('#scatterbox > svg').remove();
+    d3.select('#neighbourpca > svg').remove();
 
     // find min/max for each axis
     var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
@@ -42,7 +42,7 @@ var renderScatterplot = function(sampleData, featureNames) {
         });
 
     // setup canvas
-    var svg = d3.select('#scatterbox').append('svg')
+    var svg = d3.select('#neighbourpca').append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
