@@ -65,53 +65,53 @@ var renderScatterplot = function(sampleData, featureNames) {
         .classed('activept', false)
         .classed('neighbourpt', false)
         .attr('id', function(d) {
-          return d['_id'];
+            return d['_id'];
         })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide)
         .on('click', function(d, i) {
-          var selection = d3.select(this);
-          // only update the active point if it's not already active
-          if(!selection.classed('activept')) {
-            updatePoint(selection, i);
-            // update line plot and histogram
-            renderLinePlot(sampleData, featureNames, i);
-            renderHistogram(sampleData, featureNames, 0);
-            updateNebula(d['_id']);
-          }
+            var selection = d3.select(this);
+            // only update the active point if it's not already active
+            if(!selection.classed('activept')) {
+                updatePoint(selection, i);
+                // update line plot and histogram
+                renderLinePlot(sampleData, featureNames, i);
+                renderHistogram(sampleData, featureNames, 0);
+                updateNebula(d['_id']);
+            }
         });
 
     var updatePoint = function(selection) {
-      // reset class and attr of prev active point
-      d3.selectAll('.activept')
-        .classed('activept', false)
-        .classed('neighbourpt', false)
-        .transition()
-        .duration(125)
-        .attr('r', 5);
+        // reset class and attr of prev active point
+        d3.selectAll('.activept')
+            .classed('activept', false)
+            .classed('neighbourpt', false)
+            .transition()
+            .duration(125)
+            .attr('r', 5);
 
-      d3.selectAll('.neighbourpt')
-        .classed('neighbourpt', false)
-        .attr('r', 5)
-        .transition()
-        .duration(125);
+        d3.selectAll('.neighbourpt')
+            .classed('neighbourpt', false)
+            .attr('r', 5)
+            .transition()
+            .duration(125);
 
-      // add neighbour class to all neighbours
-      var neighbours = selection.data()[0]['neighbours'];
-      for(var i = 1 ; i < neighbours.length; i++) {
-        d3.select('[id=' + neighbours[i] + ']')
-          .classed('neighbourpt', true)
-          .transition()
-          .duration(125)
-          .attr('r', 5);
-      }
+        // add neighbour class to all neighbours
+        var neighbours = selection.data()[0]['neighbours'];
+        for(var i = 1 ; i < neighbours.length; i++) {
+            d3.select('[id=' + neighbours[i] + ']')
+                .classed('neighbourpt', true)
+                .transition()
+                .duration(125)
+                .attr('r', 5);
+        }
 
-      // set class and attr of new active point
-      selection
-        .classed('activept', true)
-        .transition()
-        .duration(125)
-        .attr('r', 7);
+        // set class and attr of new active point
+        selection
+            .classed('activept', true)
+            .transition()
+            .duration(125)
+            .attr('r', 7);
 
     };
 
@@ -127,17 +127,17 @@ var renderScatterplot = function(sampleData, featureNames) {
 
     // append axis labels
     svg.append('text')
-      .attr('transform', 'translate(' + (width / 2) + ' ,' + (height + margin.bottom) + ')')
-      .style('text-anchor', 'middle')
-      .text('PC1');
+        .attr('transform', 'translate(' + (width / 2) + ' ,' + (height + margin.bottom) + ')')
+        .style('text-anchor', 'middle')
+        .text('PC1');
 
     svg.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 0 - margin.left)
-      .attr('x',0 - (height / 2))
-      .attr('dy', '1em')
-      .style('text-anchor', 'middle')
-      .text('PC2');
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - margin.left)
+        .attr('x',0 - (height / 2))
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text('PC2');
 };
 
 
