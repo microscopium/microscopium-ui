@@ -2,6 +2,9 @@
 
 var renderScatterplot = function(sampleData, featureNames) {
 
+    // delete any scatterplots already plotted
+    d3.select('#scatterbox > svg').remove();
+
     // find min/max for each axis
     var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
     var yMin = d3.min(sampleData, function(d) { return d['pca'][1]; });
@@ -96,7 +99,6 @@ var renderScatterplot = function(sampleData, featureNames) {
       // add neighbour class to all neighbours
       var neighbours = selection.data()[0]['neighbours'];
       for(var i = 1 ; i < neighbours.length; i++) {
-        console.log(d3.select('[id=' + neighbours[i] + ']'));
         d3.select('[id=' + neighbours[i] + ']')
           .classed('neighbourpt', true)
           .transition()

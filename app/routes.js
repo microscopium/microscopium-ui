@@ -2,6 +2,13 @@ var Screen = require('./models/screen');
 var Sample = require('./models/sample');
 var Image = require('./models/image');
 
+var resHandler = function(res) {
+  return function(err, data) {
+    if(err) res.json(err);
+    res.json(data);
+  }
+};
+
 module.exports = function(app) {
 
     // index route
@@ -9,34 +16,33 @@ module.exports = function(app) {
         res.sendfile('index.html');
     });
 
-    // get all screen documents
-    app.get('/api/screens', function(req, res) {
+    // get all screen ids
+    app.get('/api/screen_ids', function(req, res) {
         Screen
-          .find({})
-          .exec(function(err, data) {
-            if (err) res.send(err);
-            res.json(data);
-          });
+            .find({})
+            .select('_id')
+            .exec(resHandler(res));
+    });
+
+    // get specific screen document
+    app.get('/api/screen/:id', function(req, res) {
+        Screen
+            .find({'_id': req.params.id})
+            .exec(resHandler(res));
     });
 
     // get all samples beloning to screen
     app.get('/api/samples/:screen', function(req, res) {
         Sample
         .find({ 'screen': req.params.screen })
-        .exec(function(err, json) {
-            if (err) res.send(err);
-            res.json(json);
-        });
+        .exec(resHandler(res));
     });
 
     // get specific sample
     app.get('/api/sample/:id', function(req, res) {
-      Sample
-        .find({ '_id': req.params.id })
-        .exec(function(err, json) {
-          if(err) res.send(json);
-          res.json(json);
-        })
+          Sample
+            .find({ '_id': req.params.id })
+            .exec(resHandler(res))
     });
 
     // get value from sample document
@@ -44,10 +50,7 @@ module.exports = function(app) {
       Sample
         .find({ '_id': req.params.id })
         .select(req.params.key)
-        .exec(function(err, data) {
-          if (err) res.send(err);
-          res.json(data)
-        })
+        .exec(resHandler(res))
     });
 
     // get image thumbnails
@@ -57,10 +60,7 @@ module.exports = function(app) {
           'sample_id': { $in: req.query.sample_ids }
         })
         .select('image_thumb sample_id')
-        .exec(function(err, data){
-          if (err) res.send(err);
-          res.json(data)
-        });
+        .exec(resHandler(res));
     });
 
     // default route

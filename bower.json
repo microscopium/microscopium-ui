@@ -7,6 +7,7 @@
         "d3": "latest",
         "d3-tip": "latest",
         "jquery": "latest",
-        "jquery-csv": "latest"
+        "jquery-csv": "latest",
+        "spin.js": "latest"
     }
 }

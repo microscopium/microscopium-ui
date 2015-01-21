@@ -6,11 +6,11 @@ var renderLinePlot = function(sampleData, featureNames, sample) {
     d3.select('#linebox > svg').remove();
 
     // get sample feature vector
-    var featureVector = sampleData[sample]['feature_vector'];
+    var featureVector = sampleData[sample]['feature_vector_std'];
 
     // get column size of data (so selected feature line doesn't
     // fall off the edge
-    var nFeatures = sampleData[sample]['feature_vector'].length;
+    var nFeatures = sampleData[sample]['feature_vector_std'].length;
 
     // update 'active feature' line
     var updateActiveLine = function(feature) {

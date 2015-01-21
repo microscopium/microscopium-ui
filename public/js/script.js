@@ -14,39 +14,69 @@ var getFeatureRow = function(json, feature) {
 var updateSelector = function(screen_data) {
     for(var i = 0; i < screen_data.length; i++) {
         $('#screen-menu')
-          .append('<li><a href="#" role="presenation">' + screen_data[i]['screen_name'] +
+            .append('<li><a href="#" role="presentation">' + screen_data[i]['_id'] +
             '</a></li>');
+
+        $('#screen-menu li:last').on('click', function() {
+            selectScreen($(this).text());
+        });
+
     }
 };
 
-// update summary tab on page load
-var updateTab = function(screen_data) {
-    $('#name').text(screen_data['screen_name']);
-    $('#desc').text(screen_data['screen_desc']);
-    $('#samples').text(screen_data['number_samples']);
-    featureNames = screen_data['screen_features'];
+var selectScreen = function(screen_id) {
+    var featureNames = [];
+    var sampleData = [];
+    var screenData = [];
+    $('#page-overlay').spin('large', '#000');
+    $('#page-overlay').addClass('load-overlay');
+    $.when(
+        $.ajax({
+            url: 'api/screen/' + screen_id,
+            async: true,
+            success: function(json) {
+                screenData = json[0];
+                featureNames = json[0]['screen_features'];
+            },
+            error: function(err) {
+                alert(err);
+            },
+            dataType: 'json'
+        }),
+        $.ajax({
+            url: 'api/samples/' + screen_id,
+            async: true,
+            success: function (json) {
+                sampleData = json;
+            },
+            error: function(err) {
+                alert(err);
+            },
+            dataType: 'json'
+        }).then(function(res, status) {
+            renderLinePlot(sampleData, featureNames, 0);
+            renderHistogram(sampleData, featureNames, 0);
+            renderScatterplot(sampleData, featureNames);
+            updateNebula(sampleData[0]['_id']);
+            updateTab(screenData);
+            $('#page-overlay').spin(false);
+            $('#page-overlay').removeClass('load-overlay');
+        }));
 };
 
-// get screen data for dropdown tab
-$.ajax({
-    url: '/api/screens',
-    async: false,
-    success: function (json) {
-        updateTab(json[0]);
-        updateSelector(json);
-    },
-    dataType: 'json'
-});
+// update summary tab
+var updateTab = function(screen_data) {
+    $('#name').text(screen_data['_id']);
+    $('#desc').text(screen_data['screen_desc']);
+    $('#samples').text(screen_data['number_samples']);
+};
 
-// get sample data
+// ON PAGE LOAD -- setup screens dropdown menu
 $.ajax({
-    url: '/api/samples/MYORES',
+    url: '/api/screen_ids/',
     async: false,
     success: function (json) {
-        renderLinePlot(json, featureNames, 0);
-        renderHistogram(json, featureNames, 0);
-        renderScatterplot(json, featureNames)
-        updateNebula(json[0]['_id']);
+        updateSelector(json);
     },
     dataType: 'json'
 });

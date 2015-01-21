@@ -1,5 +1,9 @@
 /* MAIN PAGE CSS */
 
+.load-overlay {
+    pointer-events: none;
+}
+
 .container {
     width: 95%;
 }
