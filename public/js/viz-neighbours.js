@@ -40,7 +40,6 @@ function setImages(selectedImage, neighbourImages) {
 
     for(var i = 0; i < 24; i++) {
         var nebula_selector = '#nebula-' + (i+1);
-        console.log(nebula_selector);
         $(nebula_selector).attr('src', 'data:image/jpg;base64,' + neighbourImages[i]['image_thumb']);
         $(nebula_selector).attr('title', neighbourImages[i]['sample_id']);
     }

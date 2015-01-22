@@ -53,6 +53,11 @@
             </a>
         </li>
         <li>
+            <a href="#clusterplot" data-toggle="tab">
+                Cluster Cosmologist
+            </a>
+        </li>
+        <li>
             <a href="#importexport" data-toggle="tab">
                 Export Data
             </a>
@@ -241,6 +246,20 @@
                 </div>
             </div>
         </div>
+        <!-- CLUSTER COSMOLOGIST -->
+        <div class="tab-pane fade" id ="clusterplot">
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-4 plotbox">
+                        <label for="cluster-slider">Number Clusters:</label>
+                        <input id="cluster-slider" type="range" min="2" max="20" value="2" step="1"/>
+                        <span id="cluster-number">2</span>
+                    </div>
+                    <div id="scattercluster" class="col-lg-8 plotbox">
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- IMPORT EXPORT TAB -->
         <div class="tab-pane fade" id="importexport">
             <div class="row">
@@ -256,5 +275,6 @@
 <script src="js/viz-scatterplot.js"></script>
 <script src="js/viz-lineplot.js"></script>
 <script src="js/viz-neighbours.js"></script>
+<script src="js/viz-scattercluster.js"></script>
 <script src="js/script.js"></script>
 </html>
