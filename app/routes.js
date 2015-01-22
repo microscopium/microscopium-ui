@@ -53,6 +53,14 @@ module.exports = function(app) {
         .exec(resHandler(res))
     });
 
+    //get fullsize image
+    app.get('/api/image/:id', function(req, res) {
+        Image
+            .find({ 'sample_id': req.params.id })
+        .select('sample_id image_full')
+        .exec(resHandler(res));
+    });
+
     // get image thumbnails
     app.get('/api/images/', function(req, res) {
       Image
