@@ -1,10 +1,16 @@
 {
-    "name": "huscinterface",
+    "name": "microscopium-ui",
     "main": "server.js",
     "dependencies": {
         "express": "~4.0.0",
         "mongoose": "~3.8.0",
         "morgan": "~1.0.0",
         "body-parser": "~1.0.0"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-jshint": "~0.8.0",
+        "grunt-contrib-watch": "~0.6.1",
+        "grunt-express-server": "~0.4.0"
     }
 }
