@@ -17,6 +17,7 @@
 <body>
 <div id="page-overlay">
 <!-- TOP NAVBAR -->
+<!-- See http://getbootstrap.com/components/#navbar for Boostrap Navbar class info -->
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="navbar-header">
     <a class="navbar-brand" href="#">Microscopium</a>
@@ -35,6 +36,7 @@
 </nav>
 <div class="container">
     <!-- TAB NAVIGATION -->
+    <!-- See http://getbootstrap.com/components/#nav for Boostrap nab-tabs class info -->
     <ul id="tabNav" class="nav nav-tabs nav-justified">
         <li class="active">
             <a href="#home" data-toggle="tab">
@@ -47,13 +49,13 @@
             </a>
         </li>
         <li>
-            <a href="#clusterexplorer" data-toggle="tab">
-                PCA Commander
+            <a href="#neighbournebula" data-toggle="tab">
+                Neighbour Nebula
             </a>
         </li>
         <li>
-            <a href="#imageexplorer" data-toggle="tab">
-                Neighbour Nebula
+            <a href="#clusterplot" data-toggle="tab">
+                Cluster Cosmologist
             </a>
         </li>
         <li>
@@ -63,6 +65,7 @@
         </li>
     </ul>
     <!-- TAB CONTENT -->
+    <!-- See http://getbootstrap.com/css/#grid for Bootstrap column class info -->
     <div id="tabContent" class="tab-content">
         <!-- SCREEN SUMMARY -->
         <div class="tab-pane fade in active" id="home">
@@ -92,148 +95,169 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="clusterexplorer">
+        <!-- NEIGHBOUR NEBULA -->
+        <div class="tab-pane fade" id="neighbournebula">
             <div class="row">
-                <div class="row plotbox" id="scatterbox">
+                <div class="col-lg-7">
+                    <div class="row plotbox" id="neighbourpca"></div>
+                </div>
+                <div class="col-lg-5 gallery">
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered selected-image-display">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-0" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-12 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-1" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-2" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-3" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-4" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-5" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-6" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-7" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-8" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-9" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-10" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-11" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-12" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-13" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-14" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-15" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-16" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-17" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-18" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-19" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-20" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-21" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row-centered">
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-22" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-23" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-centered thumb">
+                            <a class="thumbnail" href="#">
+                                <img id="nebula-24" class="img-responsive" src="" alt="">
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- IMAGE EXPLORER -->
-        <div class="tab-pane fade" id="imageexplorer">
-            <div id="image-box">
-                <div class="row-centered">
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-20" class="img-responsive" src="" alt="">
-                        </a>
+        <!-- CLUSTER COSMOLOGIST -->
+        <div class="tab-pane fade" id ="clusterplot">
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-4 plotbox">
+                        <label for="cluster-slider">Number Clusters:</label>
+                        <input id="cluster-slider" type="range" step="1"/>
+                        <span id="cluster-number">2</span>
                     </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-21" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-22" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-23" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-24" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="row-centered">
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-19" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-6" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-7" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-8" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-9" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="row-centered">
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-18" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-5" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-0" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-1" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-10" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="row-centered">
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-17" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-4" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-3" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-2" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-11" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="row-centered">
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-16" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-15" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-14" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-13" class="img-responsive" src="" alt="">
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-centered thumb">
-                        <a class="thumbnail" href="#">
-                            <img id="nebula-12" class="img-responsive" src="" alt="">
-                        </a>
+                    <div id="scattercluster" class="col-lg-8 plotbox">
                     </div>
                 </div>
             </div>
@@ -253,5 +277,6 @@
 <script src="js/viz-scatterplot.js"></script>
 <script src="js/viz-lineplot.js"></script>
 <script src="js/viz-neighbours.js"></script>
+<script src="js/viz-scattercluster.js"></script>
 <script src="js/script.js"></script>
 </html>

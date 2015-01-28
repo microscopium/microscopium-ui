@@ -57,7 +57,8 @@ var selectScreen = function(screen_id) {
             renderLinePlot(sampleData, featureNames, 0);
             renderHistogram(sampleData, featureNames, 0);
             renderScatterplot(sampleData, featureNames);
-            updateNebula(sampleData[0]['_id']);
+            updateNebulaImages(sampleData[0]['_id']);
+            renderScatterCluster(sampleData);
             updateTab(screenData);
             $('#page-overlay').spin(false);
             $('#page-overlay').removeClass('load-overlay');

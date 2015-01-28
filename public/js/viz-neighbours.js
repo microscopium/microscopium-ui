@@ -1,30 +1,47 @@
-function updateNebula(query_id) {
+function updateNebulaImages(query_id) {
 
-  // get neighbours for query ID
-  $.ajax({
-    url: '/api/sample/neighbours/' + query_id,
-    async: false,
-    success: function(json) {
-      var neighbours = json[0]['neighbours'];
-      setThumbnails(neighbours);
-    }
-  })
+    var neighbours = [];
+    var selectedImage = "";
+    var neighbourImages = [];
+
+    $.when(
+        $.ajax({
+            url: '/api/sample/neighbours/' + query_id,
+            async: false,
+            success: function(json) {
+                neighbours = json[0]['neighbours'].slice(1, 25);
+            }
+        }),
+        $.ajax({
+            url: '/api/image/' + query_id,
+            async: false,
+            success: function(json) {
+                selectedImage = json[0];
+            }
+        }),
+        $.ajax({
+            type: 'GET',
+            url: '/api/images/',
+            data: {
+                'sample_ids': neighbours
+            },
+            async: false,
+            success: function(json) {
+                neighbourImages = json;
+            }
+        })).then(function(res, status) {
+            setImages(selectedImage, neighbourImages);
+        });
 }
 
-function setThumbnails(query_ids) {
-  $.ajax({
-    type: 'GET',
-    url: 'api/images/',
-    data: {
-      'sample_ids': query_ids
-    },
-    async: false,
-    success: function(json) {
-      for(var i = 0; i < 25; i++) {
-        var nebula_selector = '#nebula-' + i;
-        $(nebula_selector).attr('src', 'data:image/jpg;base64,' + json[i]['image_thumb']);
-        $(nebula_selector).attr('title', json[i]['sample_name sample_id']);
-      }
+function setImages(selectedImage, neighbourImages) {
+    $('#nebula-0').attr('src', 'data:image/jpg;base64,' + selectedImage['image_full']);
+    $('#nebula-0').attr('title', selectedImage['sample_id']);
+
+    for(var i = 0; i < neighbourImages.length; i++) {
+        var nebula_selector = '#nebula-' + (i+1);
+        $(nebula_selector).attr('src', 'data:image/jpg;base64,' + neighbourImages[i]['image_thumb']);
+        $(nebula_selector).attr('title', neighbourImages[i]['sample_id']);
     }
-  });
 }
+

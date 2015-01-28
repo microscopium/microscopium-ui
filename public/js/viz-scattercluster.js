@@ -1,9 +1,25 @@
-// generate scatterplot
+var renderScatterCluster = function(sampleData) {
 
-var renderScatterplot = function(sampleData, featureNames) {
+    // setup slider control
+    var clusterMin = 2;
+    var clusterMax = 20;
+    var clusterMid = Math.round((clusterMax+clusterMin)/2);
+
+    $('#cluster-slider')
+        .attr('min', clusterMin)
+        .attr('max', clusterMax)
+        .attr('value', clusterMid);
+
+    $('#cluster-number').html(clusterMid.toString());
+
+    $('#cluster-slider').unbind('change');
+    $('#cluster-slider').on('change', function() {
+        redraw(this.value);
+        $('#cluster-number').html(this.value);
+    });
 
     // delete any scatterplots already plotted
-    d3.select('#neighbourpca > svg').remove();
+    d3.select('#scattercluster > svg').remove();
 
     // find min/max for each axis
     var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
@@ -13,8 +29,10 @@ var renderScatterplot = function(sampleData, featureNames) {
 
     // define canvas margins
     var margin = {top: 10, right: 40, bottom: 30, left: 40},
-        width = 700 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 650 - margin.left - margin.right,
+        height = 450 - margin.top - margin.bottom;
+
+    var colourScale = d3.scale.category20();
 
     // setup scales and axis
     var xScale = d3.scale.linear()
@@ -38,11 +56,12 @@ var renderScatterplot = function(sampleData, featureNames) {
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<p><strong>ID: </strong>" + d['_id'] + "</span></p>";
+            return "<p><strong>ID: </strong>" + d['_id'] + "</p>" +
+                "<p><strong>Cluster: </strong>" + (d['cluster_member'][clusterMid-clusterMin] + 1) + "</p>";
         });
 
     // setup canvas
-    var svg = d3.select('#neighbourpca').append('svg')
+    var svg = d3.select('#scattercluster').append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
@@ -61,59 +80,16 @@ var renderScatterplot = function(sampleData, featureNames) {
             return yScale(d['pca'][1]);
         })
         .attr('r', 5)
-        .classed('scatterpt', true)
-        .classed('activept', false)
-        .classed('neighbourpt', false)
+        .attr('stroke', 'white')
+        .attr('fill', function(d) {
+            var cluster_id = d['cluster_member'][clusterMid-clusterMin];
+            return colourScale(cluster_id);
+        })
         .attr('id', function(d) {
             return d['_id'];
         })
         .on('mouseover', tip.show)
-        .on('mouseout', tip.hide)
-        .on('click', function(d, i) {
-            var selection = d3.select(this);
-            // only update the active point if it's not already active
-            if(!selection.classed('activept')) {
-                updatePoint(selection, i);
-                // update line plot and histogram
-                renderLinePlot(sampleData, featureNames, i);
-                renderHistogram(sampleData, featureNames, 0);
-                updateNebulaImages(d['_id']);
-            }
-        });
-
-    var updatePoint = function(selection) {
-        // reset class and attr of prev active point
-        d3.selectAll('.activept')
-            .classed('activept', false)
-            .classed('neighbourpt', false)
-            .transition()
-            .duration(125)
-            .attr('r', 5);
-
-        d3.selectAll('.neighbourpt')
-            .classed('neighbourpt', false)
-            .attr('r', 5)
-            .transition()
-            .duration(125);
-
-        // add neighbour class to all neighbours
-        var neighbours = selection.data()[0]['neighbours'];
-        for(var i = 1 ; i < neighbours.length; i++) {
-            d3.select('[id=' + neighbours[i] + ']')
-                .classed('neighbourpt', true)
-                .transition()
-                .duration(125)
-                .attr('r', 5);
-        }
-
-        // set class and attr of new active point
-        selection
-            .classed('activept', true)
-            .transition()
-            .duration(125)
-            .attr('r', 7);
-
-    };
+        .on('mouseout', tip.hide);
 
     // append axis
     svg.append('g')
@@ -138,9 +114,17 @@ var renderScatterplot = function(sampleData, featureNames) {
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .text('PC2');
+
+    function redraw(newk) {
+        console.log(svg.selectAll('.clusterpt'));
+        svg.selectAll('circle')
+            .data(sampleData)
+            .attr('fill', function(d) {
+                var cluster_id = d['cluster_member'][newk-clusterMin];
+                return colourScale(cluster_id);
+            })
+    }
+
+
+
 };
-
-
-
-
-
