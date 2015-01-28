@@ -1,5 +1,22 @@
-// TODO rewrite scatterPlot and controls as an object
-var renderScatterCluster = function(sampleData, k) {
+var renderScatterCluster = function(sampleData) {
+
+    // setup slider control
+    var clusterMin = 2;
+    var clusterMax = 20;
+    var clusterMid = Math.round((clusterMax+clusterMin)/2);
+
+    $('#cluster-slider')
+        .attr('min', clusterMin)
+        .attr('max', clusterMax)
+        .attr('value', clusterMid);
+
+    $('#cluster-number').html(clusterMid.toString());
+
+    $('#cluster-slider').unbind('change');
+    $('#cluster-slider').on('change', function() {
+        redraw(this.value);
+        $('#cluster-number').html(this.value);
+    });
 
     // delete any scatterplots already plotted
     d3.select('#scattercluster > svg').remove();
@@ -15,15 +32,7 @@ var renderScatterCluster = function(sampleData, k) {
         width = 650 - margin.left - margin.right,
         height = 450 - margin.top - margin.bottom;
 
-    // setup colour scale
-    var colourScale;
-    if(k <= 12) {
-        colourScale = d3.scale.category10();
-    }
-    else {
-        colourScale = d3.scale.category20();
-    }
-
+    var colourScale = d3.scale.category20();
 
     // setup scales and axis
     var xScale = d3.scale.linear()
@@ -48,7 +57,7 @@ var renderScatterCluster = function(sampleData, k) {
         .offset([-10, 0])
         .html(function(d) {
             return "<p><strong>ID: </strong>" + d['_id'] + "</p>" +
-                "<p><strong>Cluster: </strong>" + (d['cluster_member'][k] + 1) + "</p>";
+                "<p><strong>Cluster: </strong>" + (d['cluster_member'][clusterMid-clusterMin] + 1) + "</p>";
         });
 
     // setup canvas
@@ -73,7 +82,7 @@ var renderScatterCluster = function(sampleData, k) {
         .attr('r', 5)
         .attr('stroke', 'white')
         .attr('fill', function(d) {
-            var cluster_id = d['cluster_member'][k];
+            var cluster_id = d['cluster_member'][clusterMid-clusterMin];
             return colourScale(cluster_id);
         })
         .attr('id', function(d) {
@@ -106,10 +115,16 @@ var renderScatterCluster = function(sampleData, k) {
         .style('text-anchor', 'middle')
         .text('PC2');
 
-    $('#cluster-slider').unbind('change');
-    $('#cluster-slider').on('change', function() {
-        $('#cluster-number').text(this.value);
-        renderScatterCluster(sampleData, this.value-2);
-    });
+    function redraw(newk) {
+        console.log(svg.selectAll('.clusterpt'));
+        svg.selectAll('circle')
+            .data(sampleData)
+            .attr('fill', function(d) {
+                var cluster_id = d['cluster_member'][newk-clusterMin];
+                return colourScale(cluster_id);
+            })
+    }
+
+
 
 };
