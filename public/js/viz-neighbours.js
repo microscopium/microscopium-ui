@@ -38,7 +38,7 @@ function setImages(selectedImage, neighbourImages) {
     $('#nebula-0').attr('src', 'data:image/jpg;base64,' + selectedImage['image_full']);
     $('#nebula-0').attr('title', selectedImage['sample_id']);
 
-    for(var i = 0; i < 24; i++) {
+    for(var i = 0; i < neighbourImages.length; i++) {
         var nebula_selector = '#nebula-' + (i+1);
         $(nebula_selector).attr('src', 'data:image/jpg;base64,' + neighbourImages[i]['image_thumb']);
         $(nebula_selector).attr('title', neighbourImages[i]['sample_id']);
