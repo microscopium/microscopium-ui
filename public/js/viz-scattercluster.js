@@ -57,7 +57,8 @@ var renderScatterCluster = function(sampleData) {
         .offset([-10, 0])
         .html(function(d) {
             return "<p><strong>ID: </strong>" + d._id + "</p>" +
-                "<p><strong>Cluster: </strong>" + (d.cluster_member[clusterMid-clusterMin] + 1) + "</p>";
+                "<p><strong>Gene: </strong>" + d.gene_name + "</p>" +
+                "<p><strong>Cluster: </strong>" + (d.cluster_member[clusterMid-clusterMin] + 1) + "</span></p>";
         });
 
     // setup canvas

@@ -38,7 +38,8 @@ var renderScatterplot = function(sampleData, featureNames) {
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<p><strong>ID: </strong>" + d._id + "</span></p>";
+            return "<p><strong>ID: </strong>" + d._id + "</span></p>" +
+                   "<p><strong>Gene: </strong>" + d.gene_name + "</span></p>";
         });
 
     // setup canvas
