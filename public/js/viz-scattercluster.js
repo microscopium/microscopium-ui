@@ -22,10 +22,10 @@ var renderScatterCluster = function(sampleData) {
     d3.select('#scattercluster > svg').remove();
 
     // find min/max for each axis
-    var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
-    var yMin = d3.min(sampleData, function(d) { return d['pca'][1]; });
-    var xMax = d3.max(sampleData, function(d) { return d['pca'][0]; });
-    var yMax = d3.max(sampleData, function(d) { return d['pca'][1]; });
+    var xMin = d3.min(sampleData, function(d) { return d.pca[0]; });
+    var yMin = d3.min(sampleData, function(d) { return d.pca[1]; });
+    var xMax = d3.max(sampleData, function(d) { return d.pca[0]; });
+    var yMax = d3.max(sampleData, function(d) { return d.pca[1]; });
 
     // define canvas margins
     var margin = {top: 10, right: 40, bottom: 30, left: 40},
@@ -56,8 +56,8 @@ var renderScatterCluster = function(sampleData) {
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<p><strong>ID: </strong>" + d['_id'] + "</p>" +
-                "<p><strong>Cluster: </strong>" + (d['cluster_member'][clusterMid-clusterMin] + 1) + "</p>";
+            return "<p><strong>ID: </strong>" + d._id + "</p>" +
+                "<p><strong>Cluster: </strong>" + (d._cluster_member[clusterMid-clusterMin] + 1) + "</p>";
         });
 
     // setup canvas
@@ -74,19 +74,19 @@ var renderScatterCluster = function(sampleData) {
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return xScale(d['pca'][0]);
+            return xScale(d.pca[0]);
         })
         .attr('cy', function(d) {
-            return yScale(d['pca'][1]);
+            return yScale(d.pca[1]);
         })
         .attr('r', 5)
         .attr('stroke', 'white')
         .attr('fill', function(d) {
-            var cluster_id = d['cluster_member'][clusterMid-clusterMin];
+            var cluster_id = d._cluster_member[clusterMid-clusterMin];
             return colourScale(cluster_id);
         })
         .attr('id', function(d) {
-            return d['_id'];
+            return d._id;
         })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
@@ -120,7 +120,7 @@ var renderScatterCluster = function(sampleData) {
         svg.selectAll('circle')
             .data(sampleData)
             .attr('fill', function(d) {
-                var cluster_id = d['cluster_member'][newk-clusterMin];
+                var cluster_id = d._cluster_member[newk-clusterMin];
                 return colourScale(cluster_id);
             })
     }
