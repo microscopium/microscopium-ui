@@ -6,10 +6,10 @@ var renderScatterplot = function(sampleData, featureNames) {
     d3.select('#neighbourpca > svg').remove();
 
     // find min/max for each axis
-    var xMin = d3.min(sampleData, function(d) { return d['pca'][0]; });
-    var yMin = d3.min(sampleData, function(d) { return d['pca'][1]; });
-    var xMax = d3.max(sampleData, function(d) { return d['pca'][0]; });
-    var yMax = d3.max(sampleData, function(d) { return d['pca'][1]; });
+    var xMin = d3.min(sampleData, function(d) { return d.pca[0]; });
+    var yMin = d3.min(sampleData, function(d) { return d.pca[1]; });
+    var xMax = d3.max(sampleData, function(d) { return d.pca[0]; });
+    var yMax = d3.max(sampleData, function(d) { return d.pca[1]; });
 
     // define canvas margins
     var margin = {top: 10, right: 40, bottom: 30, left: 40},
@@ -38,7 +38,7 @@ var renderScatterplot = function(sampleData, featureNames) {
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<p><strong>ID: </strong>" + d['_id'] + "</span></p>";
+            return "<p><strong>ID: </strong>" + d._id + "</span></p>";
         });
 
     // setup canvas
@@ -55,17 +55,17 @@ var renderScatterplot = function(sampleData, featureNames) {
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return xScale(d['pca'][0]);
+            return xScale(d.pca[0]);
         })
         .attr('cy', function(d) {
-            return yScale(d['pca'][1]);
+            return yScale(d.pca[1]);
         })
         .attr('r', 5)
         .classed('scatterpt', true)
         .classed('activept', false)
         .classed('neighbourpt', false)
         .attr('id', function(d) {
-            return d['_id'];
+            return d._id;
         })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide)
@@ -77,7 +77,7 @@ var renderScatterplot = function(sampleData, featureNames) {
                 // update line plot and histogram
                 renderLinePlot(sampleData, featureNames, i);
                 renderHistogram(sampleData, featureNames, 0);
-                updateNebulaImages(d['_id']);
+                updateNebulaImages(d._id);
             }
         });
 
@@ -97,7 +97,7 @@ var renderScatterplot = function(sampleData, featureNames) {
             .duration(125);
 
         // add neighbour class to all neighbours
-        var neighbours = selection.data()[0]['neighbours'];
+        var neighbours = selection.data()[0].neighbours;
         for(var i = 1 ; i < neighbours.length; i++) {
             d3.select('[id=' + neighbours[i] + ']')
                 .classed('neighbourpt', true)
