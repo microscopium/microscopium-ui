@@ -1,11 +1,9 @@
-var featureNames = [];
-
 // parse feature info
 var getFeatureRow = function(json, feature) {
     var n_features = json.length;
     var feature_row = [];
     for(var i = 0; i < n_features; i++) {
-        feature_row.push(json[i]['feature_vector'][feature]);
+        feature_row.push(json[i].feature_vector[feature]);
     }
     return feature_row;
 };
@@ -14,7 +12,7 @@ var getFeatureRow = function(json, feature) {
 var updateSelector = function(screen_data) {
     for(var i = 0; i < screen_data.length; i++) {
         $('#screen-menu')
-            .append('<li><a href="#" role="presentation">' + screen_data[i]['_id'] +
+            .append('<li><a href="#" role="presentation">' + screen_data[i]._id +
             '</a></li>');
 
         $('#screen-menu li:last').on('click', function() {
@@ -36,7 +34,7 @@ var selectScreen = function(screen_id) {
             async: true,
             success: function(json) {
                 screenData = json[0];
-                featureNames = json[0]['screen_features'];
+                featureNames = json[0].screen_features;
             },
             error: function(err) {
                 alert(err);
@@ -57,7 +55,7 @@ var selectScreen = function(screen_id) {
             renderLinePlot(sampleData, featureNames, 0);
             renderHistogram(sampleData, featureNames, 0);
             renderScatterplot(sampleData, featureNames);
-            updateNebulaImages(sampleData[0]['_id']);
+            updateNebulaImages(sampleData[0]._id);
             renderScatterCluster(sampleData);
             updateTab(screenData);
             $('#page-overlay').spin(false);
@@ -67,9 +65,9 @@ var selectScreen = function(screen_id) {
 
 // update summary tab
 var updateTab = function(screen_data) {
-    $('#name').text(screen_data['_id']);
-    $('#desc').text(screen_data['screen_desc']);
-    $('#samples').text(screen_data['number_samples']);
+    $('#name').text(screen_data._id);
+    $('#desc').text(screen_data.screen_desc);
+    $('#samples').text(screen_data.number_samples);
 };
 
 // ON PAGE LOAD -- setup screens dropdown menu
