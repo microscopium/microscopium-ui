@@ -57,7 +57,7 @@ var renderScatterCluster = function(sampleData) {
         .offset([-10, 0])
         .html(function(d) {
             return "<p><strong>ID: </strong>" + d._id + "</p>" +
-                "<p><strong>Cluster: </strong>" + (d._cluster_member[clusterMid-clusterMin] + 1) + "</p>";
+                "<p><strong>Cluster: </strong>" + (d.cluster_member[clusterMid-clusterMin] + 1) + "</p>";
         });
 
     // setup canvas
@@ -82,7 +82,7 @@ var renderScatterCluster = function(sampleData) {
         .attr('r', 5)
         .attr('stroke', 'white')
         .attr('fill', function(d) {
-            var cluster_id = d._cluster_member[clusterMid-clusterMin];
+            var cluster_id = d.cluster_member[clusterMid-clusterMin];
             return colourScale(cluster_id);
         })
         .attr('id', function(d) {
@@ -120,9 +120,9 @@ var renderScatterCluster = function(sampleData) {
         svg.selectAll('circle')
             .data(sampleData)
             .attr('fill', function(d) {
-                var cluster_id = d._cluster_member[newk-clusterMin];
+                var cluster_id = d.cluster_member[newk-clusterMin];
                 return colourScale(cluster_id);
-            })
+            });
     }
 
 

@@ -9,7 +9,7 @@ function updateNebulaImages(query_id) {
             url: '/api/sample/neighbours/' + query_id,
             async: false,
             success: function(json) {
-                neighbours = json[0]['neighbours'].slice(1, 25);
+                neighbours = json[0].neighbours.slice(1, 25);
             }
         }),
         $.ajax({
@@ -35,13 +35,13 @@ function updateNebulaImages(query_id) {
 }
 
 function setImages(selectedImage, neighbourImages) {
-    $('#nebula-0').attr('src', 'data:image/jpg;base64,' + selectedImage['image_full']);
-    $('#nebula-0').attr('title', selectedImage['sample_id']);
+    $('#nebula-0').attr('src', 'data:image/jpg;base64,' + selectedImage.image_full);
+    $('#nebula-0').attr('title', selectedImage.sample_id);
 
     for(var i = 0; i < neighbourImages.length; i++) {
         var nebula_selector = '#nebula-' + (i+1);
-        $(nebula_selector).attr('src', 'data:image/jpg;base64,' + neighbourImages[i]['image_thumb']);
-        $(nebula_selector).attr('title', neighbourImages[i]['sample_id']);
+        $(nebula_selector).attr('src', 'data:image/jpg;base64,' + neighbourImages[i].image_thumb);
+        $(nebula_selector).attr('title', neighbourImages[i].sample_id);
     }
 }
 
