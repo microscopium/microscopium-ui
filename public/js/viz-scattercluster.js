@@ -57,7 +57,8 @@ var renderScatterCluster = function(sampleData) {
         .offset([-10, 0])
         .html(function(d) {
             return "<p><strong>ID: </strong>" + d._id + "</p>" +
-                "<p><strong>Cluster: </strong>" + (d.cluster_member[clusterMid-clusterMin] + 1) + "</p>";
+                "<p><strong>Gene: </strong>" + d.gene_name + "</p>" +
+                "<p><strong>Cluster: </strong>" + (d.cluster_member[clusterMid-clusterMin] + 1) + "</span></p>";
         });
 
     // setup canvas
@@ -116,15 +117,28 @@ var renderScatterCluster = function(sampleData) {
         .text('PC2');
 
     function redraw(newk) {
-        console.log(svg.selectAll('.clusterpt'));
+
+        //reset tooltips
+        tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+                return "<p><strong>ID: </strong>" + d._id + "</p>" +
+                    "<p><strong>Gene: </strong>" + d.gene_name + "</p>" +
+                    "<p><strong>Cluster: </strong>" + (d.cluster_member[newk-clusterMin] + 1) + "</span></p>";
+            });
+
+        d3.selectAll('.d3-tip').remove();
+        d3.select('#scattercluster').append('svg').call(tip);
+
+        // recolour points
         svg.selectAll('circle')
             .data(sampleData)
             .attr('fill', function(d) {
                 var cluster_id = d.cluster_member[newk-clusterMin];
                 return colourScale(cluster_id);
-            });
+            })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
     }
-
-
-
 };
