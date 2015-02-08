@@ -26,6 +26,7 @@ var selectScreen = function(screen_id) {
     var featureNames = [];
     var sampleData = [];
     var screenData = [];
+    $('.nav-tabs a[href="#home"]').tab('show');
     $('#page-overlay').spin('large', '#000');
     $('#page-overlay').addClass('load-overlay');
     $.when(
