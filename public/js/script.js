@@ -3,7 +3,7 @@ var getFeatureRow = function(json, feature) {
     var n_features = json.length;
     var feature_row = [];
     for(var i = 0; i < n_features; i++) {
-        feature_row.push(json[i].feature_vector[feature]);
+        feature_row.push(json[i].feature_vector_std[feature]);
     }
     return feature_row;
 };

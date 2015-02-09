@@ -35,7 +35,7 @@ module.exports = function(app) {
     app.get('/api/samples/:screen', function(req, res) {
         Sample
         .find({ 'screen': req.params.screen })
-        .select('_id row col gene_name feature_vector_std ' +
+        .select('_id row column gene_name feature_vector_std ' +
                 'pca cluster_member neighbours')
         .exec(resHandler(res));
     });
