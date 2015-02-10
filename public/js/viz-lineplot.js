@@ -149,7 +149,7 @@ var renderLinePlot = function(sampleData, featureNames, sample) {
         .attr('x', width/2)
         .attr('y', -5)
         .style('text-anchor', 'middle')
-        .text(sampleData[sample].id);
+        .text(sampleData[sample]._id);
 
     // draw activeLine
     updateActiveLine(activeFeature);

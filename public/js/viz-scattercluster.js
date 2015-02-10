@@ -1,5 +1,8 @@
 var renderScatterCluster = function(sampleData) {
 
+    // delete any scatterplots already plotted
+    d3.select('#scattercluster > svg').remove();
+
     // setup slider control
     var clusterMin = 2;
     var clusterMax = 20;
@@ -17,9 +20,6 @@ var renderScatterCluster = function(sampleData) {
         redraw(this.value);
         $('#cluster-number').html(this.value);
     });
-
-    // delete any scatterplots already plotted
-    d3.select('#scattercluster > svg').remove();
 
     // find min/max for each axis
     var xMin = d3.min(sampleData, function(d) { return d.pca[0]; });
