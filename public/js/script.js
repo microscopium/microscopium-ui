@@ -1,3 +1,6 @@
+// add slidebars
+$.slidebars();
+
 // parse feature info
 var getFeatureRow = function(json, feature) {
     var n_features = json.length;

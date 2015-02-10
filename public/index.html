@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- DEPENDENCIES -->
     <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/slidebars/distribution/0.10.2/slidebars.js"></script>
+    <link rel="stylesheet" href="components/slidebars/distribution/0.10.2/slidebars.css">
     <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.css">
     <script src="components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="components/d3/d3.js"></script>
@@ -15,57 +17,47 @@
     <title>Microscopium</title>
 </head>
 <body>
-<div id="page-overlay">
-<!-- TOP NAVBAR -->
-<!-- See http://getbootstrap.com/components/#navbar for Boostrap Navbar class info -->
-<nav class="navbar navbar-inverse" role="navigation">
-    <div class="navbar-header">
-    <a class="navbar-brand" href="#">Microscopium</a>
-    </div>
-    <div class="navbar navbar-nav">
-        <ul class="nav navbar-nav">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                    Select Screen <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" id="screen-menu" role="menu">
-                </ul>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div class="container">
-    <!-- TAB NAVIGATION -->
-    <!-- See http://getbootstrap.com/components/#nav for Boostrap nab-tabs class info -->
-    <ul id="tabNav" class="nav nav-tabs nav-justified">
-        <li class="active">
-            <a href="#home" data-toggle="tab">
-                Screen Summary
-            </a>
-        </li>
-        <li>
-            <a href="#featurexplorer" data-toggle="tab">
-                Feature Explorer
-            </a>
-        </li>
-        <li>
-            <a href="#neighbournebula" data-toggle="tab">
-                Neighbour Nebula
-            </a>
-        </li>
-        <li>
-            <a href="#clusterplot" data-toggle="tab">
-                Cluster Cosmologist
-            </a>
-        </li>
-        <li>
-            <a href="#importexport" data-toggle="tab">
-                Export Data
-            </a>
-        </li>
-    </ul>
-    <!-- TAB CONTENT -->
-    <!-- See http://getbootstrap.com/css/#grid for Bootstrap column class info -->
+<div id="sb-site">
+    <!-- TOP NAVBAR -->
+    <!-- See http://getbootstrap.com/components/#navbar for Boostrap Navbar class info -->
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <!-- HEADER -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Microscopium</a>
+            </div>
+            <!-- LEFT NAV -->
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Select Screen <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id="screen-menu" role="menu">
+                    </ul>
+                </li>
+                <li class="active">
+                    <a href="#home" data-toggle="tab">Screen Summary</a>
+                </li>
+                <li>
+                    <a href="#featurexplorer" data-toggle="tab">Feature Explorer</a>
+                </li>
+                <li>
+                    <a href="#neighbournebula" data-toggle="tab">Neighbour Nebula</a>
+                </li>
+                <li>
+                    <a href="#clusterplot" data-toggle="tab">Cluster Cosmologist</a>
+                </li>
+            </ul>
+            <!-- RIGHT NAV -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" class="sb-toggle-right">Filter</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- PAGE CONTENT -->
+    <div class="container">
     <div id="tabContent" class="tab-content">
         <!-- SCREEN SUMMARY -->
         <div class="tab-pane fade in active" id="home">
@@ -262,14 +254,13 @@
                 </div>
             </div>
         </div>
-        <!-- IMPORT EXPORT TAB -->
-        <div class="tab-pane fade" id="importexport">
-            <div class="row">
-                <p>Export Options -- Export charts, datasets.</p>
-            </div>
-        </div>
     </div>
 </div>
+    </div>
+<!-- SIDEBAR CONTENT -->
+<!-- See http://plugins.adchsm.me/slidebars/ for additional info -->
+<div class="sb-style-push sb-slidebar sb-right">
+    Yo.
 </div>
 </body>
 <!-- CUSTOM D3 -->
