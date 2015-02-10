@@ -29,7 +29,7 @@ var selectScreen = function(screen_id) {
     var featureNames = [];
     var sampleData = [];
     var screenData = [];
-    $('.nav-tabs a[href="#home"]').tab('show');
+    $('.navbar-nav a[href="#summary"]').tab('show');
     $('#sb-site').spin('large', '#000');
     $('#sb-site').addClass('load-overlay');
     $.when(
@@ -66,7 +66,7 @@ var selectScreen = function(screen_id) {
             updateTab(screenData);
             $('#sb-site').spin(false);
             $('#sb-site').removeClass('load-overlay');
-            $('.nav-tabs a[href="#summary"]').tab('show');
+            $('.navbar-nav a[href="#summary"]').tab('show');
         }));
 };
 
