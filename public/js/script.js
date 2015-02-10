@@ -56,6 +56,8 @@ var selectScreen = function(screen_id) {
             },
             dataType: 'json'
         }).then(function(res, status) {
+            $('.navbar-item').removeClass('hidden');
+            $('#navbar-screen-name').text(screenData._id);
             renderLinePlot(sampleData, featureNames, 0);
             renderHistogram(sampleData, featureNames, 0);
             renderScatterplot(sampleData, featureNames);
@@ -64,6 +66,7 @@ var selectScreen = function(screen_id) {
             updateTab(screenData);
             $('#sb-site').spin(false);
             $('#sb-site').removeClass('load-overlay');
+            $('.nav-tabs a[href="#summary"]').tab('show');
         }));
 };
 
