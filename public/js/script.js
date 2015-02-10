@@ -30,8 +30,8 @@ var selectScreen = function(screen_id) {
     var sampleData = [];
     var screenData = [];
     $('.nav-tabs a[href="#home"]').tab('show');
-    $('#page-overlay').spin('large', '#000');
-    $('#page-overlay').addClass('load-overlay');
+    $('#sb-site').spin('large', '#000');
+    $('#sb-site').addClass('load-overlay');
     $.when(
         $.ajax({
             url: 'api/screen/' + screen_id,
@@ -62,8 +62,8 @@ var selectScreen = function(screen_id) {
             updateNebulaImages(sampleData[0]._id);
             renderScatterCluster(sampleData);
             updateTab(screenData);
-            $('#page-overlay').spin(false);
-            $('#page-overlay').removeClass('load-overlay');
+            $('#sb-site').spin(false);
+            $('#sb-site').removeClass('load-overlay');
         }));
 };
 
