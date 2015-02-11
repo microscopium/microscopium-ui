@@ -129,7 +129,6 @@ var renderScatterCluster = function(sampleData) {
             });
 
         d3.selectAll('.d3-tip').remove();
-        d3.select('#scattercluster').append('svg').call(tip);
 
         // recolour points
         svg.selectAll('circle')
@@ -139,6 +138,7 @@ var renderScatterCluster = function(sampleData) {
                 return colourScale(cluster_id);
             })
             .on('mouseover', tip.show)
-            .on('mouseout', tip.hide);
+            .on('mouseout', tip.hide)
+            .call(tip);
     }
 };

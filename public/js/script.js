@@ -1,3 +1,6 @@
+// add slidebars
+$.slidebars();
+
 // parse feature info
 var getFeatureRow = function(json, feature) {
     var n_features = json.length;
@@ -26,9 +29,9 @@ var selectScreen = function(screen_id) {
     var featureNames = [];
     var sampleData = [];
     var screenData = [];
-    $('.nav-tabs a[href="#home"]').tab('show');
-    $('#page-overlay').spin('large', '#000');
-    $('#page-overlay').addClass('load-overlay');
+    $('.navbar-nav a[href="#summary"]').tab('show');
+    $('#sb-site').spin('large', '#000');
+    $('#sb-site').addClass('load-overlay');
     $.when(
         $.ajax({
             url: 'api/screen/' + screen_id,
@@ -53,14 +56,17 @@ var selectScreen = function(screen_id) {
             },
             dataType: 'json'
         }).then(function(res, status) {
+            $('.navbar-item').removeClass('hidden');
+            $('#navbar-screen-name').text(screenData._id);
             renderLinePlot(sampleData, featureNames, 0);
             renderHistogram(sampleData, featureNames, 0);
             renderScatterplot(sampleData, featureNames);
             updateNebulaImages(sampleData[0]._id);
             renderScatterCluster(sampleData);
             updateTab(screenData);
-            $('#page-overlay').spin(false);
-            $('#page-overlay').removeClass('load-overlay');
+            $('#sb-site').spin(false);
+            $('#sb-site').removeClass('load-overlay');
+            $('.navbar-nav a[href="#summary"]').tab('show');
         }));
 };
 
