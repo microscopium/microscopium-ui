@@ -19,13 +19,23 @@
 }
 
 /* Override default colours for nav-stacked class */
-.nav-stacked > li > a {
+.nav-stacked li a {
     color: #9d9d9d;
 }
 
-.nav-stacked > li > a:hover {
+.nav-stacked li a:hover {
     color: #ffffff;
     background-color: #222222;
+}
+
+.nav-stacked li a:active,
+.nav-stacked li a:focus {
+    background-color: #000000;
+}
+
+/* Force sidebar button to use 100% of sidebar width */
+.sidebar-container {
+    width: 100%;
 }
 
 .header {
