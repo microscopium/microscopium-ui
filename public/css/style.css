@@ -17,6 +17,16 @@
     margin-top: 10px;
 }
 
+/* Override default colours for nav-stacked class */
+.nav-stacked > li > a {
+    color: #9d9d9d;
+}
+
+.nav-stacked > li > a:hover {
+    color: #ffffff;
+    background-color: #000000;
+}
+
 .header {
     font-weight: bold;
 }
