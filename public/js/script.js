@@ -108,7 +108,7 @@ var selectScreen = function(screen_id) {
             $('.navbar-item').removeClass('hidden');
             $('#navbar-screen-name').text(screenData._id);
             updatePlots(screenData, sampleData, featureNames);
-            filter(uniqueRow, uniqueCol, uniquePlate, uniqueGene);
+            var sampleFilter = new SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene);
             $('#sb-site').spin(false);
             $('#sb-site').removeClass('load-overlay');
             $('.navbar-nav a[href="#summary"]').tab('show');

@@ -1,7 +1,9 @@
-function filter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
+function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
 
-    // remove existing items in filter
     $('.filter-items').children().remove();
+
+    this.genes = uniqueGene;
+    var self = this;
 
     var length = uniquePlate.length/2;
     console.log(length);
@@ -44,14 +46,38 @@ function filter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
         }
     }
 
-    for(var i = 0; i < uniqueGene.length; i++) {
-        $('<option />', {
-            value: uniqueGene[i],
-            text: uniqueGene[i]
-        }).appendTo('#gene-select');
+    $('#gene-list-textbox').on('input', function() {
+        self.updateGeneList($(this).val());
+    });
+
+    this.updateGeneList();
+    $('#filter-button').removeClass('hidden');
+}
+
+SampleFilter.prototype.updateGeneList = function(size) {
+
+    var genesToDisplay;
+
+    if(size) {
+        genesToDisplay =  this.genes.filter(regexFilter(size));
+    }
+    else {
+        genesToDisplay = this.genes;
     }
 
-    // TODO make filters actually do stuff
 
-    $('#filter-button').removeClass('hidden');
+    $('#gene-select').children().remove();
+
+    for(var i = 0; i < genesToDisplay.length; i++) {
+        $('<option />', {
+            value: genesToDisplay[i],
+            text: genesToDisplay[i]
+        }).appendTo('#gene-select');
+    }
+};
+
+function regexFilter(pattern) {
+    return function(element) {
+        return element.match(new RegExp(pattern, 'i'))
+    }
 }

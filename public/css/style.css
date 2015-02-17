@@ -50,10 +50,30 @@
     color: #ffffff;
 }
 
-#gene-select {
+.filter-arrows {
+    width: 100%;
+    text-align: center;
+}
+
+#filter-up,
+#filter-down {
+    color: #9d9d9d;
+}
+
+#filter-up:hover,
+#filter-down:hover {
+    color: #ffffff;
+}
+
+#gene-select,
+#gene-selected {
     margin-top: 10px;
     width: 100%;
     length: 50%;
+}
+
+#gene-list-textbox {
+    width: 100%;
 }
 
 .header {
