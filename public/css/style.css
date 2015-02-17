@@ -46,9 +46,14 @@
     transition : height 400ms ease;
 }
 
-.filter-content p,
-.filter-content span {
+.filter-content label {
     color: #ffffff;
+}
+
+#gene-select {
+    margin-top: 10px;
+    width: 100%;
+    length: 50%;
 }
 
 .header {
