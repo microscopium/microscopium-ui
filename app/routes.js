@@ -24,6 +24,16 @@ module.exports = function(app) {
             .exec(resHandler(res));
     });
 
+    // find unique values for given screen and field
+    app.get('/api/unique/:screen/:field', function(req, res) {
+        Sample
+            .find({'screen': req.params.screen})
+            .distinct(req.params.field, function(err, data) {
+                if(err) res.json(err);
+                res.json(data.sort());
+            });
+    });
+
     // get specific screen document
     app.get('/api/screen/:id', function(req, res) {
         Screen
