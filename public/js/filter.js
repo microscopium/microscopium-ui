@@ -1,5 +1,8 @@
 function filter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
 
+    // remove existing items in filter
+    $('.filter-items').children().remove();
+
     var length = uniquePlate.length/2;
     console.log(length);
     for(var j = 0; j < 2; j++) {
