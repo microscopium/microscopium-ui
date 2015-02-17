@@ -38,6 +38,19 @@
     width: 100%;
 }
 
+/* Override speed of collpase menu */
+.sidebar-container .collapsing {
+    -moz-transition : height 400ms ease;
+    -webkit-transition : height 400ms ease;
+    -o-transition : height 400ms ease;
+    transition : height 400ms ease;
+}
+
+.filter-content p,
+.filter-content span {
+    color: #ffffff;
+}
+
 .header {
     font-weight: bold;
 }
