@@ -3,6 +3,7 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
     $('.filter-items').children().remove();
 
     this.genes = uniqueGene;
+    this.selectedGenes = [];
     var self = this;
 
     var length = uniquePlate.length/2;
@@ -65,7 +66,6 @@ SampleFilter.prototype.updateGeneList = function(size) {
         genesToDisplay = this.genes;
     }
 
-
     $('#gene-select').children().remove();
 
     for(var i = 0; i < genesToDisplay.length; i++) {
@@ -75,6 +75,14 @@ SampleFilter.prototype.updateGeneList = function(size) {
         }).appendTo('#gene-select');
     }
 };
+
+$('#filter-down').on('click', function() {
+    console.log($('#gene-select').val());
+});
+
+$('#filter-up').on('click', function() {
+    console.log($('#gene-select').val());
+});
 
 function regexFilter(pattern) {
     return function(element) {
