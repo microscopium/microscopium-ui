@@ -58,17 +58,21 @@ var selectScreen = function(screen_id) {
         }).then(function(res, status) {
             $('.navbar-item').removeClass('hidden');
             $('#navbar-screen-name').text(screenData._id);
-            renderLinePlot(sampleData, featureNames, 0);
-            renderHistogram(sampleData, featureNames, 0);
-            renderScatterplot(sampleData, featureNames);
-            updateNebulaImages(sampleData[0]._id);
-            renderScatterCluster(sampleData);
-            updateTab(screenData);
+            updatePlots(screenData, sampleData, featureNames);
             $('#sb-site').spin(false);
             $('#sb-site').removeClass('load-overlay');
             $('.navbar-nav a[href="#summary"]').tab('show');
         }));
 };
+
+function updatePlots(screenData, sampleData, featureNames) {
+    renderLinePlot(sampleData, featureNames, 0);
+    renderHistogram(sampleData, featureNames, 0);
+    renderScatterplot(sampleData, featureNames);
+    updateNebulaImages(sampleData[0]._id);
+    renderScatterCluster(sampleData);
+    updateTab(screenData);
+}
 
 // update summary tab
 var updateTab = function(screen_data) {
