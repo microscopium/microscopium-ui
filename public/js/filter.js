@@ -28,7 +28,7 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
     for(var i = 0; i < uniqueRow.length; i++) {
         var el = '#row-' + (j+1);
         $('<input />', { type: 'checkbox',
-            name: 'plate[' + [uniqueRow[i]] + ']',
+            name: 'row[' + [uniqueRow[i]] + ']',
             value: true,
             checked: true}).appendTo(el);
         $('<label />', { 'for': uniqueRow[i], text: uniqueRow[i] }).appendTo(el);
@@ -45,7 +45,7 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
     for(var i = 0; i < uniqueCol.length; i++) {
         var el = '#col-' + (j+1);
         $('<input />', { type: 'checkbox',
-            name: 'plate[' + [uniqueCol[i]] + ']',
+            name: 'column[' + [uniqueCol[i]] + ']',
             value: true,
             checked: true}).appendTo(el);
         $('<label />', { 'for': uniqueCol[i], text: uniqueCol[i] }).appendTo(el);
