@@ -2,11 +2,19 @@ var Screen = require('./models/screen');
 var Sample = require('./models/sample');
 var Image = require('./models/image');
 
-var resHandler = function(res) {
-  return function(err, data) {
-    if(err) res.json(err);
-    res.json(data);
-  }
+var resHandler = function(res, sort) {
+    if(sort === true) {
+        return function(err, data) {
+            if(err) res.json(err);
+            res.json(data.sort());
+        }
+    }
+    else {
+        return function(err, data) {
+            if(err) res.json(err);
+            res.json(data);
+        }
+    }
 };
 
 module.exports = function(app) {
@@ -28,10 +36,7 @@ module.exports = function(app) {
     app.get('/api/unique/:screen/:field', function(req, res) {
         Sample
             .find({'screen': req.params.screen})
-            .distinct(req.params.field, function(err, data) {
-                if(err) res.json(err);
-                res.json(data.sort());
-            });
+            .distinct(req.params.field, resHandler(res, true));
     });
 
     // get specific screen document
