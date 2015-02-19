@@ -48,6 +48,7 @@
 
 .filter-content label {
     color: #ffffff;
+    margin-top: 10px;
 }
 
 .filter-arrows {
@@ -73,6 +74,7 @@
 }
 
 #gene-filter-text {
+    margin-top: 10px;
     width: 100%;
 }
 

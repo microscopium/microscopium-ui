@@ -9,6 +9,7 @@
     "jquery": "latest",
     "spin.js": "latest",
     "slidebars": "latest",
-    "fontawesome": "~4.3.0"
+    "fontawesome": "latest",
+    "jquery.serializeJSON": "latest"
   }
 }

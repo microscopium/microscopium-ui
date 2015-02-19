@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head lang="en">
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- DEPENDENCIES -->
@@ -13,6 +13,7 @@
     <script src="components/d3-tip/index.js"></script>
     <script src="components/spin.js/spin.js"></script>
     <script src="components/spin.js/jquery.spin.js"></script>
+    <script src="components/jquery.serializeJSON/jquery.serializejson.js"></script>
     <!-- CUSTOM CSS -->
     <link rel="stylesheet" href="css/style.css">
     <title>Microscopium</title>
@@ -263,52 +264,58 @@
 <!-- SIDEBAR CONTENT -->
 <!-- See http://plugins.adchsm.me/slidebars/ for additional info -->
 <div class="sb-style-push sb-slidebar sb-right">
-    <nav class="navbar navbar-inverse" role="navigation">
-        <div class="sidebar-container">
-                <ul class="nav nav-stacked">
-                    <li>
-                        <a href="#plate-filter" data-toggle="collapse">Plate</a>
-                        <div class="collapse container-fluid filter-content" id="plate-filter">
-                            <div class="row">
-                                <div class="col-md-6 filter-items" id="plate-1"></div>
-                                <div class="col-md-6 filter-items" id="plate-2"></div>
-                            </div>
+    <div class="container-fluid">
+    <form role="form" id="filter-form">
+        <nav class="navbar navbar-inverse" role="navigation">
+        <ul class="nav nav-stacked">
+            <li>
+                <a href="#plate-filter" data-toggle="collapse">Plate</a>
+                <div class="collapse container-fluid filter-content" id="plate-filter">
+                    <div class="row">
+                        <div class="col-md-6 filter-items" id="plate-1"></div>
+                        <div class="col-md-6 filter-items" id="plate-2"></div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#row-filter" data-toggle="collapse">Row</a>
+                <div class="collapse container filter-content" id="row-filter">
+                    <div class="row">
+                        <div class="col-md-6 filter-items" id="row-1"></div>
+                        <div class="col-md-6 filter-items" id="row-2"></div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#col-filter" data-toggle="collapse">Column</a>
+                <div class="collapse container filter-content" id="col-filter">
+                    <div class="row">
+                        <div class="col-md-4 filter-items" id="col-1"></div>
+                        <div class="col-md-4 filter-items" id="col-2"></div>
+                        <div class="col-md-4 filter-items" id="col-3"></div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#gene-filter" data-toggle="collapse">Gene</a>
+                <div class="collapse container filter-content" id="gene-filter">
+                        <input id="gene-filter-text" type="text" size="10">
+                        <select id="gene-select" size="10"></select>
+                        <div class="row filter-arrows">
+                            <i id="filter-add" class="fa fa-chevron-down fa-2x"></i>
+                            <i id="filter-remove" class="fa fa-chevron-up fa-2x"></i>
                         </div>
-                    </li>
-                    <li>
-                        <a href="#row-filter" data-toggle="collapse">Row</a>
-                        <div class="collapse container filter-content" id="row-filter">
-                            <div class="row">
-                                <div class="col-md-6 filter-items" id="row-1"></div>
-                                <div class="col-md-6 filter-items" id="row-2"></div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#col-filter" data-toggle="collapse">Column</a>
-                        <div class="collapse container filter-content" id="col-filter">
-                            <div class="row">
-                                <div class="col-md-4 filter-items" id="col-1"></div>
-                                <div class="col-md-4 filter-items" id="col-2"></div>
-                                <div class="col-md-4 filter-items" id="col-3"></div>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#gene-filter" data-toggle="collapse">Gene</a>
-                        <div class="collapse container filter-content" id="gene-filter">
-                                <input id="gene-filter-text" type="text" size="10">
-                                <select id="gene-select" size="10"></select>
-                                <div class="row filter-arrows">
-                                    <i id="filter-add" class="fa fa-chevron-down fa-2x"></i>
-                                    <i id="filter-remove" class="fa fa-chevron-up fa-2x"></i>
-                                </div>
-                                <select id="gene-selected" size="10"></select>
-                        </div>
-                    </li>
-                </ul>
+                        <select id="gene-selected" size="10"></select>
+                </div>
+            </li>
+        </ul>
+        </nav>
+        <div class="container-fluid">
+            <button type="submit" value="Submit" id="filter-submit">Submit</button>
+            <button type="reset" value="Reset" id="filter-reset">Reset</button>
         </div>
-    </nav>
+        </form>
+    </div>
 </div>
 </body>
 <!-- CUSTOM D3 -->
