@@ -6,44 +6,53 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
     var self = this;
 
     // append plate checkboxes
-    var length = uniquePlate.length/2;
-    for(var j = 0; j < 2; j++) {
-        for(var i = 0; i < length; i++) {
-            var el = '#plate-' + (j+1);
-            $('<input />', { type: 'checkbox',
-                name: 'plate[' + [uniquePlate[i+j*length]] + ']',
-                value: true,
-                checked: true}).appendTo(el);
-            $('<label />', { 'for': uniquePlate[i], text: uniquePlate[i+j*length] }).appendTo(el);
-            $('<br />').appendTo(el);
+    var j = 0;
+    var cols = Math.ceil(uniquePlate.length/2);
+    for(var i = 0; i < uniquePlate.length; i++) {
+        var el = '#plate-' + (j+1);
+        $('<input />', { type: 'checkbox',
+            name: 'plate[' + [uniquePlate[i]] + ']',
+            value: true,
+            checked: true}).appendTo(el);
+        $('<label />', { 'for': uniquePlate[i], text: uniquePlate[i] }).appendTo(el);
+        $('<br />').appendTo(el);
+
+        if( (i+1) % cols === 0) {
+            j++;
         }
     }
 
     // append row checkboxes
-    var length = uniqueRow.length/2;
-    for(var j = 0; j < 2; j++) {
-        for(var i = 0; i < length; i++) {
-            var el = '#row-' + (j+1);
-            $('<input />', { type: 'checkbox',
-                name: 'rows[' + [uniqueRow[i+j*length]] + ']',
-                value: true,
-                checked: true}).appendTo(el);
-            $('<label />', { 'for': uniqueRow[i], text: uniqueRow[i+j*length] }).appendTo(el);
-            $('<br />').appendTo(el);
+    var j = 0;
+    var cols = Math.ceil(uniqueRow.length/2);
+    for(var i = 0; i < uniqueRow.length; i++) {
+        var el = '#row-' + (j+1);
+        $('<input />', { type: 'checkbox',
+            name: 'plate[' + [uniqueRow[i]] + ']',
+            value: true,
+            checked: true}).appendTo(el);
+        $('<label />', { 'for': uniqueRow[i], text: uniqueRow[i] }).appendTo(el);
+        $('<br />').appendTo(el);
+
+        if( (i+1) % cols === 0) {
+            j++;
         }
     }
 
     // append column checkboxes
-    var length = uniqueCol.length/3;
-    for(var j = 0; j < 3; j++) {
-        for(var i = 0; i < length; i++) {
-            var el = '#col-' + (j+1);
-            $('<input />', { type: 'checkbox',
-                name: 'cols[' + [uniqueCol[i+j*length]] + ']',
-                value: true,
-                checked: true}).appendTo(el);
-            $('<label />', { 'for': uniqueCol[i], text: uniqueCol[i+j*length] }).appendTo(el);
-            $('<br />').appendTo(el);
+    var j = 0;
+    var cols = Math.ceil(uniqueCol.length/3);
+    for(var i = 0; i < uniqueCol.length; i++) {
+        var el = '#col-' + (j+1);
+        $('<input />', { type: 'checkbox',
+            name: 'plate[' + [uniqueCol[i]] + ']',
+            value: true,
+            checked: true}).appendTo(el);
+        $('<label />', { 'for': uniqueCol[i], text: uniqueCol[i] }).appendTo(el);
+        $('<br />').appendTo(el);
+
+        if( (i+1) % cols === 0) {
+            j++;
         }
     }
 
@@ -116,7 +125,6 @@ SampleFilter.prototype.resetGeneFilter = function() {
 };
 
 SampleFilter.prototype.updateGeneList = function() {
-    console.log('updateGeneList');
     $('#gene-select').children().remove();
 
     var pattern = $('#gene-filter-text').val();
