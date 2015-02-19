@@ -53,7 +53,6 @@ var selectScreen = function(screen_id) {
             url: 'api/samples/' + screen_id,
             async: true,
             success: function (json) {
-                console.log(json);
                 sampleData = json;
             },
             error: function(err) {

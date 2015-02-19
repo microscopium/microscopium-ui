@@ -55,13 +55,13 @@
     text-align: center;
 }
 
-#filter-up,
-#filter-down {
+#filter-add,
+#filter-remove {
     color: #9d9d9d;
 }
 
-#filter-up:hover,
-#filter-down:hover {
+#filter-add:hover,
+#filter-remove:hover {
     color: #ffffff;
 }
 
@@ -72,7 +72,7 @@
     length: 50%;
 }
 
-#gene-list-textbox {
+#gene-filter-text {
     width: 100%;
 }
 
