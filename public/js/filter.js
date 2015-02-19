@@ -92,7 +92,8 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
 }
 
 SampleFilter.prototype.addToFilter = function() {
-    var value = $('#gene-select').val();
+    var value = $('#gene-select option:selected').val();
+    var nextValue =  $('#gene-select option:selected').next().val();
     var index = this.genes.indexOf(value);
 
     if(index !== -1 && value) {
@@ -101,6 +102,8 @@ SampleFilter.prototype.addToFilter = function() {
         this.updateGeneList();
         this.updateSelectedGeneList();
     }
+
+    $('#gene-select').val(nextValue);
 };
 
 SampleFilter.prototype.removeFromFilter = function() {
