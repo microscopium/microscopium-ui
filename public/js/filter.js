@@ -66,9 +66,33 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
         self.removeFromFilter();
     });
 
-    // attach listener to gene filter textbox
+    // attach listener to gene filter textbox input
     $('#gene-filter-text').on('input paste', function() {
         self.updateGeneList();
+    });
+
+    // attach enter key listener to text input box
+    $('#gene-filter-text').on('keypress', function(event) {
+        if(event.which === 13) {
+            event.preventDefault();
+            self.addfromTextBox();
+        }
+    });
+
+    // attach enter key listener to select box
+    $('#gene-select').on('keypress', function(event) {
+        if(event.which === 13) {
+            event.preventDefault();
+            self.addToFilter();
+        }
+    });
+
+    // attach enter key listener to selected box
+    $('#gene-selected').on('keypress', function(event) {
+        if(event.which === 13) {
+            event.preventDefault();
+            self.removeFromFilter();
+        }
     });
 
     // attach listener to submit button
@@ -91,6 +115,21 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
 
 }
 
+SampleFilter.prototype.addfromTextBox = function() {
+    var value = $('#gene-select option:eq(0)').val();
+    var nextValue = $('#gene-select option:eq(1)').val();
+    var index = this.genes.indexOf(value);
+
+    if(index !== -1 && value) {
+        this.genes.splice(index, 1);
+        this.selectedGenes.push(value);
+        this.updateGeneList();
+        this.updateSelectedGeneList();
+    }
+
+    $('#gene-select').val(nextValue);
+};
+
 SampleFilter.prototype.addToFilter = function() {
     var value = $('#gene-select option:selected').val();
     var nextValue =  $('#gene-select option:selected').next().val();
@@ -107,7 +146,8 @@ SampleFilter.prototype.addToFilter = function() {
 };
 
 SampleFilter.prototype.removeFromFilter = function() {
-    var value = $('#gene-selected').val();
+    var value = $('#gene-selected option:selected ').val();
+    var nextValue =  $('#gene-selected option:selected').next().val();
     var index = this.selectedGenes.indexOf(value);
 
     if(index !== -1 && value) {
@@ -117,6 +157,8 @@ SampleFilter.prototype.removeFromFilter = function() {
         this.updateGeneList();
         this.updateSelectedGeneList();
     }
+
+    $('#gene-selected').val(nextValue);
 };
 
 SampleFilter.prototype.resetGeneFilter = function() {
