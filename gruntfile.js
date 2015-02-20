@@ -11,6 +11,7 @@ module.exports = function(grunt) {
         jshint: {
             all: ['*.js', 'public/js/*.js'],
             options: {
+                ignores: ['public/js/build.js'],
                 white: false,
                 indent: 4,
                 force: true
