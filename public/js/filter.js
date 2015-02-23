@@ -95,18 +95,14 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
         }
     });
 
-    // attach listener to submit button
-    $('#filter-form').on('submit', function(event) {
-        event.preventDefault();
-        var filterQuery = $('form').serializeJSON();
-        // add genes to query
-        filterQuery['gene_list'] = self.selectedGenes;
-        console.log(filterQuery);
-    });
-
     // attach additional behavior to reset button
     $('#filter-form').on('reset', function() {
         self.resetGeneFilter();
+    });
+
+    // filter onchange
+    $(':checkbox').on('change', function() {
+        self.applyFilter();
     });
 
     // display filter button once components mounted
@@ -143,6 +139,7 @@ SampleFilter.prototype.addToFilter = function() {
     }
 
     $('#gene-select').val(nextValue);
+    this.applyFilter();
 };
 
 SampleFilter.prototype.removeFromFilter = function() {
@@ -159,6 +156,7 @@ SampleFilter.prototype.removeFromFilter = function() {
     }
 
     $('#gene-selected').val(nextValue);
+    this.applyFilter();
 };
 
 SampleFilter.prototype.resetGeneFilter = function() {
@@ -167,6 +165,7 @@ SampleFilter.prototype.resetGeneFilter = function() {
     this.genes.sort();
     this.selectedGenes = [];
     this.updateGeneList();
+    this.applyFilter();
 };
 
 SampleFilter.prototype.updateGeneList = function() {
@@ -198,6 +197,12 @@ SampleFilter.prototype.updateSelectedGeneList = function() {
             text: this.selectedGenes[i]
         }).appendTo('#gene-selected');
     }
+};
+
+SampleFilter.prototype.applyFilter = function() {
+    var filterQuery = $('form').serializeJSON();
+    filterQuery['gene_list'] = this.selectedGenes;
+    console.log(filterQuery);
 };
 
 function regexFilter(pattern) {

@@ -33,17 +33,12 @@
     background-color: #000000;
 }
 
-/* Force sidebar button to use 100% of sidebar width */
-.sidebar-container {
-    width: 100%;
+.sb-right {
+    margin-top: 50px;
 }
 
-/* Override speed of collpase menu */
-.sidebar-container .collapsing {
-    -moz-transition : height 400ms ease;
-    -webkit-transition : height 400ms ease;
-    -o-transition : height 400ms ease;
-    transition : height 400ms ease;
+.fa-filter {
+    font-size: 1.5em;
 }
 
 .filter-content label {
