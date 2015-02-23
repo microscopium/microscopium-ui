@@ -105,6 +105,11 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
         self.applyFilter();
     });
 
+    // only one menu open at a time
+    $('#filter-menu a').on('click', function() {
+        $('#filter-menu a').next().removeClass('in');
+    });
+
     // display filter button once components mounted
     self.updateGeneList();
     $('#filter-button').removeClass('hidden');

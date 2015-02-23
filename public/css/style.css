@@ -18,6 +18,14 @@
     margin-top: 10px;
 }
 
+/* Override speed of collapse menu */
+#filter-menu .collapsing {
+     -moz-transition : height 500ms ease;
+     -webkit-transition : height 500ms ease;
+     -o-transition : height 500ms ease;
+     transition : height 500ms ease;
+ }
+
 /* Override default colours for nav-stacked class */
 .nav-stacked li a {
     color: #9d9d9d;
