@@ -26,6 +26,10 @@
      transition : height 500ms ease;
  }
 
+#filter-button.filtering {
+    color: red;
+}
+
 /* Override default colours for nav-stacked class */
 .nav-stacked li a {
     color: #9d9d9d;

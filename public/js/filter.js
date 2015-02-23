@@ -1,6 +1,9 @@
 function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
     $('.filter-items').children().remove();
 
+    this.columns = uniqueCol;
+    this.rows = uniqueRow;
+    this.plates = uniquePlate;
     this.genes = uniqueGene;
     this.selectedGenes = [];
     var self = this;
@@ -105,15 +108,16 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
         self.applyFilter();
     });
 
-    // only one menu open at a time
+    // allow only one menu open at a time
     $('#filter-menu a').on('click', function() {
-        $('#filter-menu a').next().removeClass('in');
+        if(!$(this).next().hasClass('in')) {
+            $('#filter-menu a').next().removeClass('in');
+        }
     });
 
     // display filter button once components mounted
     self.updateGeneList();
     $('#filter-button').removeClass('hidden');
-
 }
 
 SampleFilter.prototype.addfromTextBox = function() {
@@ -206,8 +210,25 @@ SampleFilter.prototype.updateSelectedGeneList = function() {
 
 SampleFilter.prototype.applyFilter = function() {
     var filterQuery = $('form').serializeJSON();
-    filterQuery['gene_list'] = this.selectedGenes;
-    console.log(filterQuery);
+
+    var rows = $.map(filterQuery.row, function(val, key) { return val; });
+    var cols = $.map(filterQuery.column, function(val, key) { return val; });
+    var plates = $.map(filterQuery.plate, function(val, key) { return val; });
+
+    var rowActive = rows.length < this.rows.length;
+    var colActive = cols.length < this.columns.length;
+    var plateActive = plates.length < this.plates.length;
+    var geneActive = this.selectedGenes.length > 0;
+
+    if(geneActive || plateActive || rowActive || colActive) {
+        $('#filter-button').addClass('filtering');
+    }
+
+    if(!geneActive && !plateActive && !rowActive && !colActive) {
+        $('#filter-button').removeClass('filtering');
+    }
+
+    // TODO apply filter here
 };
 
 function regexFilter(pattern) {
