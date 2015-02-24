@@ -10,11 +10,80 @@
 
 .navbar-inverse {
     border-radius: 0 !important;
+    border-color: #222222;
 }
 
 /* Create some space between tab and tab content */
 .tab-pane {
     margin-top: 10px;
+}
+
+/* Override speed of collapse menu */
+#filter-menu .collapsing {
+     -moz-transition : height 500ms ease;
+     -webkit-transition : height 500ms ease;
+     -o-transition : height 500ms ease;
+     transition : height 500ms ease;
+ }
+
+#filter-button.filtering {
+    color: red;
+}
+
+/* Override default colours for nav-stacked class */
+.nav-stacked li a {
+    color: #9d9d9d;
+}
+
+.nav-stacked li a:hover {
+    color: #ffffff;
+    background-color: #222222;
+}
+
+.nav-stacked li a:active,
+.nav-stacked li a:focus {
+    background-color: #000000;
+}
+
+.sb-right {
+    margin-top: 50px;
+}
+
+.fa-filter {
+    font-size: 1.5em;
+}
+
+.filter-content label {
+    color: #ffffff;
+    margin-top: 10px;
+}
+
+.filter-arrows,
+.submit-buttons {
+    width: 100%;
+    text-align: justify;
+}
+
+#filter-add,
+#filter-remove {
+    color: #9d9d9d;
+}
+
+#filter-add:hover,
+#filter-remove:hover {
+    color: #ffffff;
+}
+
+#gene-select,
+#gene-selected {
+    margin-top: 10px;
+    width: 100%;
+    length: 50%;
+}
+
+#gene-filter-text {
+    margin-top: 10px;
+    width: 100%;
 }
 
 .header {

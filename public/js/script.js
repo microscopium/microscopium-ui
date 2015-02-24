@@ -29,6 +29,10 @@ var selectScreen = function(screen_id) {
     var featureNames = [];
     var sampleData = [];
     var screenData = [];
+    var uniqueRow = [];
+    var uniqueCol = [];
+    var uniquePlate = [];
+    var uniqueGene = [];
     $('.navbar-nav a[href="#summary"]').tab('show');
     $('#sb-site').spin('large', '#000');
     $('#sb-site').addClass('load-overlay');
@@ -55,20 +59,69 @@ var selectScreen = function(screen_id) {
                 alert(err);
             },
             dataType: 'json'
-        }).then(function(res, status) {
+        }),
+        $.ajax({
+            url: '/api/unique/' + screen_id + '/plate',
+            async: true,
+            success: function (json) {
+                uniquePlate = json;
+            },
+            error: function(err) {
+                console.log(err);
+            },
+            dataType: 'json'
+        }),
+        $.ajax({
+            url: '/api/unique/' + screen_id + '/row',
+            async: true,
+            success: function (json) {
+                uniqueRow = json;
+            },
+            error: function(err) {
+                console.log(err);
+            },
+            dataType: 'json'
+        }),
+        $.ajax({
+            url: '/api/unique/' + screen_id + '/column',
+            async: true,
+            success: function (json) {
+                uniqueCol = json;
+            },
+            error: function(err) {
+                console.log(err);
+            },
+            dataType: 'json'
+        }),
+        $.ajax({
+            url: '/api/unique/' + screen_id + '/gene_name',
+            async: true,
+            success: function (json) {
+                uniqueGene = json;
+            },
+            error: function(err) {
+                console.log(err);
+            },
+            dataType: 'json'
+        })).then(function() {
             $('.navbar-item').removeClass('hidden');
             $('#navbar-screen-name').text(screenData._id);
-            renderLinePlot(sampleData, featureNames, 0);
-            renderHistogram(sampleData, featureNames, 0);
-            renderScatterplot(sampleData, featureNames);
-            updateNebulaImages(sampleData[0]._id);
-            renderScatterCluster(sampleData);
-            updateTab(screenData);
+            updatePlots(screenData, sampleData, featureNames);
+            var sampleFilter = new SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene);
             $('#sb-site').spin(false);
             $('#sb-site').removeClass('load-overlay');
             $('.navbar-nav a[href="#summary"]').tab('show');
-        }));
+        });
 };
+
+function updatePlots(screenData, sampleData, featureNames) {
+    renderLinePlot(sampleData, featureNames, 0);
+    renderHistogram(sampleData, featureNames, 0);
+    renderScatterplot(sampleData, featureNames);
+    updateNebulaImages(sampleData[0]._id);
+    renderScatterCluster(sampleData);
+    updateTab(screenData);
+}
 
 // update summary tab
 var updateTab = function(screen_data) {

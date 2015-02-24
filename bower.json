@@ -1,13 +1,15 @@
 {
-    "name": "microscopium-ui",
-    "version": "0.0.1",
-    "directory": "public/bower_components",
-    "dependencies": {
-        "bootstrap": "latest",
-        "d3": "latest",
-        "d3-tip": "latest",
-        "jquery": "latest",
-        "spin.js": "latest",
-        "slidebars": "latest"
-    }
+  "name": "microscopium-ui",
+  "version": "0.0.1",
+  "directory": "public/bower_components",
+  "dependencies": {
+    "bootstrap": "latest",
+    "d3": "latest",
+    "d3-tip": "latest",
+    "jquery": "latest",
+    "spin.js": "latest",
+    "slidebars": "latest",
+    "fontawesome": "latest",
+    "jquery.serializeJSON": "latest"
+  }
 }
