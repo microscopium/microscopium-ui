@@ -2,8 +2,6 @@ var d3 = require('d3');
 var _ = require('lodash');
 
 function Lineplot(sampleData, histogram) {
-    this.destroy();
-
     this.sampleData = sampleData;
     this.featureLength = sampleData[0].feature_vector_std.length;
     this.activeSample = 0;
@@ -24,6 +22,8 @@ function Lineplot(sampleData, histogram) {
 Lineplot.prototype.drawLineplot = function(sample) {
 
     var self = this;
+
+    self.destroy();
 
     var featureVector = this.sampleData[sample].feature_vector_std;
 
@@ -106,6 +106,9 @@ Lineplot.prototype.drawLineplot = function(sample) {
         .attr('y', -5)
         .style('text-anchor', 'middle')
         .text(this.sampleData[sample]._id);
+
+    // set active line
+    self.updateActiveLine(this.activeFeature);
 
 };
 
