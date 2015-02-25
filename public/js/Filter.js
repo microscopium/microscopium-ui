@@ -1,23 +1,26 @@
-function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
+var _ = require('lodash');
+
+function SampleFilter(sampleData) {
     $('.filter-items').children().remove();
 
-    this.columns = uniqueCol;
-    this.rows = uniqueRow;
-    this.plates = uniquePlate;
-    this.genes = uniqueGene;
+    this.data = sampleData;
+    this.uniqueCol = _.uniq(_.pluck(_.flatten(this.data), 'column')).sort();
+    this.uniqueRow = _.uniq(_.pluck(_.flatten(this.data), 'row')).sort();
+    this.uniquePlate = _.uniq(_.pluck(_.flatten(this.data), 'plate')).sort();
+    this.genes = _.uniq(_.pluck(_.flatten(this.data), 'gene_name')).sort();
     this.selectedGenes = [];
     var self = this;
 
     // append plate checkboxes
     var j = 0;
-    var cols = Math.ceil(uniquePlate.length/2);
-    for(var i = 0; i < uniquePlate.length; i++) {
+    var cols = Math.ceil(this.uniquePlate.length/2);
+    for(var i = 0; i < this.uniquePlate.length; i++) {
         var el = '#plate-' + (j+1);
         $('<input />', { type: 'checkbox',
-            name: 'plate[' + [uniquePlate[i]] + ']',
+            name: 'plate[' + [this.uniquePlate[i]] + ']',
             value: true,
             checked: true}).appendTo(el);
-        $('<label />', { 'for': uniquePlate[i], text: uniquePlate[i] }).appendTo(el);
+        $('<label />', { 'for': this.uniquePlate[i], text: this.uniquePlate[i] }).appendTo(el);
         $('<br />').appendTo(el);
 
         if( (i+1) % cols === 0) {
@@ -27,14 +30,14 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
 
     // append row checkboxes
     var j = 0;
-    var cols = Math.ceil(uniqueRow.length/2);
-    for(var i = 0; i < uniqueRow.length; i++) {
+    var cols = Math.ceil(this.uniqueRow.length/2);
+    for(var i = 0; i < this.uniqueRow.length; i++) {
         var el = '#row-' + (j+1);
         $('<input />', { type: 'checkbox',
-            name: 'row[' + [uniqueRow[i]] + ']',
+            name: 'row[' + [this.uniqueRow[i]] + ']',
             value: true,
             checked: true}).appendTo(el);
-        $('<label />', { 'for': uniqueRow[i], text: uniqueRow[i] }).appendTo(el);
+        $('<label />', { 'for': this.uniqueRow[i], text: this.uniqueRow[i] }).appendTo(el);
         $('<br />').appendTo(el);
 
         if( (i+1) % cols === 0) {
@@ -44,14 +47,14 @@ function SampleFilter(uniqueRow, uniqueCol, uniquePlate, uniqueGene) {
 
     // append column checkboxes
     var j = 0;
-    var cols = Math.ceil(uniqueCol.length/3);
-    for(var i = 0; i < uniqueCol.length; i++) {
+    var cols = Math.ceil(this.uniqueCol.length/3);
+    for(var i = 0; i < this.uniqueCol.length; i++) {
         var el = '#col-' + (j+1);
         $('<input />', { type: 'checkbox',
-            name: 'column[' + [uniqueCol[i]] + ']',
+            name: 'column[' + [this.uniqueCol[i]] + ']',
             value: true,
             checked: true}).appendTo(el);
-        $('<label />', { 'for': uniqueCol[i], text: uniqueCol[i] }).appendTo(el);
+        $('<label />', { 'for': this.uniqueCol[i], text: this.uniqueCol[i] }).appendTo(el);
         $('<br />').appendTo(el);
 
         if( (i+1) % cols === 0) {
@@ -184,7 +187,7 @@ SampleFilter.prototype.updateGeneList = function() {
     var genesToDisplay;
 
     if(pattern) {
-        genesToDisplay = this.genes.filter(regexFilter(pattern));
+        genesToDisplay = _.filter(this.genes, regexFilter(pattern));
     }
     else {
         genesToDisplay = this.genes;
@@ -215,9 +218,9 @@ SampleFilter.prototype.applyFilter = function() {
     var cols = $.map(filterQuery.column, function(val, key) { return val; });
     var plates = $.map(filterQuery.plate, function(val, key) { return val; });
 
-    var rowActive = rows.length < this.rows.length;
-    var colActive = cols.length < this.columns.length;
-    var plateActive = plates.length < this.plates.length;
+    var rowActive = rows.length < this.uniqueRow.length;
+    var colActive = cols.length < this.uniqueCol.length;
+    var plateActive = plates.length < this.uniquePlate.length;
     var geneActive = this.selectedGenes.length > 0;
 
     if(geneActive || plateActive || rowActive || colActive) {
@@ -236,3 +239,5 @@ function regexFilter(pattern) {
         return element.match(new RegExp(pattern, 'i'))
     }
 }
+
+module.exports = SampleFilter;
