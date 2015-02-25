@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                 options: {
                     debug: true
                 },
-                src: ['public/js/*.js'],
+                src: 'public/js/script.js',
                 dest: 'public/js/build.js'
             }
         },
