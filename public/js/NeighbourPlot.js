@@ -2,20 +2,23 @@ var d3 = require('d3');
 require('d3-tip')(d3);
 
 function NeighbourPlot(sampleData, lineplot, neighbourImages) {
-    this.destroy();
     this.sampleData = sampleData;
     this.lineplot = lineplot;
     this.neighbourImages = neighbourImages;
 
     this.fullWidth = 700;
     this.fullHeight = 500;
+    this.transitionDuration = 125;
+    this.inactivePointRadius = 5;
+    this.activePointRadius = 7;
+    this.xAxisTicks = 10;
+    this.yAxisTicks = 10;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
     this.drawScatterplot();
-    // default first point sampleData[0]._id
 }
 
 NeighbourPlot.prototype.drawScatterplot = function() {
@@ -34,15 +37,15 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .range([0, self.width]);
     var xAxis = d3.svg.axis()
         .scale(xScale)
-        .orient('bottom')
-        .ticks(10);
+        .ticks(self.xAxisTicks)
+        .orient('bottom');
 
     var yScale = d3.scale.linear()
         .domain([yMin-1, yMax+1])
         .range([self.height, 0]);
     var yAxis = d3.svg.axis()
         .scale(yScale)
-        .ticks(10)
+        .ticks(self.yAxisTicks)
         .orient('left');
 
     // tooltip function
@@ -119,10 +122,6 @@ NeighbourPlot.prototype.drawScatterplot = function() {
     self.updatePoint(firstPoint, firstPoint.data()[0],  0);
 };
 
-NeighbourPlot.prototype.updatePlot = function() {
-
-};
-
 NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
     var self = this;
 
@@ -134,14 +133,14 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
         .classed('activept', false)
         .classed('neighbourpt', false)
         .transition()
-        .duration(125)
-        .attr('r', 5);
+        .duration(self.transitionDuration)
+        .attr('r', self.inactivePointRadius);
 
     d3.selectAll('.neighbourpt')
         .classed('neighbourpt', false)
-        .attr('r', 5)
+        .attr('r', self.inactivePointRadius)
         .transition()
-        .duration(125);
+        .duration(self.transitionDuration);
 
     // add neighbour class to all neighbours
     var neighbours = d.neighbours;
@@ -149,16 +148,16 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
         d3.select('[id=' + neighbours[i] + ']')
             .classed('neighbourpt', true)
             .transition()
-            .duration(125)
-            .attr('r', 5);
+            .duration(self.transitionDuration)
+            .attr('r', self.inactivePointRadius);
     }
 
     // set class and attr of new active point
     selection
         .classed('activept', true)
         .transition()
-        .duration(125)
-        .attr('r', 7);
+        .duration(self.transitionDuration)
+        .attr('r', self.activePointRadius);
 };
 
 NeighbourPlot.prototype.destroy = function() {

@@ -10,9 +10,10 @@ function Lineplot(sampleData, histogram) {
 
     this.fullWidth = 600;
     this.fullHeight = 400;
+    this.xAxisTicks = 10;
+    this.yAxisTicks = 5;
 
     this.margin = {top: 20, right: 30, bottom: 20, left: 45};
-
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
@@ -41,7 +42,8 @@ Lineplot.prototype.drawLineplot = function(sample) {
 
     var xAxis = d3.svg.axis()
         .scale(self.xScale)
-        .orient('bottom');
+        .orient('bottom')
+        .ticks(self.xAxisTicks);
 
     // define y-scale and y-axis
     self.yScale = d3.scale.linear()
@@ -50,8 +52,8 @@ Lineplot.prototype.drawLineplot = function(sample) {
 
     var yAxis = d3.svg.axis()
         .scale(self.yScale)
-        .ticks(5)
-        .orient('left');
+        .orient('left')
+        .ticks(self.yAxisTicks);
 
     var line = d3.svg.line()
         .x(function(d) { return self.xScale(d[0]); })

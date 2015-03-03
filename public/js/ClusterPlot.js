@@ -9,10 +9,13 @@ function ClusterPlot(sampleData) {
 
     this.fullWidth = 650;
     this.fullHeight = 450;
+    this.pointRadius = 5;
+    this.xAxisTicks = 10;
+    this.yAxisTicks = 10;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
-    this.width = 650 - this.margin.left - this.margin.right;
-    this.height = 450 - this.margin.top - this.margin.bottom;
+    this.width = this.fullWidth - this.margin.left - this.margin.right;
+    this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
     this.colourScale = d3.scale.category20();
     this.drawScatterplot();
@@ -35,15 +38,15 @@ ClusterPlot.prototype.drawScatterplot = function() {
         .range([0, self.width]);
     var xAxis = d3.svg.axis()
         .scale(xScale)
-        .orient('bottom')
-        .ticks(10);
+        .ticks(self.xAxisTicks)
+        .orient('bottom');
 
     var yScale = d3.scale.linear()
         .domain([yMin-1, yMax+1])
         .range([self.height, 0]);
     var yAxis = d3.svg.axis()
         .scale(yScale)
-        .ticks(10)
+        .ticks(self.yAxisTicks)
         .orient('left');
 
     // tooltip function
@@ -76,7 +79,7 @@ ClusterPlot.prototype.drawScatterplot = function() {
         .attr('cy', function(d) {
             return yScale(d.pca[1]);
         })
-        .attr('r', 5)
+        .attr('r', self.pointRadius)
         .attr('stroke', 'white')
         .attr('fill', function(d) {
             var cluster_id = d.cluster_member[self.clusterMid-self.clusterMin];
@@ -107,8 +110,8 @@ ClusterPlot.prototype.drawScatterplot = function() {
 
     self.svg.append('text')
         .attr('transform', 'rotate(-90)')
-        .attr('y', 0 - self.margin.left)
-        .attr('x',0 - self.height/2)
+        .attr('y', -self.margin.left)
+        .attr('x', -self.height/2)
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .text('PC2');

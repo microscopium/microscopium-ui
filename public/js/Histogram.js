@@ -9,17 +9,19 @@ function Histogram(sampleData, featureNames) {
 
     this.fullWidth = 500;
     this.fullHeight = 400;
+    this.xAxisTicks = 8;
+    this.yAxisTicks = 5;
 
     this.margin = {top: 20, right: 30, bottom: 20, left: 45};
-    this.width = 500 - this.margin.left - this.margin.right;
-    this.height = 400 - this.margin.top - this.margin.bottom;
+    this.width = this.fullWidth - this.margin.left - this.margin.right;
+    this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
     this.drawHistogram(0);
 }
 
 Histogram.prototype.drawHistogram = function(feature) {
-
     var self = this;
+
     self.destroy();
 
     var featureDist = _.deepPluck(self.sampleData,
@@ -32,11 +34,12 @@ Histogram.prototype.drawHistogram = function(feature) {
 
     var xAxis = d3.svg.axis()
         .scale(xScale)
+        .ticks(this.xAxisTicks)
         .orient('bottom');
 
-    var data = d3.layout.histogram()
-        .bins(xScale.ticks(10))
-    (featureDist);
+    var dataBinner = d3.layout.histogram()
+        .bins(xScale.ticks(this.xAxisTicks));
+    var data = dataBinner(featureDist);
 
     // define y Scale and y axis
     var yScale = d3.scale.linear()
@@ -45,6 +48,7 @@ Histogram.prototype.drawHistogram = function(feature) {
 
     var yAxis = d3.svg.axis()
         .scale(yScale)
+        .ticks(this.yAxisTicks)
         .orient('left');
 
     // add SVG canvas

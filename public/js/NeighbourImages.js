@@ -12,7 +12,9 @@ NeighbourImages.prototype.getImages = function(query_id) {
             url: '/api/sample/neighbours/' + query_id,
             async: false,
             success: function(json) {
-                self.neighbours = json[0].neighbours.slice(1, 25);
+                var neighboursLength = json[0].length;
+                self.neighbours = json[0].neighbours.slice(1,
+                    neighboursLength);
             }
         }),
         $.ajax({
