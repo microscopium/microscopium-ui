@@ -11,11 +11,17 @@ function SampleFilter(sampleData) {
     this.selectedGenes = [];
     var self = this;
 
+    // declare variables used in iterators
+    var i;
+    var j;
+    var cols;
+    var el;
+
     // append plate checkboxes
-    var j = 0;
-    var cols = Math.ceil(this.uniquePlate.length/2);
-    for(var i = 0; i < this.uniquePlate.length; i++) {
-        var el = '#plate-' + (j+1);
+    j = 0;
+    cols = Math.ceil(this.uniquePlate.length/2);
+    for(i = 0; i < this.uniquePlate.length; i++) {
+        el = '#plate-' + (j+1);
         $('<input />', { type: 'checkbox',
             name: 'plate[' + [this.uniquePlate[i]] + ']',
             value: true,
@@ -29,10 +35,10 @@ function SampleFilter(sampleData) {
     }
 
     // append row checkboxes
-    var j = 0;
-    var cols = Math.ceil(this.uniqueRow.length/2);
-    for(var i = 0; i < this.uniqueRow.length; i++) {
-        var el = '#row-' + (j+1);
+    j = 0;
+    cols = Math.ceil(this.uniqueRow.length/2);
+    for(i = 0; i < this.uniqueRow.length; i++) {
+        el = '#row-' + (j+1);
         $('<input />', { type: 'checkbox',
             name: 'row[' + [this.uniqueRow[i]] + ']',
             value: true,
@@ -46,10 +52,10 @@ function SampleFilter(sampleData) {
     }
 
     // append column checkboxes
-    var j = 0;
-    var cols = Math.ceil(this.uniqueCol.length/3);
-    for(var i = 0; i < this.uniqueCol.length; i++) {
-        var el = '#col-' + (j+1);
+    j = 0;
+    cols = Math.ceil(this.uniqueCol.length/3);
+    for(i = 0; i < this.uniqueCol.length; i++) {
+        el = '#col-' + (j+1);
         $('<input />', { type: 'checkbox',
             name: 'column[' + [this.uniqueCol[i]] + ']',
             value: true,
@@ -236,12 +242,12 @@ SampleFilter.prototype.applyFilter = function() {
 
 function regexFilter(pattern) {
     return function(element) {
-        return element.match(new RegExp(pattern, 'i'))
-    }
+        return element.match(new RegExp(pattern, 'i'));
+    };
 }
 
 function uniqueData(data, field) {
-    return _.uniq(_.pluck(_.flatten(data), field)).sort()
+    return _.uniq(_.pluck(_.flatten(data), field)).sort();
 }
 
 module.exports = SampleFilter;

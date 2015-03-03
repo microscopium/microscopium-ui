@@ -29,9 +29,8 @@ function updateSelector(screen_data) {
         $('#screen-menu li:last').on('click', function() {
             selectScreen($(this).text());
         });
-
     }
-};
+}
 
 function selectScreen(screen_id) {
     var featureNames = [];
@@ -71,7 +70,7 @@ function selectScreen(screen_id) {
             spinner.spin(false);
             $('.navbar-nav a[href="#summary"]').tab('show');
         });
-};
+}
 
 function mountPlots(screenData, sampleData, featureNames) {
     updateTab(screenData);

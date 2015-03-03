@@ -143,8 +143,8 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
 
     // add neighbour class to all neighbours
     var neighbours = d.neighbours;
-    for(var i = 1 ; i < neighbours.length; i++) {
-        d3.select('[id=' + neighbours[i] + ']')
+    for(var j = 1 ; j < neighbours.length; j++) {
+        d3.select('[id=' + neighbours[j] + ']')
             .classed('neighbourpt', true)
             .transition()
             .duration(self.transitionDuration)
