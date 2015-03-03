@@ -1,6 +1,19 @@
 var d3 = require('d3');
 require('d3-tip')(d3);
 
+/**
+ * Draws PCA scatterplot of the data Clicking on scatterplot points will
+ * trigger updates of the neighbour image gallery and corresponding sample
+ * lineplot.
+ *
+ *
+ * @constructor
+ * @param {array} sampleData - The sample data for the screen. Each element
+ * in the array is an instance of a Sample document.
+ * @param {string} element - The ID of the target div for this plot.
+ * @param {LinePlot} lineplot - LinePlot that will update when scatterplot
+ * points are clicked.
+ */
 function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.sampleData = sampleData;
     this.lineplot = lineplot;
@@ -22,6 +35,11 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.drawScatterplot();
 }
 
+/**
+ * This function draws the PCA plot.
+ *
+ * @this {NeighbourPlot}
+ */
 NeighbourPlot.prototype.drawScatterplot = function() {
     var self = this;
 
@@ -122,6 +140,13 @@ NeighbourPlot.prototype.drawScatterplot = function() {
     self.updatePoint(firstPoint, firstPoint.data()[0],  0);
 };
 
+/**
+ * This function is attached to all PCA scatterplot points, and updates
+ * the styling of the points and triggers updates in the associated samples
+ * lineplot and neighbour image gallery.
+ *
+ * @this {NeighbourPlot}
+ */
 NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
     var self = this;
 
@@ -160,6 +185,11 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
         .attr('r', self.activePointRadius);
 };
 
+/**
+ * Removes all child SVG elements of the plots containing div.
+ *
+ * @this {NeighbourPlot}
+ */
 NeighbourPlot.prototype.destroy = function() {
     d3.select(this.element + ' > svg').remove();
 };
