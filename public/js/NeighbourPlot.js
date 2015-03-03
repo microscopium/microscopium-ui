@@ -1,11 +1,12 @@
 var d3 = require('d3');
 require('d3-tip')(d3);
 
-function NeighbourPlot(sampleData, lineplot, neighbourImages) {
+function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.sampleData = sampleData;
     this.lineplot = lineplot;
     this.neighbourImages = neighbourImages;
 
+    this.element = element;
     this.fullWidth = 700;
     this.fullHeight = 500;
     this.transitionDuration = 125;
@@ -58,7 +59,7 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         });
 
     // setup canvas
-    var svg = d3.select('#neighbourpca').append('svg')
+    var svg = d3.select(this.element).append('svg')
         .attr('width', self.fullWidth)
         .attr('height', self.fullHeight)
         .append('g')
@@ -160,7 +161,7 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
 };
 
 NeighbourPlot.prototype.destroy = function() {
-    d3.select('#neighbourpca > svg').remove();
+    d3.select(this.element + ' > svg').remove();
 };
 
 module.exports = NeighbourPlot;

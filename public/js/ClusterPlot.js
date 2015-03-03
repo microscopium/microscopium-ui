@@ -1,12 +1,13 @@
 var d3 = require('d3');
 require('d3-tip')(d3); // load d3-tip plugin
 
-function ClusterPlot(sampleData) {
+function ClusterPlot(sampleData, element) {
     this.clusterMin = 2;
     this.clusterMax = 20;
     this.clusterMid = Math.round((this.clusterMax+this.clusterMin)/2);
     this.sampleData = sampleData;
 
+    this.element = element;
     this.fullWidth = 650;
     this.fullHeight = 450;
     this.pointRadius = 5;
@@ -61,7 +62,7 @@ ClusterPlot.prototype.drawScatterplot = function() {
         });
 
     // setup canvas
-    self.svg = d3.select('#scattercluster').append('svg')
+    self.svg = d3.select(self.element).append('svg')
         .attr('width', self.width + self.margin.left + self.margin.right)
         .attr('height', self.height + self.margin.top + self.margin.bottom)
         .append('g')
@@ -146,7 +147,7 @@ ClusterPlot.prototype.redrawClusters = function(newk) {
 };
 
 ClusterPlot.prototype.destroy = function() {
-    d3.select('#scattercluster > svg').remove();
+    d3.select(this.element + ' > svg').remove();
 };
 
 ClusterPlot.prototype.mountSlider = function() {

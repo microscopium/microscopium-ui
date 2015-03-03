@@ -2,11 +2,12 @@ var d3 = require('d3');
 var _ = require('lodash');
 _.mixin(require('lodash-deep'));
 
-function Histogram(sampleData, featureNames) {
+function Histogram(sampleData, element, featureNames) {
     this.sampleData = sampleData;
     this.featureNames = featureNames;
     this.feature = 0;
 
+    this.element = element;
     this.fullWidth = 500;
     this.fullHeight = 400;
     this.xAxisTicks = 8;
@@ -52,7 +53,7 @@ Histogram.prototype.drawHistogram = function(feature) {
         .orient('left');
 
     // add SVG canvas
-    var svg = d3.select('#histbox').append('svg')
+    var svg = d3.select(self.element).append('svg')
         .attr('width', self.fullWidth)
         .attr('height', self.fullHeight)
         .append('g')
@@ -93,7 +94,7 @@ Histogram.prototype.drawHistogram = function(feature) {
 };
 
 Histogram.prototype.destroy = function() {
-    d3.select('#histbox > svg').remove();
+    d3.select(this.element + ' > svg').remove();
 };
 
 module.exports = Histogram;

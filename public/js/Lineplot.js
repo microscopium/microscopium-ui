@@ -1,13 +1,14 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
-function Lineplot(sampleData, histogram) {
+function Lineplot(sampleData, element, histogram) {
     this.sampleData = sampleData;
     this.featureLength = sampleData[0].feature_vector_std.length;
     this.activeSample = 0;
     this.activeFeature = 0;
     this.histogram = histogram;
 
+    this.element = element;
     this.fullWidth = 600;
     this.fullHeight = 400;
     this.xAxisTicks = 10;
@@ -60,7 +61,7 @@ Lineplot.prototype.drawLineplot = function(sample) {
         .y(function(d) { return self.yScale(d[1]); });
 
     // append canvas
-    self.svg = d3.select('#linebox').append('svg')
+    self.svg = d3.select(this.element).append('svg')
         .attr('width', self.fullWidth)
         .attr('height', self.fullHeight)
         .append('g')
@@ -159,7 +160,7 @@ Lineplot.prototype.keypressUpdate = function(keyCode) {
 };
 
 Lineplot.prototype.destroy = function() {
-    d3.select('#linebox > svg').remove();
+    d3.select(this.element + ' > svg').remove();
 };
 
 module.exports = Lineplot;
