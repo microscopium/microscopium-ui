@@ -13,6 +13,8 @@ require('d3-tip')(d3);
  * @param {string} element - The ID of the target div for this plot.
  * @param {LinePlot} lineplot - LinePlot that will update when scatterplot
  * points are clicked.
+ * @param {NeighbourImages} neighbourImages - NeighbourImages object that will
+ * update when scatterplot points are clicked.
  */
 function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.sampleData = sampleData;
