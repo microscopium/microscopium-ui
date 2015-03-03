@@ -118,7 +118,6 @@ NeighbourPlot.prototype.drawScatterplot = function() {
 
     // default select first point
     var firstPoint = d3.select('.scatterpt');
-    console.log(firstPoint.data());
     self.updatePoint(firstPoint, firstPoint.data()[0],  0);
 };
 

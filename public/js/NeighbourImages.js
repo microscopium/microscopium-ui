@@ -35,14 +35,12 @@ NeighbourImages.prototype.getImages = function(query_id) {
                 self.neighbourImages = json;
             }
         })).then(function(res, status) {
-            console.log('then!');
             self.setImages();
         });
 };
 
 NeighbourImages.prototype.setImages = function() {
     var self = this;
-    console.log('set images!');
 
     $('#nebula-0').attr('src', 'data:image/jpg;base64,' + self.selectedImage.image_full);
     $('#nebula-0').attr('title', self.selectedImage.sample_id);

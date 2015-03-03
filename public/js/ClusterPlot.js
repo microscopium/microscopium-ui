@@ -1,5 +1,5 @@
 var d3 = require('d3');
-require('d3-tip')(d3);
+require('d3-tip')(d3); // load d3-tip plugin
 
 function ClusterPlot(sampleData) {
     this.clusterMin = 2;

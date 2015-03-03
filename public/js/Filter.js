@@ -4,10 +4,10 @@ function SampleFilter(sampleData) {
     $('.filter-items').children().remove();
 
     this.data = sampleData;
-    this.uniqueCol = _.uniq(_.pluck(_.flatten(this.data), 'column')).sort();
-    this.uniqueRow = _.uniq(_.pluck(_.flatten(this.data), 'row')).sort();
-    this.uniquePlate = _.uniq(_.pluck(_.flatten(this.data), 'plate')).sort();
-    this.genes = _.uniq(_.pluck(_.flatten(this.data), 'gene_name')).sort();
+    this.uniqueCol = uniqueData(this.data, 'column');
+    this.uniqueRow = uniqueData(this.data, 'row');
+    this.uniquePlate = uniqueData(this.data, 'plate');
+    this.genes = uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
     var self = this;
 
@@ -238,6 +238,10 @@ function regexFilter(pattern) {
     return function(element) {
         return element.match(new RegExp(pattern, 'i'))
     }
+}
+
+function uniqueData(data, field) {
+    return _.uniq(_.pluck(_.flatten(data), field)).sort()
 }
 
 module.exports = SampleFilter;
