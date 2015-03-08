@@ -1,5 +1,15 @@
 var _ = require('lodash');
 
+/**
+ * SampleFilter: Setup sample filter.
+ *
+ * The constructor function adds all filter filters based on the current
+ * sample data and attaches event listeners that drive behaviour filter.
+ *
+ * @constructor
+ * @param {array} sampleData - The sample data for the screen. Each element
+ * in the array is an instance of a Sample document.
+ */
 function SampleFilter(sampleData) {
     $('.filter-items').children().remove();
 
@@ -15,19 +25,19 @@ function SampleFilter(sampleData) {
     var i;
     var j;
     var cols;
-    var el;
+    var element;
 
     // append plate checkboxes
     j = 0;
     cols = Math.ceil(this.uniquePlate.length/2);
     for(i = 0; i < this.uniquePlate.length; i++) {
-        el = '#plate-' + (j+1);
+        element = '#plate-' + (j+1);
         $('<input />', { type: 'checkbox',
             name: 'plate[' + [this.uniquePlate[i]] + ']',
             value: true,
-            checked: true}).appendTo(el);
-        $('<label />', { 'for': this.uniquePlate[i], text: this.uniquePlate[i] }).appendTo(el);
-        $('<br />').appendTo(el);
+            checked: true}).appendTo(element);
+        $('<label />', { 'for': this.uniquePlate[i], text: this.uniquePlate[i] }).appendTo(element);
+        $('<br />').appendTo(element);
 
         if( (i+1) % cols === 0) {
             j++;
@@ -38,13 +48,13 @@ function SampleFilter(sampleData) {
     j = 0;
     cols = Math.ceil(this.uniqueRow.length/2);
     for(i = 0; i < this.uniqueRow.length; i++) {
-        el = '#row-' + (j+1);
+        element = '#row-' + (j+1);
         $('<input />', { type: 'checkbox',
             name: 'row[' + [this.uniqueRow[i]] + ']',
             value: true,
-            checked: true}).appendTo(el);
-        $('<label />', { 'for': this.uniqueRow[i], text: this.uniqueRow[i] }).appendTo(el);
-        $('<br />').appendTo(el);
+            checked: true}).appendTo(element);
+        $('<label />', { 'for': this.uniqueRow[i], text: this.uniqueRow[i] }).appendTo(element);
+        $('<br />').appendTo(element);
 
         if( (i+1) % cols === 0) {
             j++;
@@ -55,13 +65,13 @@ function SampleFilter(sampleData) {
     j = 0;
     cols = Math.ceil(this.uniqueCol.length/3);
     for(i = 0; i < this.uniqueCol.length; i++) {
-        el = '#col-' + (j+1);
+        element = '#col-' + (j+1);
         $('<input />', { type: 'checkbox',
             name: 'column[' + [this.uniqueCol[i]] + ']',
             value: true,
-            checked: true}).appendTo(el);
-        $('<label />', { 'for': this.uniqueCol[i], text: this.uniqueCol[i] }).appendTo(el);
-        $('<br />').appendTo(el);
+            checked: true}).appendTo(element);
+        $('<label />', { 'for': this.uniqueCol[i], text: this.uniqueCol[i] }).appendTo(element);
+        $('<br />').appendTo(element);
 
         if( (i+1) % cols === 0) {
             j++;
@@ -87,7 +97,7 @@ function SampleFilter(sampleData) {
     $('#gene-filter-text').on('keypress', function(event) {
         if(event.which === 13) {
             event.preventDefault();
-            self.addfromTextBox();
+            self.addToFilter();
         }
     });
 
@@ -129,21 +139,14 @@ function SampleFilter(sampleData) {
     $('#filter-button').removeClass('hidden');
 }
 
-SampleFilter.prototype.addfromTextBox = function() {
-    var value = $('#gene-select option:eq(0)').val();
-    var nextValue = $('#gene-select option:eq(1)').val();
-    var index = this.genes.indexOf(value);
-
-    if(index !== -1 && value) {
-        this.genes.splice(index, 1);
-        this.selectedGenes.push(value);
-        this.updateGeneList();
-        this.updateSelectedGeneList();
-    }
-
-    $('#gene-select').val(nextValue);
-};
-
+/**
+ * addToFilter: Add gene to list of genes being filtered.
+ *
+ * Adds a gene to the list of genes currently being filtered,
+ * then sets the selected genes to the next one on the list.
+ *
+ * @this {SampleFilter}
+ */
 SampleFilter.prototype.addToFilter = function() {
     var value = $('#gene-select option:selected').val();
     var nextValue =  $('#gene-select option:selected').next().val();
@@ -160,6 +163,11 @@ SampleFilter.prototype.addToFilter = function() {
     this.applyFilter();
 };
 
+/**
+ * removeFromFilter: Remove a gene from the list of genes being filtered.
+ *
+ * @this {SampleFilter}
+ */
 SampleFilter.prototype.removeFromFilter = function() {
     var value = $('#gene-selected option:selected ').val();
     var nextValue =  $('#gene-selected option:selected').next().val();
@@ -177,6 +185,11 @@ SampleFilter.prototype.removeFromFilter = function() {
     this.applyFilter();
 };
 
+/**
+ * resetGeneFilter: Reset all selections in the filter.
+ *
+ * @this {SampleFilter}
+ */
 SampleFilter.prototype.resetGeneFilter = function() {
     $('#gene-selected').children().remove();
     this.genes.push.apply(this.genes, this.selectedGenes);
@@ -186,6 +199,11 @@ SampleFilter.prototype.resetGeneFilter = function() {
     this.applyFilter();
 };
 
+/**
+ * updateSelectedGeneList: Update genes displayed in genes list.
+ * *
+ * @this {SampleFilter}
+ */
 SampleFilter.prototype.updateGeneList = function() {
     $('#gene-select').children().remove();
 
@@ -207,6 +225,11 @@ SampleFilter.prototype.updateGeneList = function() {
     }
 };
 
+/**
+ * updateSelectedGeneList: Update genes displayed in selected genes list.
+ *
+ * @this {SampleFilter}
+ */
 SampleFilter.prototype.updateSelectedGeneList = function() {
     $('#gene-selected').children().remove();
 
@@ -217,6 +240,11 @@ SampleFilter.prototype.updateSelectedGeneList = function() {
     }
 };
 
+/**
+ * applyFilter: Apply current filter parameters to dataset and update plots.
+ *
+ * @this {SampleFilter}
+ */
 SampleFilter.prototype.applyFilter = function() {
     var filterQuery = $('form').serializeJSON();
 
@@ -240,12 +268,31 @@ SampleFilter.prototype.applyFilter = function() {
     // TODO apply filter here
 };
 
+/**
+ * regexFilter: Return regex function for use in filter.
+ *
+ * The function returned returns true if the query pattern is contained
+ * in the element given to it. Case insensitive.
+ *
+ * @param {string} pattern - The query pattern.
+ * @returns {Function} - The query function.
+ */
 function regexFilter(pattern) {
     return function(element) {
         return element.match(new RegExp(pattern, 'i'));
     };
 }
 
+/**
+ * uniqueData: Return all unique data values.
+ *
+ * Given an array of objects, find all unique values for a specified key.
+ * Uses lodash chained lodash methods.
+ *
+ * @param {array} data - An array of objects.
+ * @param {string} key - The key to find the unique values of.
+ * @returns {array} - An array of unique values.
+ */
 function uniqueData(data, field) {
     return _.uniq(_.pluck(_.flatten(data), field)).sort();
 }
