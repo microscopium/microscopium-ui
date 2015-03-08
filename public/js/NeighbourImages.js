@@ -1,9 +1,21 @@
-function NeighbourImages(query_id) {
+/**
+ * NeighbourImages: Object to get and set images in the gallery.
+ *
+ * @constructor
+ */
+function NeighbourImages() {
     this.neighbours = [];
     this.selectedImage = "";
     this.neighbourImages = [];
 }
 
+/**
+ * getImages: Get med-size image for selected samples, and nearest
+ * neighbour images.
+ *
+ * @this {NeighbourImages}
+ * @params {string} - _id of the query sample
+ */
 NeighbourImages.prototype.getImages = function(query_id) {
     var self = this;
 
@@ -39,6 +51,11 @@ NeighbourImages.prototype.getImages = function(query_id) {
         });
 };
 
+/**
+ * setImages: Convert base64 encoded strings to images and set them in the DOM.
+ *
+ * @this {NeighbourImages}
+ */
 NeighbourImages.prototype.setImages = function() {
     var self = this;
 

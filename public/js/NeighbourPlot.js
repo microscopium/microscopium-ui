@@ -1,11 +1,11 @@
 var d3 = require('d3');
-require('d3-tip')(d3);
+require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
 
 /**
- * Draws PCA scatterplot of the data Clicking on scatterplot points will
- * trigger updates of the neighbour image gallery and corresponding sample
- * lineplot.
+ * NeighbourPlot: Object to draw scatterplot of dimension reduced data.
  *
+ * Clicking on scatterplot points will trigger updates of the neighbour
+ * image gallery and corresponding sample lineplot.
  *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
@@ -38,7 +38,9 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
 }
 
 /**
- * This function draws the PCA plot.
+ * drawScatterplot: Draw the scatterplot.
+ *
+ * Draw the SVG canvas, axis, scatterplot points and tooltips.
  *
  * @this {NeighbourPlot}
  */
@@ -143,11 +145,18 @@ NeighbourPlot.prototype.drawScatterplot = function() {
 };
 
 /**
- * This function is attached to all PCA scatterplot points, and updates
+ * updatePoint: Update catterplot point on click.
+ *
+ * This method is attached to all scatterplot points, and updates
  * the styling of the points and triggers updates in the associated samples
  * lineplot and neighbour image gallery.
  *
  * @this {NeighbourPlot}
+ * @param {d3-selection} selection - The d3 selection object from the
+ * clicked scatterplot point.
+ * @param {object} d - The datum attached to the clicked scatterplot point.
+ * @param {number} i - The index of the clicked scatterplot point.
+ *
  */
 NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
     var self = this;
@@ -188,7 +197,7 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
 };
 
 /**
- * Removes all child SVG elements of the plots containing div.
+ * destroy: Remove all child SVG elements of the plot objects containing div.
  *
  * @this {NeighbourPlot}
  */

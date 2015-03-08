@@ -2,6 +2,15 @@ var d3 = require('d3');
 var _ = require('lodash');
 _.mixin(require('lodash-deep'));
 
+/**
+ * Histogram: Object to draw a histogram of the features across a dataset.
+ *
+ * @constructor
+ * @param {array} sampleData - The sample data for the screen. Each element
+ * in the array is an instance of a Sample document.
+ * @param {string} element - The ID of the target div for this plot.
+ * @param {array} featureNames - An array of the features used in this screen.
+ */
 function Histogram(sampleData, element, featureNames) {
     this.sampleData = sampleData;
     this.featureNames = featureNames;
@@ -20,6 +29,16 @@ function Histogram(sampleData, element, featureNames) {
     this.drawHistogram(0);
 }
 
+/**
+ * drawHistogram: Draw the histogram.
+ *
+ * Draw the SVG canvas, axis and bars for the histogram. Histogram bins
+ * are calculated using d3's histogram layout function.
+ *
+ * @this {Histogram}
+ * @param {number} feature - The index of the feature currently selected
+ * on the line plot.
+ */
 Histogram.prototype.drawHistogram = function(feature) {
     var self = this;
 
@@ -93,6 +112,11 @@ Histogram.prototype.drawHistogram = function(feature) {
         .text(this.featureNames[feature]);
 };
 
+/**
+ * destroy: Remove all child SVG elements of the plot objects containing div.
+ *
+ * @this {Histogram}
+ */
 Histogram.prototype.destroy = function() {
     d3.select(this.element + ' > svg').remove();
 };

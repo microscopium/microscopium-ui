@@ -1,6 +1,19 @@
 var d3 = require('d3');
-require('d3-tip')(d3); // load d3-tip plugin
+require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
 
+/**
+ * ClusterPlot: Object to draw scatterplot of dimension reduced data.
+ *
+ * This scatterplot is controlled by a slider that allows the user to
+ * select the number of k partitions they would like the data clustered into.
+ * The plot points are coloured according to which cluster they belong to for
+ * the currently selected k.
+ *
+ * @constructor
+ * @param {array} sampleData - The sample data for the screen. Each element
+ * in the array is an instance of a Sample document.
+ * @param {string} element - The ID of the target div for this plot.
+ */
 function ClusterPlot(sampleData, element) {
     this.clusterMin = 2;
     this.clusterMax = 20;
@@ -23,6 +36,13 @@ function ClusterPlot(sampleData, element) {
     this.mountSlider();
 }
 
+/**
+ * drawScatterplot: Draw the scatterplot.
+ *
+ * Draw the SVG canvas, axis, scatterplot points and tooltips.
+ *
+ * @this {NeighbourPlot}
+ */
 ClusterPlot.prototype.drawScatterplot = function() {
     var self = this;
     self.destroy();
@@ -118,6 +138,16 @@ ClusterPlot.prototype.drawScatterplot = function() {
         .text('PC2');
 };
 
+/**
+ * redrawClusters: Update the scatterplot points.
+ *
+ * When a new value of k is chosen, update the colouring of the
+ * scatterplot points and their tool-tips to show which cluster they
+ * belong to.
+ *
+ * @this {redrawClusters}
+ * @param {int} newk - The number of k partitions to cluster the data into.
+ */
 ClusterPlot.prototype.redrawClusters = function(newk) {
     var self = this;
 
@@ -146,10 +176,22 @@ ClusterPlot.prototype.redrawClusters = function(newk) {
         .call(tip);
 };
 
+/**
+ * destroy: Remove all child SVG elements of the plot objects containing div.
+ *
+ * @this {Lineplot}
+ */
 ClusterPlot.prototype.destroy = function() {
     d3.select(this.element + ' > svg').remove();
 };
 
+/**
+ * mountSlider: Add event listener to cluster number slider.
+ *
+ * Updates the plot by trigger redrawClusters when the slider is moved.
+ *
+ * @this {Lineplot}
+ */
 ClusterPlot.prototype.mountSlider = function() {
     var self = this;
 
