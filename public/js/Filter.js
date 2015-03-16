@@ -19,21 +19,98 @@ function SampleFilter(sampleData) {
     this.uniquePlate = uniqueData(this.data, 'plate');
     this.genes = uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
+
+    this.mountFilters();
+    this.mountEventListeners();
+    this.updateGeneList();
+    $('#filter-button').removeClass('hidden');
+}
+
+/**
+ * mountFilters: Add filter categories to the filter.
+ *
+ * Add the values the user can filter on.
+ *
+ * @this {SampleFilter}
+ */
+SampleFilter.prototype.mountFilters = function() {
+    // declare variables used in iterators
+    var i;
+    var j;
+    var cols;
+    var element;
+
+    // append plate checkboxes
+    j = 0;
+    cols = Math.ceil(this.uniquePlate.length/2);
+    for(i = 0; i < this.uniquePlate.length; i++) {
+        element = '#plate-' + (j+1);
+        $('<input />', { type: 'checkbox',
+            name: 'plate[' + [this.uniquePlate[i]] + ']',
+            value: true,
+            checked: true}).appendTo(element);
+        $('<label />', { 'for': this.uniquePlate[i], text: this.uniquePlate[i] }).appendTo(element);
+        $('<br />').appendTo(element);
+
+        if((i+1) % cols === 0) {
+            j++;
+        }
+    }
+
+    // append row checkboxes
+    j = 0;
+    cols = Math.ceil(this.uniqueRow.length/2);
+    for(i = 0; i < this.uniqueRow.length; i++) {
+        element = '#row-' + (j+1);
+        $('<input />', { type: 'checkbox',
+            name: 'row[' + [this.uniqueRow[i]] + ']',
+            value: true,
+            checked: true}).appendTo(element);
+        $('<label />', { 'for': this.uniqueRow[i], text: this.uniqueRow[i] }).appendTo(element);
+        $('<br />').appendTo(element);
+
+        if((i+1) % cols === 0) {
+            j++;
+        }
+    }
+
+    // append column checkboxes
+    j = 0;
+    cols = Math.ceil(this.uniqueCol.length/3);
+    for(i = 0; i < this.uniqueCol.length; i++) {
+        element = '#col-' + (j+1);
+        $('<input />', { type: 'checkbox',
+            name: 'column[' + [this.uniqueCol[i]] + ']',
+            value: true,
+            checked: true}).appendTo(element);
+        $('<label />', { 'for': this.uniqueCol[i], text: this.uniqueCol[i] }).appendTo(element);
+        $('<br />').appendTo(element);
+
+        if( (i+1) % cols === 0) {
+            j++;
+        }
+    }
+};
+
+/**
+ * mountEventListeners: Add event listeners to filter.
+ *
+ * Add event listeners to filter elements to drive the behaviour
+ * of the filter UI.
+ *
+ * @this {SampleFilter}
+ */
+SampleFilter.prototype.mountEventListeners = function() {
     var self = this;
 
-    // attach listener for 'add to filter' event
+    // add treatment to filter when arrow clicked
     $('#filter-add').on('click', function() {
         self.addToFilter();
     });
 
-    // attach listener for 'remove from filter' event
+    // remove treatment from filter when arrow clicked
     $('#filter-remove').on('click', function() {
         self.removeFromFilter();
-    });
-
-    // attach listener to gene filter textbox input
-    $('#gene-filter-text').on('input paste', function() {
-        self.updateGeneList();
     });
 
     // attach enter key listener to text input box
@@ -60,12 +137,17 @@ function SampleFilter(sampleData) {
         }
     });
 
+    // update treatment 'search' value on input, paste
+    $('#gene-filter-text').on('change keyup paste', function() {
+        self.updateGeneList();
+    });
+
     // attach additional behavior to reset button
     $('#filter-form').on('reset', function() {
         self.resetGeneFilter();
     });
 
-    // filter onchange
+    // update filter when checkbox (un)selected
     $(':checkbox').on('change', function() {
         self.applyFilter();
     });
@@ -76,18 +158,6 @@ function SampleFilter(sampleData) {
             $('#filter-menu a').next().removeClass('in');
         }
     });
-
-    // display filter button once components mounted
-    self.updateGeneList();
-    $('#filter-button').removeClass('hidden');
-}
-
-SampleFilter.prototype.mountFilters = function() {
-
-};
-
-SampleFilter.prototype.mountEvents = function() {
-
 };
 
 /**
