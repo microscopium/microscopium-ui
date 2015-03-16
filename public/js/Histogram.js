@@ -7,7 +7,7 @@ _.mixin(require('lodash-deep'));
  *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
- * in the array is an instance of a Sample document.
+ *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
  * @param {array} featureNames - An array of the features used in this screen.
  */
@@ -37,7 +37,7 @@ function Histogram(sampleData, element, featureNames) {
  *
  * @this {Histogram}
  * @param {number} feature - The index of the feature currently selected
- * on the line plot.
+ *     on the line plot.
  */
 Histogram.prototype.drawHistogram = function(feature) {
     var self = this;

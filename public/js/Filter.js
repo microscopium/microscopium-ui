@@ -3,12 +3,12 @@ var _ = require('lodash');
 /**
  * SampleFilter: Setup sample filter.
  *
- * The constructor function adds all filter filters based on the current
+ * The constructor function adds all filters based on the current
  * sample data and attaches event listeners that drive behaviour filter.
  *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
- * in the array is an instance of a Sample document.
+ *     in the array is an instance of a Sample document.
  */
 function SampleFilter(sampleData) {
     $('.filter-items').children().remove();
@@ -20,63 +20,6 @@ function SampleFilter(sampleData) {
     this.genes = uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
     var self = this;
-
-    // declare variables used in iterators
-    var i;
-    var j;
-    var cols;
-    var element;
-
-    // append plate checkboxes
-    j = 0;
-    cols = Math.ceil(this.uniquePlate.length/2);
-    for(i = 0; i < this.uniquePlate.length; i++) {
-        element = '#plate-' + (j+1);
-        $('<input />', { type: 'checkbox',
-            name: 'plate[' + [this.uniquePlate[i]] + ']',
-            value: true,
-            checked: true}).appendTo(element);
-        $('<label />', { 'for': this.uniquePlate[i], text: this.uniquePlate[i] }).appendTo(element);
-        $('<br />').appendTo(element);
-
-        if( (i+1) % cols === 0) {
-            j++;
-        }
-    }
-
-    // append row checkboxes
-    j = 0;
-    cols = Math.ceil(this.uniqueRow.length/2);
-    for(i = 0; i < this.uniqueRow.length; i++) {
-        element = '#row-' + (j+1);
-        $('<input />', { type: 'checkbox',
-            name: 'row[' + [this.uniqueRow[i]] + ']',
-            value: true,
-            checked: true}).appendTo(element);
-        $('<label />', { 'for': this.uniqueRow[i], text: this.uniqueRow[i] }).appendTo(element);
-        $('<br />').appendTo(element);
-
-        if( (i+1) % cols === 0) {
-            j++;
-        }
-    }
-
-    // append column checkboxes
-    j = 0;
-    cols = Math.ceil(this.uniqueCol.length/3);
-    for(i = 0; i < this.uniqueCol.length; i++) {
-        element = '#col-' + (j+1);
-        $('<input />', { type: 'checkbox',
-            name: 'column[' + [this.uniqueCol[i]] + ']',
-            value: true,
-            checked: true}).appendTo(element);
-        $('<label />', { 'for': this.uniqueCol[i], text: this.uniqueCol[i] }).appendTo(element);
-        $('<br />').appendTo(element);
-
-        if( (i+1) % cols === 0) {
-            j++;
-        }
-    }
 
     // attach listener for 'add to filter' event
     $('#filter-add').on('click', function() {
@@ -138,6 +81,14 @@ function SampleFilter(sampleData) {
     self.updateGeneList();
     $('#filter-button').removeClass('hidden');
 }
+
+SampleFilter.prototype.mountFilters = function() {
+
+};
+
+SampleFilter.prototype.mountEvents = function() {
+
+};
 
 /**
  * addToFilter: Add gene to list of genes being filtered.
@@ -201,7 +152,7 @@ SampleFilter.prototype.resetGeneFilter = function() {
 
 /**
  * updateSelectedGeneList: Update genes displayed in genes list.
- * *
+ *
  * @this {SampleFilter}
  */
 SampleFilter.prototype.updateGeneList = function() {

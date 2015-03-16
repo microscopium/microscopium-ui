@@ -11,7 +11,7 @@ require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
  *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
- * in the array is an instance of a Sample document.
+ *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
  */
 function ClusterPlot(sampleData, element) {
@@ -41,7 +41,7 @@ function ClusterPlot(sampleData, element) {
  *
  * Draw the SVG canvas, axis, scatterplot points and tooltips.
  *
- * @this {NeighbourPlot}
+ * @this {ClusterPlot}
  */
 ClusterPlot.prototype.drawScatterplot = function() {
     var self = this;
@@ -145,7 +145,7 @@ ClusterPlot.prototype.drawScatterplot = function() {
  * scatterplot points and their tool-tips to show which cluster they
  * belong to.
  *
- * @this {redrawClusters}
+ * @this {ClusterPlot}
  * @param {int} newk - The number of k partitions to cluster the data into.
  */
 ClusterPlot.prototype.redrawClusters = function(newk) {
@@ -179,7 +179,7 @@ ClusterPlot.prototype.redrawClusters = function(newk) {
 /**
  * destroy: Remove all child SVG elements of the plot objects containing div.
  *
- * @this {Lineplot}
+ * @this {ClusterPlot}
  */
 ClusterPlot.prototype.destroy = function() {
     d3.select(this.element + ' > svg').remove();
@@ -190,7 +190,7 @@ ClusterPlot.prototype.destroy = function() {
  *
  * Updates the plot by trigger redrawClusters when the slider is moved.
  *
- * @this {Lineplot}
+ * @this {ClusterPlot}
  */
 ClusterPlot.prototype.mountSlider = function() {
     var self = this;

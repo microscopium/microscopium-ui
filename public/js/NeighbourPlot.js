@@ -9,10 +9,10 @@ require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
  *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
- * in the array is an instance of a Sample document.
+ *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
  * @param {LinePlot} lineplot - LinePlot that will update when scatterplot
- * points are clicked.
+ *     points are clicked.
  * @param {NeighbourImages} neighbourImages - NeighbourImages object that will
  * update when scatterplot points are clicked.
  */
@@ -145,7 +145,7 @@ NeighbourPlot.prototype.drawScatterplot = function() {
 };
 
 /**
- * updatePoint: Update catterplot point on click.
+ * updatePoint: Update scatterplot point on click.
  *
  * This method is attached to all scatterplot points, and updates
  * the styling of the points and triggers updates in the associated samples
@@ -153,7 +153,7 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  *
  * @this {NeighbourPlot}
  * @param {d3-selection} selection - The d3 selection object from the
- * clicked scatterplot point.
+ *     clicked scatterplot point.
  * @param {object} d - The datum attached to the clicked scatterplot point.
  * @param {number} i - The index of the clicked scatterplot point.
  *
