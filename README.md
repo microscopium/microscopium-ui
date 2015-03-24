@@ -1,6 +1,6 @@
 # Microscopium User Interface
 
-The development version of the web interface for [Microscopium](https://github.com/microscopium/microscopium).
+The web interface for [Microscopium](https://github.com/microscopium/microscopium).
 
 Prerequisites
 -------------
@@ -22,7 +22,7 @@ $ bower install
 Then then run this locally using grunt.
 
 ```console
-grunt
+$ grunt
 ```
 
 The dev gruntfile is currently configured to run the following tasks:
@@ -96,5 +96,3 @@ var Image = {
         image_thumb: String // BinData of image (thumbnail)
     }
 ```
-
-Screen has a one to one relationship with Images.
