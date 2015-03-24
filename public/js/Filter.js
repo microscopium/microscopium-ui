@@ -20,73 +20,73 @@ function SampleFilter(sampleData) {
     this.genes = uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
 
-    this.mountFilters();
+    this.mountFilterComponent(this.uniqueCol, 'col', 3);
+    this.mountFilterComponent(this.uniqueRow, 'row', 2);
+    this.mountFilterComponent(this.uniquePlate, 'plate', 2);
     this.mountEventListeners();
     this.updateGeneList();
     $('#filter-button').removeClass('hidden');
 }
 
 /**
- * mountFilters: Add filter categories to the filter.
+ * mountFilterComponent: Add filter menu items for rows, columns or plates.
  *
- * Add the values the user can filter on.
+ * Given an array of items, the function will append the checkboxes that
+ * comprise the options for the filter interface.
  *
- * @this {SampleFilter}
+ * @param {array} uniqueValues - An array of strings that will be added to the
+ *     filter menu as options. These should be unique values.
+ * @param {string} label - Whether the unique values are for columns, rows, or
+ *     plates. Value should be one of 'col', 'row' or 'plate'.
+ * @param {number} numberCols - The number of columns to use when displaying
+ *     options in the menu. This number should be a divisor of 12 (due to the
+ *     Bootstrap grid layout system).
+ *     e.g. 2 will append the items to display
+ *     'A' 'D'
+ *     'B' 'E'
+ *     'C' 'F'
+ *     3 will append the items such that:
+ *     'A' 'C' 'E'
+ *     'B' 'D' 'F'
  */
-SampleFilter.prototype.mountFilters = function() {
-    // declare variables used in iterators
+SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numberCols) {
+    var bootstrapColSize = 12/numberCols;
+    var displayCols = Math.ceil(uniqueValues.length/numberCols);
     var i;
-    var j;
-    var cols;
-    var element;
+    var j = 0;
 
-    // append plate checkboxes
-    j = 0;
-    cols = Math.ceil(this.uniquePlate.length/2);
-    for(i = 0; i < this.uniquePlate.length; i++) {
-        element = '#plate-' + (j+1);
-        $('<input />', { type: 'checkbox',
-            name: 'plate[' + [this.uniquePlate[i]] + ']',
-            value: true,
-            checked: true}).appendTo(element);
-        $('<label />', { 'for': this.uniquePlate[i], text: this.uniquePlate[i] }).appendTo(element);
-        $('<br />').appendTo(element);
+    // append a div with class row to contain the menu items
+    $('#' + label + '-filter').append('<div class="row">');
 
-        if((i+1) % cols === 0) {
-            j++;
-        }
+    // append a div for each column of the menu
+    for(i = 0; i < numberCols; i++) {
+        $('<div/>')
+            .attr('id', label + '-' + i)
+            .addClass('filter-item')
+            .addClass('col-md-' + bootstrapColSize)
+            .appendTo('#' + label + '-filter div:first')
     }
 
-    // append row checkboxes
-    j = 0;
-    cols = Math.ceil(this.uniqueRow.length/2);
-    for(i = 0; i < this.uniqueRow.length; i++) {
-        element = '#row-' + (j+1);
-        $('<input />', { type: 'checkbox',
-            name: 'row[' + [this.uniqueRow[i]] + ']',
-            value: true,
-            checked: true}).appendTo(element);
-        $('<label />', { 'for': this.uniqueRow[i], text: this.uniqueRow[i] }).appendTo(element);
-        $('<br />').appendTo(element);
+    //append items to each column in the menu
+    for(i = 0; i < uniqueValues.length; i++) {
+        var element = '#' + label + '-' + j;
 
-        if((i+1) % cols === 0) {
-            j++;
-        }
-    }
+        $('<input/>')
+            .attr('type', 'checkbox')
+            .attr('id', uniqueValues[i])
+            .attr('name', label + '[' + [uniqueValues[i]] + ']')
+            .attr('value', true)
+            .attr('checked', true)
+            .appendTo(element);
 
-    // append column checkboxes
-    j = 0;
-    cols = Math.ceil(this.uniqueCol.length/3);
-    for(i = 0; i < this.uniqueCol.length; i++) {
-        element = '#col-' + (j+1);
-        $('<input />', { type: 'checkbox',
-            name: 'column[' + [this.uniqueCol[i]] + ']',
-            value: true,
-            checked: true}).appendTo(element);
-        $('<label />', { 'for': this.uniqueCol[i], text: this.uniqueCol[i] }).appendTo(element);
-        $('<br />').appendTo(element);
+        $('<label/>')
+            .attr('for', uniqueValues[i])
+            .html(uniqueValues[i])
+            .appendTo(element);
 
-        if( (i+1) % cols === 0) {
+        $('<br/>').appendTo(element);
+
+        if((i+1) % displayCols === 0) {
             j++;
         }
     }
@@ -270,13 +270,16 @@ SampleFilter.prototype.applyFilter = function() {
     var filterQuery = $('form').serializeJSON();
 
     var rows = $.map(filterQuery.row, function(val, key) { return val; });
-    var cols = $.map(filterQuery.column, function(val, key) { return val; });
+    var cols = $.map(filterQuery.col, function(val, key) { return val; });
     var plates = $.map(filterQuery.plate, function(val, key) { return val; });
 
     var rowActive = rows.length < this.uniqueRow.length;
     var colActive = cols.length < this.uniqueCol.length;
     var plateActive = plates.length < this.uniquePlate.length;
     var geneActive = this.selectedGenes.length > 0;
+
+    console.log(filterQuery);
+    console.log(this.selectedGenes);
 
     if(geneActive || plateActive || rowActive || colActive) {
         $('#filter-button').addClass('filtering');
@@ -287,6 +290,7 @@ SampleFilter.prototype.applyFilter = function() {
     }
 
     // TODO apply filter here
+    console.log(filterQuery);
 };
 
 /**
