@@ -1,8 +1,11 @@
 var _ = require('lodash');
+var utils = require('./Utils.js');
 
-// add findByValues function to lodash namespace
+// add findByValues and uniqueData functions to lodash namespace
+// so they can be used in lodash chains
 _.mixin({
-    'findByValues': findByValues
+    'findByValues': utils.findByValues,
+    'uniqueData': utils.uniqueData
 });
 
 /**
@@ -14,15 +17,18 @@ _.mixin({
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
+ * @param {NeighbourPlot} neighbourPlot - The NeighbourPlot object that this
+ *     filter acts upon.
  */
-function SampleFilter(sampleData) {
+function SampleFilter(sampleData, neighbourPlot) {
     $('.filter-items').children().remove();
 
     this.data = sampleData;
-    this.uniqueCol = uniqueData(this.data, 'column');
-    this.uniqueRow = uniqueData(this.data, 'row');
-    this.uniquePlate = uniqueData(this.data, 'plate');
-    this.genes = uniqueData(this.data, 'gene_name');
+    this.neighbourPlot = neighbourPlot;
+    this.uniqueCol = _.uniqueData(this.data, 'column');
+    this.uniqueRow = _.uniqueData(this.data, 'row');
+    this.uniquePlate = _.uniqueData(this.data, 'plate');
+    this.genes = _.uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
 
     this.mountFilterComponent(this.uniqueCol, 'col', 3);
@@ -69,7 +75,7 @@ SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numb
             .attr('id', label + '-' + i)
             .addClass('filter-item')
             .addClass('col-md-' + bootstrapColSize)
-            .appendTo('#' + label + '-filter div:first')
+            .appendTo('#' + label + '-filter div:first');
     }
 
     //append items to each column in the menu
@@ -237,7 +243,7 @@ SampleFilter.prototype.updateGeneList = function() {
     var genesToDisplay;
 
     if(pattern) {
-        genesToDisplay = _.filter(this.genes, regexFilter(pattern));
+        genesToDisplay = _.filter(this.genes, utils.regexFilter(pattern));
     }
     else {
         genesToDisplay = this.genes;
@@ -267,77 +273,50 @@ SampleFilter.prototype.updateSelectedGeneList = function() {
 };
 
 /**
- * applyFilter: Apply current filter parameters to dataset and update plots.
+ * applyFilter: Apply current filter parameters to dataset and update plot.
+ *
+ * Read selected values from filter menu, parse the values, filter the dataset
+ * then update the neighbourPlot with the new filtered data.
  *
  * @this {SampleFilter}
  */
 SampleFilter.prototype.applyFilter = function() {
+    // parse the data from the filter menu
     var filterQuery = $('form').serializeJSON();
+    var rows = _.keys(filterQuery.row);
+    var cols = _.keys(filterQuery.col);
+    var plates = _.keys(filterQuery.plate);
 
-    var rows = $.map(filterQuery.row, function(val, key) { return val; });
-    var cols = $.map(filterQuery.col, function(val, key) { return val; });
-    var plates = $.map(filterQuery.plate, function(val, key) { return val; });
+    // need to read the plates as integers
+    plates = _.map(plates, function(d) { return +d; });
 
     var rowActive = rows.length < this.uniqueRow.length;
     var colActive = cols.length < this.uniqueCol.length;
     var plateActive = plates.length < this.uniquePlate.length;
     var geneActive = this.selectedGenes.length > 0;
 
-    console.log(filterQuery);
-    console.log(this.selectedGenes);
-
+    // apply filter and re-draw plot when filter active
     if(geneActive || plateActive || rowActive || colActive) {
         $('#filter-button').addClass('filtering');
+
+        var result = _.chain(this.data)
+            .findByValues('column', cols)
+            .findByValues('row', rows)
+            .findByValues('plate', plates);
+
+        if(geneActive) {
+            result = result.findByValues('gene_name', this.selectedGenes);
+        }
+
+        this.neighbourPlot.updatePlot(result.value());
     }
 
+    // add all data back to plot when filters empty
     if(!geneActive && !plateActive && !rowActive && !colActive) {
         $('#filter-button').removeClass('filtering');
+        this.neighbourPlot.updatePlot(this.data);
     }
 
-    // TODO apply filter here
-    console.log(filterQuery);
 };
-
-/**
- * regexFilter: Return regex function for use in filter.
- *
- * The function returned returns true if the query pattern is contained
- * in the element given to it. Case insensitive.
- *
- * @param {string} pattern - The query pattern.
- * @returns {Function} - The query function.
- */
-function regexFilter(pattern) {
-    return function(element) {
-        return element.match(new RegExp(pattern, 'i'));
-    };
-}
-
-/**
- * uniqueData: Return all unique data values.
- *
- * Given an array of objects, find all unique values for a specified key.
- * Uses lodash chained lodash methods.
- *
- * @param {array} data - An array of objects.
- * @param {string} key - The key to find the unique values of.
- * @returns {array} - An array of unique values.
- */
-function uniqueData(data, field) {
-    return _.uniq(_.pluck(_.flatten(data), field)).sort();
-}
-
-/**
- * findByValues: Filter an array of objects on multiple values of a property.
- *
- * @param {array} collection - An array of objects.
- * @param {string} property - The object property to filter on.
- * @param {array} values - An array of values to filter the data.
- */
-function findByValues(collection, property, values) {
-    return _.filter(collection, function(item) {
-        return _.contains(values, item[property]);
-    });
-}
 
 module.exports = SampleFilter;

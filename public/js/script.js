@@ -74,12 +74,12 @@ function selectScreen(screen_id) {
 
 function mountPlots(screenData, sampleData, featureNames) {
     updateTab(screenData);
-    var filter = new Filter(sampleData);
     var neighbourImages = new NeighbourImages(sampleData[0]._id);
     var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
     var lineplot = new Lineplot(sampleData, '#lineplot', histogram);
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot', lineplot, neighbourImages);
     var clusterPlot = new ClusterPlot(sampleData, '#clusterpcaplot');
+    var filter = new Filter(sampleData, neighbourPlot);
 }
 
 // update summary tab

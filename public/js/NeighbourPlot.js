@@ -55,24 +55,24 @@ NeighbourPlot.prototype.drawScatterplot = function() {
     var yMax = d3.max(this.sampleData, function(d) { return d.pca[1]; });
 
     // setup scales and axis
-    var xScale = d3.scale.linear()
+    self.xScale = d3.scale.linear()
         .domain([xMin-1, xMax+1])
         .range([0, self.width]);
     var xAxis = d3.svg.axis()
-        .scale(xScale)
+        .scale(self.xScale)
         .ticks(self.xAxisTicks)
         .orient('bottom');
 
-    var yScale = d3.scale.linear()
+    self.yScale = d3.scale.linear()
         .domain([yMin-1, yMax+1])
         .range([self.height, 0]);
     var yAxis = d3.svg.axis()
-        .scale(yScale)
+        .scale(self.yScale)
         .ticks(self.yAxisTicks)
         .orient('left');
 
     // tooltip function
-    var tip = d3.tip()
+    self.tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
@@ -81,23 +81,23 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         });
 
     // setup canvas
-    var svg = d3.select(this.element).append('svg')
+    self.svg = d3.select(this.element).append('svg')
         .attr('width', self.fullWidth)
         .attr('height', self.fullHeight)
         .append('g')
         .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
-        .call(tip);
+        .call(self.tip);
 
     // add points
-    svg.selectAll('circle')
+    self.svg.selectAll('circle')
         .data(self.sampleData)
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return xScale(d.pca[0]);
+            return self.xScale(d.pca[0]);
         })
         .attr('cy', function(d) {
-            return yScale(d.pca[1]);
+            return self.yScale(d.pca[1]);
         })
         .attr('r', 5)
         .classed('scatterpt', true)
@@ -106,8 +106,8 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .attr('id', function(d) {
             return d._id;
         })
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide)
+        .on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide)
         .on('click', function(d, i) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
@@ -116,22 +116,22 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         });
 
     // append axis
-    svg.append('g')
+    self.svg.append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + self.height + ')')
         .call(xAxis);
 
-    svg.append('g')
+    self.svg.append('g')
         .attr('class', 'y axis')
         .call(yAxis);
 
     // append axis labels
-    svg.append('text')
+    self.svg.append('text')
         .attr('transform', 'translate(' + (self.width / 2) + ' ,' + (self.height + self.margin.bottom) + ')')
         .style('text-anchor', 'middle')
         .text('PC1');
 
-    svg.append('text')
+    self.svg.append('text')
         .attr('transform', 'rotate(-90)')
         .attr('y', 0 - self.margin.left)
         .attr('x', 0 - self.height/2)
@@ -194,6 +194,76 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
         .transition()
         .duration(self.transitionDuration)
         .attr('r', self.activePointRadius);
+};
+
+/**
+ * updatePlot: Re-render plot data points given a new set of data.
+ *
+ * Uses D3 enter-update-select pattern to update the plot datapoints.
+ *
+ * @this {NeighbourPlot}
+ * @param {array} newData - The new dataset to display.
+ */
+NeighbourPlot.prototype.updatePlot = function(newData) {
+    var self = this;
+
+    var points = self.svg.selectAll('circle')
+        .data(newData);
+
+    // update - Handle the data that has already been plotted.
+    points
+        .attr('cx', function(d) {
+            return self.xScale(d.pca[0]);
+        })
+        .attr('cy', function(d) {
+            return self.yScale(d.pca[1]);
+        })
+        .attr('r', 5)
+        .classed('scatterpt', true)
+        .classed('activept', false)
+        .classed('neighbourpt', false)
+        .attr('id', function(d) {
+            return d._id;
+        })
+        .on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide)
+        .on('click', function(d) {
+            var selection = d3.select(this);
+            if(!selection.classed('activept')) {
+                self.updatePoint(selection, d);
+            }
+        });
+
+    // enter - Handle the data entering the plot in this update.
+    points
+        .enter()
+        .append('circle')
+        .attr('cx', function(d) {
+            return self.xScale(d.pca[0]);
+        })
+        .attr('cy', function(d) {
+            return self.yScale(d.pca[1]);
+        })
+        .attr('r', 5)
+        .classed('scatterpt', true)
+        .classed('activept', false)
+        .classed('neighbourpt', false)
+        .attr('id', function(d) {
+            return d._id;
+        })
+        .on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide)
+        .on('click', function(d) {
+            var selection = d3.select(this);
+            if(!selection.classed('activept')) {
+                self.updatePoint(selection, d);
+            }
+        });
+
+    // exit - Handle the data that will not be plotted in this update.
+    points
+        .exit()
+        .remove();
 };
 
 /**
