@@ -25,6 +25,13 @@ Then then run this locally using grunt.
 $ grunt
 ```
 
+If you don't have the `grunt` command in your path, you can install it
+with:
+
+```console
+$ sudo npm install -g grunt-cli
+```
+
 The dev gruntfile is currently configured to run the following tasks:
 * Run JSHint with [default settings](https://github.com/jshint/jshint/blob/master/examples/.jshintrc)
 with the following excepions:
