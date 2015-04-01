@@ -124,25 +124,19 @@ SampleFilter.prototype.mountEventListeners = function() {
         self.removeFromFilter();
     });
 
-    // attach enter key listener to text input box
-    $('#gene-filter-text').on('keypress', function(event) {
-        if(event.which === 13) {
+    // attach enter key and doubleclick listener to select box
+    // using $(parent).on(event, element, function) as events must be bound to
+    // elements that may not exist at time of page rendering
+    $('#filter-menu').on('keydown dblclick', '#gene-select', function(event) {
+        if(event.which === 13 || event.type === 'dblclick') {
             event.preventDefault();
             self.addToFilter();
         }
     });
 
-    // attach enter key listener to select box
-    $('#gene-select').on('keypress', function(event) {
-        if(event.which === 13) {
-            event.preventDefault();
-            self.addToFilter();
-        }
-    });
-
-    // attach enter key listener to selected box
-    $('#gene-selected').on('keypress', function(event) {
-        if(event.which === 13) {
+    // attach enter key and double listener to selected box
+    $('#filter-menu').on('keydown dblclick', '#gene-selected', function(event) {
+        if(event.which === 13 || 'dblclick') {
             event.preventDefault();
             self.removeFromFilter();
         }
