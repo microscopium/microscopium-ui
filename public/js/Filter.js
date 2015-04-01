@@ -151,7 +151,7 @@ SampleFilter.prototype.mountEventListeners = function() {
     $('#filter-form').on('reset', function(event) {
         event.preventDefault();
         // reset all checkboxes
-        $(':checkbox').prop('checked', true);
+        $('#filter-form input[type="checkbox"]').prop('checked', true);
 
         // reset gene filter boxes, then apply filter
         self.resetGeneFilter();
@@ -159,7 +159,7 @@ SampleFilter.prototype.mountEventListeners = function() {
     });
 
     // update filter when checkbox (un)selected
-    $(':checkbox').on('change', function(event) {
+    $('#filter-form input[type="checkbox"]').on('change', function(event) {
         self.applyFilter();
     });
 
