@@ -155,6 +155,7 @@ SampleFilter.prototype.mountEventListeners = function() {
 
     // attach additional behavior to reset button
     $('#filter-form').on('reset', function() {
+        $('#gene-filter-text').val(null);
         self.resetGeneFilter();
     });
 
