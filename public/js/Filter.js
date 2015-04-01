@@ -147,14 +147,19 @@ SampleFilter.prototype.mountEventListeners = function() {
         self.updateGeneList();
     });
 
-    // attach additional behavior to reset button
-    $('#filter-form').on('reset', function() {
-        $('#gene-filter-text').val(null);
+    // define behaviour for reset button
+    $('#filter-form').on('reset', function(event) {
+        event.preventDefault();
+        // reset all checkboxes
+        $(':checkbox').prop('checked', true);
+
+        // reset gene filter boxes, then apply filter
         self.resetGeneFilter();
+        self.applyFilter();
     });
 
     // update filter when checkbox (un)selected
-    $(':checkbox').on('change', function() {
+    $(':checkbox').on('change', function(event) {
         self.applyFilter();
     });
 
