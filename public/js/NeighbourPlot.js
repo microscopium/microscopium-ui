@@ -140,8 +140,8 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .text('PC2');
 
     // default select first point
-    var firstPoint = d3.select('.scatterpt');
-    self.updatePoint(firstPoint, firstPoint.data()[0],  0);
+    var first = d3.select('.scatterpt');
+    self.updatePoint(first, this.sampleData[0])
 };
 
 /**
@@ -155,15 +155,12 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  * @param {d3-selection} selection - The d3 selection object from the
  *     clicked scatterplot point.
  * @param {object} d - The datum attached to the clicked scatterplot point.
- * @param {number} i - The index of the clicked scatterplot point.
- *
  */
-NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
+NeighbourPlot.prototype.updatePoint = function(selection, d) {
     var self = this;
 
-    // update neighbour images
     self.neighbourImages.getImages(d._id);
-    self.lineplot.drawLineplot(i);
+    self.lineplot.drawLineplot(d._id);
 
     d3.selectAll('.activept')
         .classed('activept', false)
