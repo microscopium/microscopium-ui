@@ -261,44 +261,63 @@
 <!-- SIDEBAR CONTENT -->
 <!-- See http://plugins.adchsm.me/slidebars/ for additional info -->
 <div class="sb-style-overlay sb-slidebar sb-right">
-    <div class="container-fluid">
     <form role="form" id="filter-form">
-        <nav class="navbar navbar-inverse" role="navigation">
-        <ul id="filter-menu" class="nav nav-stacked">
-            <li>
-                <a href="#gene-filter" data-toggle="collapse">Gene</a>
-                <div class="collapse in container filter-content" id="gene-filter">
-                    <input id="gene-filter-text" type="text" size="10">
-                    <select id="gene-select" size="10"></select>
-                    <div class="container-fluid filter-arrows">
-                        <i id="filter-add" class="fa fa-chevron-down fa-2x"></i>
-                        <i id="filter-remove" class="fa fa-chevron-up fa-2x"></i>
+        <div id="filter-menu" class="container panel-group">
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <a data-toggle="collapse" data-parent="#filter-menu" href="#gene-menu">
+                        Gene
+                    </a>
+                </div>
+                <div id="gene-menu" class="collapse">
+                    <div class="panel-body">
+                        <input id="gene-filter-text" type="text">
+                        <select id="gene-select" size="7"></select>
+                        <div class="container-fluid filter-arrows">
+                            <i id="filter-add" class="fa fa-chevron-down fa-2x"></i>
+                            <i id="filter-remove" class="fa fa-chevron-up fa-2x"></i>
+                        </div>
+                        <select id="gene-selected" size="7"></select>
                     </div>
-                    <select id="gene-selected" size="10"></select>
                 </div>
-            </li>
-            <li>
-                <a href="#plate-filter" data-toggle="collapse">Plate</a>
-                <div class="collapse container-fluid filter-content" id="plate-filter">
+            </div>
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <a data-toggle="collapse" data-parent="#filter-menu" href="#plate-menu">
+                        Plate
+                    </a>
                 </div>
-            </li>
-            <li>
-                <a href="#row-filter" data-toggle="collapse">Row</a>
-                <div class="collapse container filter-content" id="row-filter">
+                <div id="plate-menu" class="collapse">
+                    <div id="plate-filter" class="panel-body">
+                    </div>
                 </div>
-            </li>
-            <li>
-                <a href="#col-filter" data-toggle="collapse">Column</a>
-                <div class="collapse container filter-content" id="col-filter">
+            </div>
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <a data-toggle="collapse" data-parent="#filter-menu" href="#row-menu">
+                        Row
+                    </a>
                 </div>
-            </li>
-        </ul>
-        </nav>
-        <div class="container-fluid submit-buttons">
+                <div id="row-menu" class="collapse">
+                    <div id="row-filter" class="panel-body">
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <a data-toggle="collapse" data-parent="#filter-menu" href="#column-menu">
+                        Column
+                    </a>
+                </div>
+                <div id="column-menu" class="collapse">
+                    <div id="col-filter" class="panel-body">
+                    </div>
+                </div>
+            </div>
             <button type="reset" value="Reset" id="filter-reset">Reset</button>
         </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 </body>
 <!-- BROWSERIFIED FILES -->
