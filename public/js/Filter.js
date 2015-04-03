@@ -67,6 +67,7 @@ SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numb
     var j = 0;
 
     // append a div with class row to contain the menu items
+    $('#' + label + '-filter').children().remove();
     $('#' + label + '-filter').append('<div class="row">');
 
     // append a div for each column of the menu
@@ -136,7 +137,7 @@ SampleFilter.prototype.mountEventListeners = function() {
 
     // attach enter key and double listener to selected box
     $('#filter-menu').on('keydown dblclick', '#gene-selected', function(event) {
-        if(event.which === 13 || 'dblclick') {
+        if(event.which === 13 || event.type === 'dblclick') {
             event.preventDefault();
             self.removeFromFilter();
         }
@@ -163,11 +164,17 @@ SampleFilter.prototype.mountEventListeners = function() {
         self.applyFilter();
     });
 
-    // allow only one menu open at a time
-    $('#filter-menu a').on('click', function() {
-        if(!$(this).next().hasClass('in')) {
-            $('#filter-menu a').next().removeClass('in');
-        }
+    // automatically focus on textbox when menu opened
+    $('#filter-button').on('click', function() {
+        $('#gene-filter-text').focus();
+    });
+
+    $('a[href="#gene-menu"').on('click', function() {
+        // see http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
+        // for an explanation of this hack
+        setTimeout(function() {
+            $('#gene-filter-text').focus();
+        }, 0)
     });
 };
 
