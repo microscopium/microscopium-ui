@@ -264,12 +264,12 @@
     <form role="form" id="filter-form">
         <div id="filter-menu" class="container panel-group">
             <div class="panel">
-                <div class="panel-heading" role="tab" id="headingOne">
+                <div class="panel-heading" role="tab">
                     <a data-toggle="collapse" data-parent="#filter-menu" href="#gene-menu">
                         Gene
                     </a>
                 </div>
-                <div id="gene-menu" class="collapse">
+                <div id="gene-menu" class="collapse in">
                     <div class="panel-body">
                         <input id="gene-filter-text" type="text">
                         <select id="gene-select" size="7"></select>
@@ -282,7 +282,7 @@
                 </div>
             </div>
             <div class="panel">
-                <div class="panel-heading" role="tab" id="headingOne">
+                <div class="panel-heading" role="tab">
                     <a data-toggle="collapse" data-parent="#filter-menu" href="#plate-menu">
                         Plate
                     </a>
@@ -293,7 +293,7 @@
                 </div>
             </div>
             <div class="panel">
-                <div class="panel-heading" role="tab" id="headingOne">
+                <div class="panel-heading" role="tab">
                     <a data-toggle="collapse" data-parent="#filter-menu" href="#row-menu">
                         Row
                     </a>
@@ -304,7 +304,7 @@
                 </div>
             </div>
             <div class="panel">
-                <div class="panel-heading" role="tab" id="headingOne">
+                <div class="panel-heading" role="tab">
                     <a data-toggle="collapse" data-parent="#filter-menu" href="#column-menu">
                         Column
                     </a>
@@ -314,8 +314,7 @@
                     </div>
                 </div>
             </div>
-            <button type="reset" value="Reset" id="filter-reset">Reset</button>
-        </div>
+            <button id="filter-reset" type="reset" value="Reset">Reset</button>
         </div>
     </form>
 </div>

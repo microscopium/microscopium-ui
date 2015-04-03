@@ -70,6 +70,10 @@
     width: 100%;
 }
 
+#filter-reset {
+    margin-left: 15px;
+}
+
 .header {
     font-weight: bold;
 }

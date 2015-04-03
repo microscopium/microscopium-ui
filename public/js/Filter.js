@@ -174,7 +174,7 @@ SampleFilter.prototype.mountEventListeners = function() {
         // for an explanation of this hack
         setTimeout(function() {
             $('#gene-filter-text').focus();
-        }, 0)
+        }, 400)
     });
 };
 
