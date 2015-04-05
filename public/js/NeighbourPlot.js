@@ -88,33 +88,6 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
         .call(self.tip);
 
-    // add points
-    self.svg.selectAll('circle')
-        .data(self.sampleData)
-        .enter()
-        .append('circle')
-        .attr('cx', function(d) {
-            return self.xScale(d.pca[0]);
-        })
-        .attr('cy', function(d) {
-            return self.yScale(d.pca[1]);
-        })
-        .attr('r', 5)
-        .classed('scatterpt', true)
-        .classed('activept', false)
-        .classed('neighbourpt', false)
-        .attr('id', function(d) {
-            return d._id;
-        })
-        .on('mouseover', self.tip.show)
-        .on('mouseout', self.tip.hide)
-        .on('click', function(d, i) {
-            var selection = d3.select(this);
-            if(!selection.classed('activept')) {
-                self.updatePoint(selection, d, i);
-            }
-        });
-
     // append axis
     self.svg.append('g')
         .attr('class', 'x axis')
@@ -138,6 +111,9 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .text('PC2');
+
+    // draw plot
+    self.updatePlot(this.sampleData);
 
     // default select first point
     var first = d3.select('.scatterpt');
