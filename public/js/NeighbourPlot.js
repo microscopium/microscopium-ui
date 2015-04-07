@@ -1,5 +1,26 @@
 var d3 = require('d3');
+var _ = require('lodash');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
+
+/**
+ * Move to back: Move elements to bottom of parent node.
+ *
+ * SVG elements have no notion of a z-index, elements are
+ * rendered with respect to their order of appearance in the DOM.
+ * In order move elements to the bottom, we need to remove them
+ * from the DOM, then add them again to the parent. This function
+ * extends the d3 selection object to do just that.
+ *
+ * @this {d3.selection}
+ */
+d3.selection.prototype.moveToBack = function() {
+    return this.each(function() {
+        var firstChild = this.parentNode.firstChild;
+        if (firstChild) {
+            this.parentNode.insertBefore(this, firstChild);
+        }
+    });
+};
 
 /**
  * NeighbourPlot: Object to draw scatterplot of dimension reduced data.
@@ -29,7 +50,7 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.activePointRadius = 7;
     this.xAxisTicks = 10;
     this.yAxisTicks = 10;
-    this.filteredOpacity = 0.3;
+    this.filteredOpacity = 0.5;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
@@ -125,7 +146,31 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .text('PC2');
 
     // draw plot
-    self.updatePlot(this.sampleData);
+    self.svg.selectAll('circle')
+        .data(this.sampleData)
+        .enter()
+        .append('circle')
+        .attr('cx', function(d) {
+            return self.xScale(d.pca[0]);
+        })
+        .attr('cy', function(d) {
+            return self.yScale(d.pca[1]);
+        })
+        .attr('r', 5)
+        .classed('scatterpt', true)
+        .classed('activept', false)
+        .classed('neighbourpt', false)
+        .attr('id', function(d) {
+            return d._id;
+        })
+        .on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide)
+        .on('click', function(d) {
+            var selection = d3.select(this);
+            if(!selection.classed('activept')) {
+                self.updatePoint(selection, d);
+            }
+        });
 
     // default select first point
     var first = d3.select('.scatterpt');
@@ -191,64 +236,19 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
  */
 NeighbourPlot.prototype.updatePlot = function(newData) {
     var self = this;
+    var ids = _.pluck(newData, '_id');
 
-    var points = self.svg.selectAll('circle')
-        .data(newData);
-
-    // update - Handle the data that has already been plotted.
-    points
-        .attr('cx', function(d) {
-            return self.xScale(d.pca[0]);
+    self.svg.selectAll('circle')
+        .attr('opacity', 1)
+        .style('stroke-width', 1)
+        .attr('filter', null)
+        .filter(function (d) {
+            return !_.contains(ids, d._id)
         })
-        .attr('cy', function(d) {
-            return self.yScale(d.pca[1]);
-        })
-        .attr('r', 5)
-        .classed('scatterpt', true)
-        .classed('activept', false)
-        .classed('neighbourpt', false)
-        .attr('id', function(d) {
-            return d._id;
-        })
-        .on('mouseover', self.tip.show)
-        .on('mouseout', self.tip.hide)
-        .on('click', function(d) {
-            var selection = d3.select(this);
-            if(!selection.classed('activept')) {
-                self.updatePoint(selection, d);
-            }
-        });
-
-    // enter - Handle the data entering the plot in this update.
-    points
-        .enter()
-        .append('circle')
-        .attr('cx', function(d) {
-            return self.xScale(d.pca[0]);
-        })
-        .attr('cy', function(d) {
-            return self.yScale(d.pca[1]);
-        })
-        .attr('r', 5)
-        .classed('scatterpt', true)
-        .classed('activept', false)
-        .classed('neighbourpt', false)
-        .attr('id', function(d) {
-            return d._id;
-        })
-        .on('mouseover', self.tip.show)
-        .on('mouseout', self.tip.hide)
-        .on('click', function(d) {
-            var selection = d3.select(this);
-            if(!selection.classed('activept')) {
-                self.updatePoint(selection, d);
-            }
-        });
-
-    // exit - Handle the data that will not be plotted in this update.
-    points
-        .exit()
-        .remove();
+            .attr('opacity', self.filteredOpacity)
+            .style('stroke-width', 0)
+            .attr('filter', 'url(#constantOpacity)')
+            .moveToBack()
 };
 
 /**
