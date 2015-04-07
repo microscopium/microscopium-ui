@@ -29,6 +29,7 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.activePointRadius = 7;
     this.xAxisTicks = 10;
     this.yAxisTicks = 10;
+    this.filteredOpacity = 0.3;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
@@ -87,6 +88,17 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .append('g')
         .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
         .call(self.tip);
+
+    // add filter transfer function
+    // when this transformation is applied to an element, or group of elements,
+    // the opacity will increase when elements with the same filter overlap.
+    self.svg.append('defs')
+        .append('filter')
+        .attr('id', 'constantOpacity')
+        .append('feComponentTransfer')
+        .append('feFuncA')
+        .attr('type', 'table')
+        .attr('tableValues', '0 ' + this.filteredOpacity + ' ' + this.filteredOpacity);
 
     // append axis
     self.svg.append('g')
