@@ -169,7 +169,7 @@ SampleFilter.prototype.mountEventListeners = function() {
         $('#gene-filter-text').focus();
     });
 
-    $('a[href="#gene-menu"').on('click', function() {
+    $('a[href*="gene-menu"]').on('click', function() {
         // see http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
         // for an explanation of this hack
         setTimeout(function() {
