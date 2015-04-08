@@ -125,10 +125,11 @@ SampleFilter.prototype.mountEventListeners = function() {
         self.removeFromFilter();
     });
 
+    var $filterMenu = $('#filter-menu');
     // attach enter key and doubleclick listener to select box
     // using $(parent).on(event, element, function) as events must be bound to
     // elements that may not exist at time of page rendering
-    $('#filter-menu').on('keydown dblclick', '#gene-select', function(event) {
+    $filterMenu.on('keydown dblclick', '#gene-select', function(event) {
         if(event.which === 13 || event.type === 'dblclick') {
             event.preventDefault();
             self.addToFilter();
@@ -136,23 +137,42 @@ SampleFilter.prototype.mountEventListeners = function() {
     });
 
     // attach enter key and double listener to selected box
-    $('#filter-menu').on('keydown dblclick', '#gene-selected', function(event) {
+    $filterMenu.on('keydown dblclick', '#gene-selected', function(event) {
         if(event.which === 13 || event.type === 'dblclick') {
             event.preventDefault();
             self.removeFromFilter();
         }
     });
 
+    var $geneSelect = $('#gene-select');
+    var $geneFilterText = $('#gene-filter-text');
     // update treatment 'search' value on input, paste
-    $('#gene-filter-text').on('change keyup paste', function() {
+    $geneFilterText.on('change keyup paste', function() {
         self.updateGeneList();
+        var value = $($geneSelect, 'option:first').val();
+        $geneSelect.val(value);
+
+    });
+
+    // update selected gene when enter pressed on textbox
+    $geneFilterText.on('keypress', function() {
+        if(event.which === 13) {
+            console.log('fart');
+            self.addToFilter();
+        }
+    });
+
+    var $filterForm = $('#filter-form');
+    // prevent submit event from triggering
+    $filterForm.on('submit', function(event) {
+        event.preventDefault();
     });
 
     // define behaviour for reset button
-    $('#filter-form').on('reset', function(event) {
+    $filterForm.on('reset', function(event) {
         event.preventDefault();
         // reset all checkboxes
-        $('#filter-form input[type="checkbox"]').prop('checked', true);
+        $($filterForm, 'input[type="checkbox"]').prop('checked', true);
 
         // reset gene filter boxes, then apply filter
         self.resetGeneFilter();
@@ -160,20 +180,20 @@ SampleFilter.prototype.mountEventListeners = function() {
     });
 
     // update filter when checkbox (un)selected
-    $('#filter-form input[type="checkbox"]').on('change', function(event) {
+    $($filterForm, 'input[type="checkbox"]').on('change', function(event) {
         self.applyFilter();
     });
 
     // automatically focus on textbox when menu opened
     $('#filter-button').on('click', function() {
-        $('#gene-filter-text').focus();
+        $geneFilterText.focus();
     });
 
     $('a[href*="gene-menu"]').on('click', function() {
         // see http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
         // for an explanation of this hack
         setTimeout(function() {
-            $('#gene-filter-text').focus();
+            $geneFilterText.focus();
         }, 400)
     });
 };
@@ -187,7 +207,12 @@ SampleFilter.prototype.mountEventListeners = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.addToFilter = function() {
+
     var value = $('#gene-select option:selected').val();
+    if(!value) {
+        var value = $('#gene-select option:first').val();
+    }
+
     var nextValue =  $('#gene-select option:selected').next().val();
     var index = this.genes.indexOf(value);
 
