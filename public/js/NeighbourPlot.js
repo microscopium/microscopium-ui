@@ -3,22 +3,21 @@ var _ = require('lodash');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
 
 /**
- * Move to back: Move elements to bottom of parent node.
+ * moveToFront: Move elements to front of SVG stack.
  *
- * SVG elements have no notion of a z-index, elements are
+ * Unlike CSS, SVG elements have no notion of a z-index. Elements are
  * rendered with respect to their order of appearance in the DOM.
- * In order move elements to the bottom, we need to remove them
- * from the DOM, then add them again to the parent. This function
- * extends the d3 selection object to do just that.
+ * In order move elements to the top, we need to remove them
+ * from the DOM, then add them again as the first child of their parent.
+ * This function extends the d3 selection object to do just that.
+ *
+ * This is an example of where prototypical inheritance is awesome!
  *
  * @this {d3.selection}
  */
-d3.selection.prototype.moveToBack = function() {
-    return this.each(function() {
-        var firstChild = this.parentNode.firstChild;
-        if (firstChild) {
-            this.parentNode.insertBefore(this, firstChild);
-        }
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+        this.parentNode.appendChild(this);
     });
 };
 
@@ -50,7 +49,7 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.activePointRadius = 7;
     this.xAxisTicks = 10;
     this.yAxisTicks = 10;
-    this.filteredOpacity = 0.5;
+    this.filteredOpacity = 0.25;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
@@ -109,17 +108,6 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .append('g')
         .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
         .call(self.tip);
-
-    // add filter transfer function
-    // when this transformation is applied to an element, or group of elements,
-    // the opacity will increase when elements with the same filter overlap.
-    self.svg.append('defs')
-        .append('filter')
-        .attr('id', 'constantOpacity')
-        .append('feComponentTransfer')
-        .append('feFuncA')
-        .attr('type', 'table')
-        .attr('tableValues', '0 ' + this.filteredOpacity + ' ' + this.filteredOpacity);
 
     // append axis
     self.svg.append('g')
@@ -236,20 +224,26 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
  */
 NeighbourPlot.prototype.updatePlot = function(newData) {
     var self = this;
-    var ids = _.pluck(newData, '_id');
 
-    self.svg.selectAll('circle')
-        .attr('opacity', 1)
-        .style('stroke-width', 1)
-        .attr('filter', null)
-        .filter(function (d) {
-            return !_.contains(ids, d._id)
-        })
-            .attr('opacity', self.filteredOpacity)
-            .style('stroke-width', 0)
-            .attr('filter', 'url(#constantOpacity)')
-            .moveToBack()
+    if(this.sampleData.length === newData.length) {
+        self.svg.selectAll('circle')
+            .attr('opacity')
+            .style('stroke-width', 1)
+    }
+    else {
+        self.svg.selectAll('circle')
+            .attr('opacity', this.filteredOpacity)
+            .style('stroke-width', 0);
+
+        for(var i = 0; i < newData.length; i++) {
+            d3.select('[id=' + newData[i]._id + ']')
+                .attr('opacity', 1)
+                .style('stroke-width', 1)
+                .moveToFront()
+        }
+    }
 };
+
 
 /**
  * destroy: Remove all child SVG elements of the plot objects containing div.

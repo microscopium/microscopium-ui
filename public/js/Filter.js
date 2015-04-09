@@ -8,6 +8,18 @@ _.mixin({
     'uniqueData': utils.uniqueData
 });
 
+// cache all jQuery selectors where possible.
+// see: http://ttmm.io/tech/selector-caching-jquery/
+var $filterButton = $('#filter-button');
+var $filterMenu = $('#filter-menu');
+var $geneSelect = $('#gene-select');
+var $geneSelected = $('#gene-selected');
+var $geneFilterText = $('#gene-filter-text');
+var $filterForm = $('#filter-form');
+var $filterAdd = $('#filter-add');
+var $filterRemove = $('#filter-remove');
+
+
 /**
  * SampleFilter: Setup sample filter.
  *
@@ -21,8 +33,6 @@ _.mixin({
  *     filter acts upon.
  */
 function SampleFilter(sampleData, neighbourPlot) {
-    $('.filter-items').children().remove();
-
     this.data = sampleData;
     this.neighbourPlot = neighbourPlot;
     this.uniqueCol = _.uniqueData(this.data, 'column');
@@ -31,12 +41,19 @@ function SampleFilter(sampleData, neighbourPlot) {
     this.genes = _.uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
 
+    // reset filter before mounting
+    $('.filter-menu-item').children().remove();
+    $geneSelect.children().remove();
+    $geneSelected.children().remove();
+    $filterButton.removeClass('filtering');
+
+    // mount filter components
     this.mountFilterComponent(this.uniqueCol, 'col', 3);
     this.mountFilterComponent(this.uniqueRow, 'row', 2);
     this.mountFilterComponent(this.uniquePlate, 'plate', 2);
     this.mountEventListeners();
     this.updateGeneList();
-    $('#filter-button').removeClass('hidden');
+    $filterButton.removeClass('hidden');
 }
 
 /**
@@ -67,8 +84,9 @@ SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numb
     var j = 0;
 
     // append a div with class row to contain the menu items
-    $('#' + label + '-filter').children().remove();
-    $('#' + label + '-filter').append('<div class="row">');
+    var $labelFilter = $('#' + label + '-filter');
+    $labelFilter.children().remove();
+    $labelFilter.append('<div class="row">');
 
     // append a div for each column of the menu
     for(i = 0; i < numberCols; i++) {
@@ -116,16 +134,15 @@ SampleFilter.prototype.mountEventListeners = function() {
     var self = this;
 
     // add treatment to filter when arrow clicked
-    $('#filter-add').on('click', function() {
+    $filterAdd.on('click', function() {
         self.addToFilter();
     });
 
     // remove treatment from filter when arrow clicked
-    $('#filter-remove').on('click', function() {
+    $filterRemove.on('click', function() {
         self.removeFromFilter();
     });
 
-    var $filterMenu = $('#filter-menu');
     // attach enter key and doubleclick listener to select box
     // using $(parent).on(event, element, function) as events must be bound to
     // elements that may not exist at time of page rendering
@@ -144,25 +161,21 @@ SampleFilter.prototype.mountEventListeners = function() {
         }
     });
 
-    var $geneSelect = $('#gene-select');
-    var $geneFilterText = $('#gene-filter-text');
     // update treatment 'search' value on input, paste
     $geneFilterText.on('change keyup paste', function() {
         self.updateGeneList();
-        var value = $($geneSelect, 'option:first').val();
+        var value = $('#gene-select option:first').val();
         $geneSelect.val(value);
 
     });
 
     // update selected gene when enter pressed on textbox
-    $geneFilterText.on('keypress', function() {
+    $geneFilterText.on('keypress', function(event) {
         if(event.which === 13) {
-            console.log('fart');
             self.addToFilter();
         }
     });
 
-    var $filterForm = $('#filter-form');
     // prevent submit event from triggering
     $filterForm.on('submit', function(event) {
         event.preventDefault();
@@ -180,12 +193,12 @@ SampleFilter.prototype.mountEventListeners = function() {
     });
 
     // update filter when checkbox (un)selected
-    $($filterForm, 'input[type="checkbox"]').on('change', function(event) {
+    $('#filter-form input[type="checkbox"]').on('change', function(event) {
         self.applyFilter();
     });
 
     // automatically focus on textbox when menu opened
-    $('#filter-button').on('click', function() {
+    $filterButton.on('click', function() {
         $geneFilterText.focus();
     });
 
@@ -210,7 +223,7 @@ SampleFilter.prototype.addToFilter = function() {
 
     var value = $('#gene-select option:selected').val();
     if(!value) {
-        var value = $('#gene-select option:first').val();
+        value = $('#gene-select option:first').val();
     }
 
     var nextValue =  $('#gene-select option:selected').next().val();
@@ -223,7 +236,7 @@ SampleFilter.prototype.addToFilter = function() {
         this.updateSelectedGeneList();
     }
 
-    $('#gene-select').val(nextValue);
+    $geneSelect.val(nextValue);
     this.applyFilter();
 };
 
@@ -245,7 +258,7 @@ SampleFilter.prototype.removeFromFilter = function() {
         this.updateSelectedGeneList();
     }
 
-    $('#gene-selected').val(nextValue);
+    $geneSelected.val(nextValue);
     this.applyFilter();
 };
 
@@ -255,7 +268,7 @@ SampleFilter.prototype.removeFromFilter = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.resetGeneFilter = function() {
-    $('#gene-selected').children().remove();
+    $geneSelected.children().remove();
     this.genes.push.apply(this.genes, this.selectedGenes);
     this.genes.sort();
     this.selectedGenes = [];
@@ -269,9 +282,9 @@ SampleFilter.prototype.resetGeneFilter = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.updateGeneList = function() {
-    $('#gene-select').children().remove();
+    $geneSelect.children().remove();
 
-    var pattern = $('#gene-filter-text').val();
+    var pattern = $geneFilterText.val();
     var genesToDisplay;
 
     if(pattern) {
@@ -295,7 +308,7 @@ SampleFilter.prototype.updateGeneList = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.updateSelectedGeneList = function() {
-    $('#gene-selected').children().remove();
+    $geneSelected.children().remove();
 
     for(var i = 0; i < this.selectedGenes.length; i++) {
         $('<option />', {
@@ -314,7 +327,7 @@ SampleFilter.prototype.updateSelectedGeneList = function() {
  */
 SampleFilter.prototype.applyFilter = function() {
     // parse the data from the filter menu
-    var filterQuery = $('form').serializeJSON();
+    var filterQuery = $filterForm.serializeJSON();
     var rows = _.keys(filterQuery.row);
     var cols = _.keys(filterQuery.col);
     var plates = _.keys(filterQuery.plate);
@@ -329,7 +342,7 @@ SampleFilter.prototype.applyFilter = function() {
 
     // apply filter and re-draw plot when filter active
     if(geneActive || plateActive || rowActive || colActive) {
-        $('#filter-button').addClass('filtering');
+        $filterButton.addClass('filtering');
 
         var result = _.chain(this.data)
             .findByValues('column', cols)
@@ -345,7 +358,7 @@ SampleFilter.prototype.applyFilter = function() {
 
     // add all data back to plot when filters empty
     if(!geneActive && !plateActive && !rowActive && !colActive) {
-        $('#filter-button').removeClass('filtering');
+        $filterButton.removeClass('filtering');
         this.neighbourPlot.updatePlot(this.data);
     }
 
