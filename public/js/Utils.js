@@ -28,7 +28,7 @@ function regexFilter(pattern) {
  * Uses lodash chained lodash methods.
  *
  * @param {array} data - An array of objects.
- * @param {string} key - The key to find the unique values of.
+ * @param {string} field - The key to find the unique values of.
  * @returns {array} - An array of unique values.
  */
 function uniqueData(data, field) {
