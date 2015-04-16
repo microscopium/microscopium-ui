@@ -31,8 +31,6 @@ function Lineplot(sampleData, element, histogram) {
     this.margin = {top: 20, right: 30, bottom: 20, left: 45};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
-
-    this.drawLineplot(0);
 }
 
 /**
@@ -41,16 +39,16 @@ function Lineplot(sampleData, element, histogram) {
  * Draw the SVG canvas, axis and SVG path for the lineplot.
  *
  * @this {Lineplot}
- * @param {number} sample - The index of the sample being plotted in the
- *     sampleData array.
+ * @param {String} sampleId - The string ID of the sample to display.
  */
-Lineplot.prototype.drawLineplot = function(sample) {
+Lineplot.prototype.drawLineplot = function(sampleId) {
 
     var self = this;
 
     self.destroy();
 
-    var featureVector = this.sampleData[sample].feature_vector_std;
+    var sampleIndex = _.findIndex(this.sampleData, '_id', sampleId);
+    var featureVector = this.sampleData[sampleIndex].feature_vector_std;
 
     // get min/max x/y values -- needed for scaling axis/data
     var yMin = d3.min(featureVector);
@@ -131,7 +129,7 @@ Lineplot.prototype.drawLineplot = function(sample) {
         .attr('x', self.width/2)
         .attr('y', -5)
         .style('text-anchor', 'middle')
-        .text(this.sampleData[sample]._id);
+        .text(sampleId);
 
     // set active line
     self.updateActiveLine(this.activeFeature);

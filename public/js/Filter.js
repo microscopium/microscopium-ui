@@ -1,4 +1,24 @@
 var _ = require('lodash');
+var utils = require('./Utils.js');
+
+// add findByValues and uniqueData functions to lodash namespace
+// so they can be used in lodash chains
+_.mixin({
+    'findByValues': utils.findByValues,
+    'uniqueData': utils.uniqueData
+});
+
+// cache all jQuery selectors where possible.
+// see: http://ttmm.io/tech/selector-caching-jquery/
+var $filterButton = $('#filter-button');
+var $filterMenu = $('#filter-menu');
+var $geneSelect = $('#gene-select');
+var $geneSelected = $('#gene-selected');
+var $geneFilterText = $('#gene-filter-text');
+var $filterForm = $('#filter-form');
+var $filterAdd = $('#filter-add');
+var $filterRemove = $('#filter-remove');
+
 
 /**
  * SampleFilter: Setup sample filter.
@@ -9,23 +29,31 @@ var _ = require('lodash');
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
+ * @param {NeighbourPlot} neighbourPlot - The NeighbourPlot object that this
+ *     filter acts upon.
  */
-function SampleFilter(sampleData) {
-    $('.filter-items').children().remove();
-
+function SampleFilter(sampleData, neighbourPlot) {
     this.data = sampleData;
-    this.uniqueCol = uniqueData(this.data, 'column');
-    this.uniqueRow = uniqueData(this.data, 'row');
-    this.uniquePlate = uniqueData(this.data, 'plate');
-    this.genes = uniqueData(this.data, 'gene_name');
+    this.neighbourPlot = neighbourPlot;
+    this.uniqueCol = _.uniqueData(this.data, 'column');
+    this.uniqueRow = _.uniqueData(this.data, 'row');
+    this.uniquePlate = _.uniqueData(this.data, 'plate');
+    this.genes = _.uniqueData(this.data, 'gene_name');
     this.selectedGenes = [];
 
+    // reset filter before mounting
+    $('.filter-menu-item').children().remove();
+    $geneSelect.children().remove();
+    $geneSelected.children().remove();
+    $filterButton.removeClass('filtering');
+
+    // mount filter components
     this.mountFilterComponent(this.uniqueCol, 'col', 3);
     this.mountFilterComponent(this.uniqueRow, 'row', 2);
     this.mountFilterComponent(this.uniquePlate, 'plate', 2);
     this.mountEventListeners();
     this.updateGeneList();
-    $('#filter-button').removeClass('hidden');
+    $filterButton.removeClass('hidden');
 }
 
 /**
@@ -56,7 +84,9 @@ SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numb
     var j = 0;
 
     // append a div with class row to contain the menu items
-    $('#' + label + '-filter').append('<div class="row">');
+    var $labelFilter = $('#' + label + '-filter');
+    $labelFilter.children().remove();
+    $labelFilter.append('<div class="row">');
 
     // append a div for each column of the menu
     for(i = 0; i < numberCols; i++) {
@@ -64,7 +94,7 @@ SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numb
             .attr('id', label + '-' + i)
             .addClass('filter-item')
             .addClass('col-md-' + bootstrapColSize)
-            .appendTo('#' + label + '-filter div:first')
+            .appendTo('#' + label + '-filter div:first');
     }
 
     //append items to each column in the menu
@@ -104,59 +134,80 @@ SampleFilter.prototype.mountEventListeners = function() {
     var self = this;
 
     // add treatment to filter when arrow clicked
-    $('#filter-add').on('click', function() {
+    $filterAdd.on('click', function() {
         self.addToFilter();
     });
 
     // remove treatment from filter when arrow clicked
-    $('#filter-remove').on('click', function() {
+    $filterRemove.on('click', function() {
         self.removeFromFilter();
     });
 
-    // attach enter key listener to text input box
-    $('#gene-filter-text').on('keypress', function(event) {
-        if(event.which === 13) {
+    // attach enter key and doubleclick listener to select box
+    // using $(parent).on(event, element, function) as events must be bound to
+    // elements that may not exist at time of page rendering
+    $filterMenu.on('keydown dblclick', '#gene-select', function(event) {
+        if(event.which === 13 || event.type === 'dblclick') {
             event.preventDefault();
             self.addToFilter();
         }
     });
 
-    // attach enter key listener to select box
-    $('#gene-select').on('keypress', function(event) {
-        if(event.which === 13) {
-            event.preventDefault();
-            self.addToFilter();
-        }
-    });
-
-    // attach enter key listener to selected box
-    $('#gene-selected').on('keypress', function(event) {
-        if(event.which === 13) {
+    // attach enter key and double listener to selected box
+    $filterMenu.on('keydown dblclick', '#gene-selected', function(event) {
+        if(event.which === 13 || event.type === 'dblclick') {
             event.preventDefault();
             self.removeFromFilter();
         }
     });
 
     // update treatment 'search' value on input, paste
-    $('#gene-filter-text').on('change keyup paste', function() {
+    $geneFilterText.on('change keyup paste', function() {
         self.updateGeneList();
+        var value = $('#gene-select option:first').val();
+        $geneSelect.val(value);
+
     });
 
-    // attach additional behavior to reset button
-    $('#filter-form').on('reset', function() {
+    // update selected gene when enter pressed on textbox
+    $geneFilterText.on('keypress', function(event) {
+        if(event.which === 13) {
+            self.addToFilter();
+        }
+    });
+
+    // prevent submit event from triggering
+    $filterForm.on('submit', function(event) {
+        event.preventDefault();
+    });
+
+    // define behaviour for reset button
+    $filterForm.on('reset', function(event) {
+        event.preventDefault();
+        // reset all checkboxes
+        $('#filter-form input[type="checkbox"]').prop('checked', true);
+
+        // reset gene filter boxes, then apply filter
         self.resetGeneFilter();
-    });
-
-    // update filter when checkbox (un)selected
-    $(':checkbox').on('change', function() {
         self.applyFilter();
     });
 
-    // allow only one menu open at a time
-    $('#filter-menu a').on('click', function() {
-        if(!$(this).next().hasClass('in')) {
-            $('#filter-menu a').next().removeClass('in');
-        }
+    // update filter when checkbox (un)selected
+    $('#filter-form input[type="checkbox"]').on('change', function(event) {
+        self.applyFilter();
+    });
+
+    // automatically focus on textbox when menu opened
+    $filterButton.on('click', function() {
+        $geneFilterText.focus();
+    });
+
+    $('a[href*="gene-menu"]').on('click', function() {
+        // see http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
+        // for an explanation of this hack
+        setTimeout(function() {
+            $geneFilterText.focus();
+        }, 400)
     });
 };
 
@@ -169,7 +220,12 @@ SampleFilter.prototype.mountEventListeners = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.addToFilter = function() {
+
     var value = $('#gene-select option:selected').val();
+    if(!value) {
+        value = $('#gene-select option:first').val();
+    }
+
     var nextValue =  $('#gene-select option:selected').next().val();
     var index = this.genes.indexOf(value);
 
@@ -180,7 +236,7 @@ SampleFilter.prototype.addToFilter = function() {
         this.updateSelectedGeneList();
     }
 
-    $('#gene-select').val(nextValue);
+    $geneSelect.val(nextValue);
     this.applyFilter();
 };
 
@@ -196,13 +252,12 @@ SampleFilter.prototype.removeFromFilter = function() {
 
     if(index !== -1 && value) {
         this.selectedGenes.splice(index, 1);
-        this.genes.push(value);
-        this.genes.sort();
+        utils.sortedPush(this.genes, value);
         this.updateGeneList();
         this.updateSelectedGeneList();
     }
 
-    $('#gene-selected').val(nextValue);
+    $geneSelected.val(nextValue);
     this.applyFilter();
 };
 
@@ -212,9 +267,7 @@ SampleFilter.prototype.removeFromFilter = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.resetGeneFilter = function() {
-    $('#gene-selected').children().remove();
-    this.genes.push.apply(this.genes, this.selectedGenes);
-    this.genes.sort();
+    $geneSelected.children().remove();
     this.selectedGenes = [];
     this.updateGeneList();
     this.applyFilter();
@@ -226,13 +279,13 @@ SampleFilter.prototype.resetGeneFilter = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.updateGeneList = function() {
-    $('#gene-select').children().remove();
+    $geneSelect.children().remove();
 
-    var pattern = $('#gene-filter-text').val();
+    var pattern = $geneFilterText.val();
     var genesToDisplay;
 
     if(pattern) {
-        genesToDisplay = _.filter(this.genes, regexFilter(pattern));
+        genesToDisplay = _.filter(this.genes, utils.regexFilter(pattern));
     }
     else {
         genesToDisplay = this.genes;
@@ -252,7 +305,7 @@ SampleFilter.prototype.updateGeneList = function() {
  * @this {SampleFilter}
  */
 SampleFilter.prototype.updateSelectedGeneList = function() {
-    $('#gene-selected').children().remove();
+    $geneSelected.children().remove();
 
     for(var i = 0; i < this.selectedGenes.length; i++) {
         $('<option />', {
@@ -262,64 +315,50 @@ SampleFilter.prototype.updateSelectedGeneList = function() {
 };
 
 /**
- * applyFilter: Apply current filter parameters to dataset and update plots.
+ * applyFilter: Apply current filter parameters to dataset and update plot.
+ *
+ * Read selected values from filter menu, parse the values, filter the dataset
+ * then update the neighbourPlot with the new filtered data.
  *
  * @this {SampleFilter}
  */
 SampleFilter.prototype.applyFilter = function() {
-    var filterQuery = $('form').serializeJSON();
+    // parse the data from the filter menu
+    var filterQuery = $filterForm.serializeJSON();
+    var rows = _.keys(filterQuery.row);
+    var cols = _.keys(filterQuery.col);
+    var plates = _.keys(filterQuery.plate);
 
-    var rows = $.map(filterQuery.row, function(val, key) { return val; });
-    var cols = $.map(filterQuery.col, function(val, key) { return val; });
-    var plates = $.map(filterQuery.plate, function(val, key) { return val; });
+    // need to read the plates as integers
+    plates = _.map(plates, function(d) { return +d; });
 
     var rowActive = rows.length < this.uniqueRow.length;
     var colActive = cols.length < this.uniqueCol.length;
     var plateActive = plates.length < this.uniquePlate.length;
     var geneActive = this.selectedGenes.length > 0;
 
-    console.log(filterQuery);
-    console.log(this.selectedGenes);
-
+    // apply filter and re-draw plot when filter active
     if(geneActive || plateActive || rowActive || colActive) {
-        $('#filter-button').addClass('filtering');
+        $filterButton.addClass('filtering');
+
+        var result = _.chain(this.data)
+            .findByValues('column', cols)
+            .findByValues('row', rows)
+            .findByValues('plate', plates);
+
+        if(geneActive) {
+            result = result.findByValues('gene_name', this.selectedGenes);
+        }
+
+        this.neighbourPlot.updatePlot(result.value());
     }
 
+    // add all data back to plot when filters empty
     if(!geneActive && !plateActive && !rowActive && !colActive) {
-        $('#filter-button').removeClass('filtering');
+        $filterButton.removeClass('filtering');
+        this.neighbourPlot.updatePlot(this.data);
     }
 
-    // TODO apply filter here
-    console.log(filterQuery);
 };
-
-/**
- * regexFilter: Return regex function for use in filter.
- *
- * The function returned returns true if the query pattern is contained
- * in the element given to it. Case insensitive.
- *
- * @param {string} pattern - The query pattern.
- * @returns {Function} - The query function.
- */
-function regexFilter(pattern) {
-    return function(element) {
-        return element.match(new RegExp(pattern, 'i'));
-    };
-}
-
-/**
- * uniqueData: Return all unique data values.
- *
- * Given an array of objects, find all unique values for a specified key.
- * Uses lodash chained lodash methods.
- *
- * @param {array} data - An array of objects.
- * @param {string} key - The key to find the unique values of.
- * @returns {array} - An array of unique values.
- */
-function uniqueData(data, field) {
-    return _.uniq(_.pluck(_.flatten(data), field)).sort();
-}
 
 module.exports = SampleFilter;

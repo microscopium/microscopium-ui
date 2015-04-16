@@ -1,5 +1,25 @@
 var d3 = require('d3');
+var _ = require('lodash');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
+
+/**
+ * moveToFront: Move elements to front of SVG stack.
+ *
+ * Unlike CSS, SVG elements have no notion of a z-index. Elements are
+ * rendered with respect to their order of appearance in the DOM.
+ * In order move elements to the top, we need to remove them
+ * from the DOM, then add them again as the first child of their parent.
+ * This function extends the d3 selection object to do just that.
+ *
+ * This is an example of where prototypical inheritance is awesome!
+ *
+ * @this {d3.selection}
+ */
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+        this.parentNode.appendChild(this);
+    });
+};
 
 /**
  * NeighbourPlot: Object to draw scatterplot of dimension reduced data.
@@ -29,6 +49,7 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.activePointRadius = 7;
     this.xAxisTicks = 10;
     this.yAxisTicks = 10;
+    this.filteredOpacity = 0.25;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
@@ -55,24 +76,24 @@ NeighbourPlot.prototype.drawScatterplot = function() {
     var yMax = d3.max(this.sampleData, function(d) { return d.pca[1]; });
 
     // setup scales and axis
-    var xScale = d3.scale.linear()
+    self.xScale = d3.scale.linear()
         .domain([xMin-1, xMax+1])
         .range([0, self.width]);
     var xAxis = d3.svg.axis()
-        .scale(xScale)
+        .scale(self.xScale)
         .ticks(self.xAxisTicks)
         .orient('bottom');
 
-    var yScale = d3.scale.linear()
+    self.yScale = d3.scale.linear()
         .domain([yMin-1, yMax+1])
         .range([self.height, 0]);
     var yAxis = d3.svg.axis()
-        .scale(yScale)
+        .scale(self.yScale)
         .ticks(self.yAxisTicks)
         .orient('left');
 
     // tooltip function
-    var tip = d3.tip()
+    self.tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
@@ -81,23 +102,47 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         });
 
     // setup canvas
-    var svg = d3.select(this.element).append('svg')
+    self.svg = d3.select(this.element).append('svg')
         .attr('width', self.fullWidth)
         .attr('height', self.fullHeight)
         .append('g')
         .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
-        .call(tip);
+        .call(self.tip);
 
-    // add points
-    svg.selectAll('circle')
-        .data(self.sampleData)
+    // append axis
+    self.svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + self.height + ')')
+        .call(xAxis);
+
+    self.svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis);
+
+    // append axis labels
+    self.svg.append('text')
+        .attr('transform', 'translate(' + (self.width / 2) + ' ,' + (self.height + self.margin.bottom) + ')')
+        .style('text-anchor', 'middle')
+        .text('PC1');
+
+    self.svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - self.margin.left)
+        .attr('x', 0 - self.height/2)
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text('PC2');
+
+    // draw plot
+    self.svg.selectAll('circle')
+        .data(this.sampleData)
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return xScale(d.pca[0]);
+            return self.xScale(d.pca[0]);
         })
         .attr('cy', function(d) {
-            return yScale(d.pca[1]);
+            return self.yScale(d.pca[1]);
         })
         .attr('r', 5)
         .classed('scatterpt', true)
@@ -106,42 +151,18 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .attr('id', function(d) {
             return d._id;
         })
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide)
-        .on('click', function(d, i) {
+        .on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide)
+        .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                self.updatePoint(selection, d, i);
+                self.updatePoint(selection, d);
             }
         });
 
-    // append axis
-    svg.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + self.height + ')')
-        .call(xAxis);
-
-    svg.append('g')
-        .attr('class', 'y axis')
-        .call(yAxis);
-
-    // append axis labels
-    svg.append('text')
-        .attr('transform', 'translate(' + (self.width / 2) + ' ,' + (self.height + self.margin.bottom) + ')')
-        .style('text-anchor', 'middle')
-        .text('PC1');
-
-    svg.append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0 - self.margin.left)
-        .attr('x', 0 - self.height/2)
-        .attr('dy', '1em')
-        .style('text-anchor', 'middle')
-        .text('PC2');
-
     // default select first point
-    var firstPoint = d3.select('.scatterpt');
-    self.updatePoint(firstPoint, firstPoint.data()[0],  0);
+    var first = d3.select('.scatterpt');
+    self.updatePoint(first, this.sampleData[0])
 };
 
 /**
@@ -155,15 +176,12 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  * @param {d3-selection} selection - The d3 selection object from the
  *     clicked scatterplot point.
  * @param {object} d - The datum attached to the clicked scatterplot point.
- * @param {number} i - The index of the clicked scatterplot point.
- *
  */
-NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
+NeighbourPlot.prototype.updatePoint = function(selection, d) {
     var self = this;
 
-    // update neighbour images
     self.neighbourImages.getImages(d._id);
-    self.lineplot.drawLineplot(i);
+    self.lineplot.drawLineplot(d._id);
 
     d3.selectAll('.activept')
         .classed('activept', false)
@@ -195,6 +213,37 @@ NeighbourPlot.prototype.updatePoint = function(selection, d, i) {
         .duration(self.transitionDuration)
         .attr('r', self.activePointRadius);
 };
+
+/**
+ * updatePlot: Re-render plot data points given a new set of data.
+ *
+ * Uses D3 enter-update-select pattern to update the plot datapoints.
+ *
+ * @this {NeighbourPlot}
+ * @param {array} newData - The new dataset to display.
+ */
+NeighbourPlot.prototype.updatePlot = function(newData) {
+    var self = this;
+
+    if(this.sampleData.length === newData.length) {
+        self.svg.selectAll('circle')
+            .attr('opacity', 1)
+            .style('stroke-width', 1)
+    }
+    else {
+        self.svg.selectAll('circle')
+            .attr('opacity', this.filteredOpacity)
+            .style('stroke-width', 0);
+
+        for(var i = 0; i < newData.length; i++) {
+            d3.select('[id=' + newData[i]._id + ']')
+                .attr('opacity', 1)
+                .style('stroke-width', 1)
+                .moveToFront()
+        }
+    }
+};
+
 
 /**
  * destroy: Remove all child SVG elements of the plot objects containing div.

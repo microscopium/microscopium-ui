@@ -13,49 +13,33 @@
     border-color: #222222;
 }
 
-/* Create some space between tab and tab content */
-.tab-pane {
-    margin-top: 10px;
-}
-
-/* Override speed of collapse menu */
-#filter-menu .collapsing {
-     -moz-transition : height 500ms ease;
-     -webkit-transition : height 500ms ease;
-     -o-transition : height 500ms ease;
-     transition : height 500ms ease;
- }
-
 #filter-button.filtering {
     color: red;
-}
-
-/* Override default colours for nav-stacked class */
-.nav-stacked li a {
-    color: #9d9d9d;
-}
-
-.nav-stacked li a:hover {
-    color: #ffffff;
-    background-color: #222222;
-}
-
-.nav-stacked li a:active,
-.nav-stacked li a:focus {
-    background-color: #000000;
 }
 
 .sb-right {
     margin-top: 50px;
 }
 
-.fa-filter {
-    font-size: 1.5em;
+.panel {
+    background-color: #222222;
 }
 
-.filter-content label {
+.panel-heading a {
+    color: #9d9d9d;
+}
+
+.panel-body label,
+.panel-body p {
     color: #ffffff;
-    margin-top: 10px;
+}
+
+.panel-heading .active {
+    background-color: #000000;
+}
+
+.fa-filter {
+    font-size: 1.3em;
 }
 
 .filter-arrows,
@@ -84,6 +68,10 @@
 #gene-filter-text {
     margin-top: 10px;
     width: 100%;
+}
+
+#filter-reset {
+    margin-left: 15px;
 }
 
 .header {
