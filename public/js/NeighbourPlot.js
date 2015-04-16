@@ -227,7 +227,7 @@ NeighbourPlot.prototype.updatePlot = function(newData) {
 
     if(this.sampleData.length === newData.length) {
         self.svg.selectAll('circle')
-            .attr('opacity')
+            .attr('opacity', 1)
             .style('stroke-width', 1)
     }
     else {
