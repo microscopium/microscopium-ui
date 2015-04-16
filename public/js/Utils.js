@@ -5,6 +5,7 @@ var Utils = {};
 Utils.regexFilter = regexFilter;
 Utils.uniqueData = uniqueData;
 Utils.findByValues = findByValues;
+Utils.sortedPush = sortedPush;
 
 /**
  * regexFilter: Return regex function for use in filter.
@@ -46,6 +47,16 @@ function findByValues(collection, property, values) {
     return _.filter(collection, function(item) {
         return _.contains(values, item[property]);
     });
+}
+
+/**
+ * sortedPush: Insert an item into an array while preserving the ordering.
+ *
+ * @param {array} array - A sorted array of primitives.
+ * @param {string, number} value - A value to insert into the array.
+ */
+function sortedPush(array, value) {
+    array.splice(_.sortedIndex(array, value), 0, value);
 }
 
 module.exports = Utils;

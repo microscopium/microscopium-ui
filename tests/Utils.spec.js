@@ -55,3 +55,11 @@ describe('findByValues', function() {
         expect(testQuery).toEqual(expected);
     });
 });
+
+describe('sortedPush', function() {
+    it('passes if sorted order after item pushed to the array', function() {
+        var sortedArray = [1, 2, 4, 5];
+        Utils.sortedPush(sortedArray, 3);
+        expect(sortedArray).toEqual([1, 2, 3, 4, 5]);
+    });
+});
