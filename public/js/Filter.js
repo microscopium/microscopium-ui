@@ -185,7 +185,7 @@ SampleFilter.prototype.mountEventListeners = function() {
     $filterForm.on('reset', function(event) {
         event.preventDefault();
         // reset all checkboxes
-        $($filterForm, 'input[type="checkbox"]').prop('checked', true);
+        $('#filter-form input[type="checkbox"]').prop('checked', true);
 
         // reset gene filter boxes, then apply filter
         self.resetGeneFilter();
