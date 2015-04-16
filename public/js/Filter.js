@@ -252,8 +252,7 @@ SampleFilter.prototype.removeFromFilter = function() {
 
     if(index !== -1 && value) {
         this.selectedGenes.splice(index, 1);
-        this.genes.push(value);
-        this.genes.sort();
+        utils.sortedPush(this.genes, value);
         this.updateGeneList();
         this.updateSelectedGeneList();
     }
@@ -269,8 +268,6 @@ SampleFilter.prototype.removeFromFilter = function() {
  */
 SampleFilter.prototype.resetGeneFilter = function() {
     $geneSelected.children().remove();
-    this.genes.push.apply(this.genes, this.selectedGenes);
-    this.genes.sort();
     this.selectedGenes = [];
     this.updateGeneList();
     this.applyFilter();
