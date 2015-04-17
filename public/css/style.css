@@ -158,14 +158,21 @@
 .scatterpt {
     fill: steelblue;
     stroke: white;
+    opacity: 1;
+    stroke-width: 1;
 }
 
-.activept {
-    fill: red;
+.scatterpt.activept {
+    fill: red !important;
 }
 
-.neighbourpt {
+.scatterpt.neighbourpt {
     fill: #ffb323;
+}
+
+.scatterpt.filtered {
+    opacity: 0.25;
+    stroke-width: 0;
 }
 
 /* TOOLTIP CSS */
