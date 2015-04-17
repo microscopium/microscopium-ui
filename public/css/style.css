@@ -162,11 +162,11 @@
     stroke-width: 1;
 }
 
-.activept {
-    fill: red;
+.scatterpt.activept {
+    fill: red !important;
 }
 
-.neighbourpt {
+.scatterpt.neighbourpt {
     fill: #ffb323;
 }
 
