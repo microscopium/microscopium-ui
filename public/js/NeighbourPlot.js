@@ -49,7 +49,6 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.activePointRadius = 7;
     this.xAxisTicks = 10;
     this.yAxisTicks = 10;
-    this.filteredOpacity = 0.25;
 
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
@@ -199,7 +198,10 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
     // add neighbour class to all neighbours
     var neighbours = d.neighbours;
     for(var j = 1 ; j < neighbours.length; j++) {
-        d3.select('[id=' + neighbours[j] + ']')
+        var neighbourTags = _.map(neighbours, function(d) {
+            return '#' + d;
+        });
+        self.svg.selectAll(neighbourTags)
             .classed('neighbourpt', true)
             .transition()
             .duration(self.transitionDuration)
@@ -225,22 +227,25 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
 NeighbourPlot.prototype.updatePlot = function(newData) {
     var self = this;
 
-    if(this.sampleData.length === newData.length) {
+    if(newData.length === this.sampleData.length) {
+        // if no points have been filtered out, class everything as unfiltered
         self.svg.selectAll('circle')
-            .attr('opacity', 1)
-            .style('stroke-width', 1)
+            .classed('filtered', false)
     }
     else {
-        self.svg.selectAll('circle')
-            .attr('opacity', this.filteredOpacity)
-            .style('stroke-width', 0);
+        // cast sample ids as id #tags so they can be used as selectors
+        var tags = _.map(_.pluck(newData, '_id'), function(d) {
+            return '#' + d;
+        });
 
-        for(var i = 0; i < newData.length; i++) {
-            d3.select('[id=' + newData[i]._id + ']')
-                .attr('opacity', 1)
-                .style('stroke-width', 1)
-                .moveToFront()
-        }
+        // all points are filtered..
+        self.svg.selectAll('circle')
+            .classed('filtered', true);
+
+        // until proven otherwise..
+        self.svg.selectAll(tags)
+            .classed('filtered', false)
+            .moveToFront();
     }
 };
 
