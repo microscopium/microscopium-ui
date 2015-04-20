@@ -17,12 +17,12 @@ function Histogram(sampleData, element, featureNames) {
     this.feature = 0;
 
     this.element = element;
-    this.fullWidth = 500;
-    this.fullHeight = 200;
+    this.fullWidth = 400;
+    this.fullHeight = 225;
     this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
-    this.margin = {top: 20, right: 30, bottom: 20, left: 45};
+    this.margin = {top: 20, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 

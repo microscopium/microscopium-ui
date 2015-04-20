@@ -81,15 +81,15 @@
 .thumb {
     margin: 1px 1px -3px 1px;
     padding: 0 0 0 0;
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
 }
 
 .selected-image-display {
     margin: 1px 1px -3px 1px;
     padding: 0 0 0 0;
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
 }
 
 /* Centered columns for grid display in Nebula */
@@ -107,7 +107,7 @@
 
 /* Plot all D3 SVGs to center of their divs */
 .plotbox {
-    text-align: center;
+    text-align: left;
 }
 
 /* GENERAL PLOT CSS */
@@ -147,7 +147,7 @@
 /* NEIGHBOUR PLOT CSS */
 
 .gallery {
-    height: 500px;
+    height: 675px;
     overflow: scroll;
 }
 

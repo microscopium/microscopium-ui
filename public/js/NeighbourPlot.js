@@ -42,8 +42,8 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.neighbourImages = neighbourImages;
 
     this.element = element;
-    this.fullWidth = 500;
-    this.fullHeight = 300;
+    this.fullWidth = 800;
+    this.fullHeight = 450;
     this.transitionDuration = 125;
     this.inactivePointRadius = 5;
     this.activePointRadius = 7;
