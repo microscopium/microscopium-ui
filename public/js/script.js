@@ -3,7 +3,6 @@ var Histogram = require('./Histogram.js');
 var Lineplot = require('./Lineplot.js');
 var NeighbourPlot = require('./NeighbourPlot.js');
 var NeighbourImages = require('./NeighbourImages.js');
-var ClusterPlot = require('./ClusterPlot.js');
 var Spinner = require('spin.js');
 var spinner = new Spinner();
 
@@ -78,7 +77,6 @@ function mountPlots(screenData, sampleData, featureNames) {
     var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
     var lineplot = new Lineplot(sampleData, '#lineplot', histogram);
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot', lineplot, neighbourImages);
-    var clusterPlot = new ClusterPlot(sampleData, '#clusterpcaplot');
     var filter = new Filter(sampleData, neighbourPlot);
 }
 
