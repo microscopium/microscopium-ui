@@ -2,15 +2,16 @@
     "name": "microscopium-ui",
     "main": "server.js",
     "dependencies": {
-        "express": "~4.0.0",
-        "mongoose": "~3.8.0",
-        "morgan": "~1.0.0",
-        "body-parser": "~1.0.0",
+        "body-parser": "~1.12.0",
+        "compression": "~1.4.3",
         "d3": "~3.5.5",
         "d3-tip": "~0.6.7",
-        "spin.js": "~2.0.2",
+        "express": "~4.12.0",
         "lodash": "~3.2.0",
-        "lodash-deep": "~1.5.3"
+        "lodash-deep": "~1.5.3",
+        "mongoose": "~4.0.0",
+        "morgan": "~1.5.0",
+        "spin.js": "~2.0.2"
     },
     "devDependencies": {
         "grunt": "~0.4.5",
