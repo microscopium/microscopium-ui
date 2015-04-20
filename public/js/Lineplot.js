@@ -23,8 +23,8 @@ function Lineplot(sampleData, element, histogram) {
     this.histogram = histogram;
 
     this.element = element;
-    this.fullWidth = 600;
-    this.fullHeight = 400;
+    this.fullWidth = 400;
+    this.fullHeight = 150;
     this.xAxisTicks = 10;
     this.yAxisTicks = 5;
 

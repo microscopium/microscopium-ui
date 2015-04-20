@@ -72,17 +72,9 @@ function selectScreen(screen_id) {
 }
 
 function mountPlots(screenData, sampleData, featureNames) {
-    updateTab(screenData);
     var neighbourImages = new NeighbourImages(sampleData[0]._id);
     var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
     var lineplot = new Lineplot(sampleData, '#lineplot', histogram);
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot', lineplot, neighbourImages);
     var filter = new Filter(sampleData, neighbourPlot);
-}
-
-// update summary tab
-function updateTab(screen_data) {
-    $('#name').text(screen_data._id);
-    $('#desc').text(screen_data.screen_desc);
-    $('#samples').text(screen_data.number_samples);
 }

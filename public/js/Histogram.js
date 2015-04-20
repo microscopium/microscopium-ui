@@ -18,7 +18,7 @@ function Histogram(sampleData, element, featureNames) {
 
     this.element = element;
     this.fullWidth = 500;
-    this.fullHeight = 400;
+    this.fullHeight = 200;
     this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
