@@ -21,6 +21,10 @@
     margin-top: 50px;
 }
 
+.sb-active {
+    overflow: hidden;
+}
+
 .panel {
     background-color: #222222;
 }
