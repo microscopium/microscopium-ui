@@ -23,9 +23,9 @@ function Lineplot(sampleData, element, histogram) {
     this.histogram = histogram;
 
     this.element = element;
-    this.fullWidth = 400;
+    this.fullWidth = 420;
     this.fullHeight = 225;
-    this.xAxisTicks = 10;
+    this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
     this.margin = {top: 20, right: 40, bottom: 30, left: 40};
