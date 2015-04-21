@@ -34,11 +34,10 @@ d3.selection.prototype.moveToFront = function() {
  * @param {NeighbourImages} neighbourImages - NeighbourImages object that will
  * update when scatterplot points are clicked.
  */
-function NeighbourPlot(sampleData, element, neighbourImages) {
+function NeighbourPlot(sampleData, element) {
     var self = this;
 
     this.sampleData = sampleData;
-    this.neighbourImages = neighbourImages;
     this.element = element;
 
     this.fullWidth = $(this.element).width();
@@ -54,8 +53,8 @@ function NeighbourPlot(sampleData, element, neighbourImages) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    $('body').on('updatePoint', function(event, selection, d) {
-        self.updatePoint(selection, d)
+    $('body').on('updatePoint', function(event, d) {
+        self.updatePoint(d)
     });
 
     this.drawScatterplot();
@@ -159,12 +158,14 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                $('body').trigger('updatePoint', [d]);
+                $('body').trigger('updatePoint', d);
+                $('body').trigger('updateGallery', d._id);
             }
         });
 
     // default select first point
-    self.updatePoint(this.sampleData[0])
+    $('body').trigger('updatePoint', this.sampleData[0]);
+    $('body').trigger('updateGallery', this.sampleData[0]._id);
 };
 
 /**
@@ -182,7 +183,6 @@ NeighbourPlot.prototype.drawScatterplot = function() {
 NeighbourPlot.prototype.updatePoint = function(d) {
     var self = this;
 
-    self.neighbourImages.getImages(d._id);
     $('body').trigger('redrawLineplot', [d._id]);
 
     d3.selectAll('.activept')

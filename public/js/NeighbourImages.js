@@ -1,9 +1,13 @@
+var _ = require('lodash');
+
 /**
  * NeighbourImages: Object to get and set images in the gallery.
  *
  * @constructor
  */
 function NeighbourImages() {
+    var self = this;
+
     this.neighbours = [];
     this.selectedImage = "";
     this.neighbourImages = [];
@@ -19,7 +23,11 @@ function NeighbourImages() {
     // set size of thumbnail size image
     $('.thumb')
         .css('width', imgWidth)
-        .css('height', imgWidth)
+        .css('height', imgWidth);
+
+    $('body').on('updatePoint', function(event, d) {
+        self.getImages(d._id);
+    });
 
 }
 
@@ -41,28 +49,22 @@ NeighbourImages.prototype.getImages = function(query_id) {
     $.when(
         $.ajax({
             url: '/api/sample/neighbours/' + query_id,
-            async: false,
             success: function(json) {
-                var neighboursLength = json[0].length;
-                self.neighbours = json[0].neighbours.slice(1,
-                    neighboursLength);
+                json.shift(); // don't need first document
+                self.neighbours = json;
             }
         }),
         $.ajax({
             url: '/api/image/' + query_id,
-            async: false,
             success: function(json) {
                 self.selectedImage = json[0];
             }
         }),
         $.ajax({
             type: 'GET',
-            url: '/api/images/',
-            data: {
-                'sample_ids': self.neighbours
-            },
-            async: false,
+            url: '/api/images/' + query_id,
             success: function(json) {
+                json.shift(); // don't need first document
                 self.neighbourImages = json;
             }
         })).then(function(res, status) {
@@ -82,10 +84,21 @@ NeighbourImages.prototype.setImages = function() {
     $('#nebula-0').attr('title', self.selectedImage.sample_id);
 
     for(var i = 0; i < self.neighbourImages.length; i++) {
-        var nebula_selector = '#nebula-' + (i+1);
-        $(nebula_selector).attr('src', 'data:image/jpg;base64,' + self.neighbourImages[i].image_thumb);
-        $(nebula_selector).attr('title', self.neighbourImages[i].sample_id);
+        var $nebulaSelector = $('#nebula-' + (i+1));
+        $nebulaSelector
+            .attr('src', 'data:image/jpg;base64,' + self.neighbourImages[i].image_thumb)
+            .attr('title', self.neighbourImages[i].sample_id);
+        $nebulaSelector.unbind('click');
+        (function(j) {
+            $nebulaSelector.on('click', function() {
+                $('body').trigger('updatePoint', [self.neighbours[j]])
+            });
+        })(i);
     }
 };
+
+function foo(j) {
+    console.log(s)
+}
 
 module.exports = NeighbourImages;
