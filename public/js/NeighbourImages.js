@@ -7,6 +7,20 @@ function NeighbourImages() {
     this.neighbours = [];
     this.selectedImage = "";
     this.neighbourImages = [];
+
+    var divWidth = Math.round($('#image-column').width()) - 20;
+    var imgWidth = Math.round(divWidth/3) - 20;
+
+    // set size of fullsize image
+    $('.selected-image-display')
+        .css('width', divWidth)
+        .css('height', divWidth);
+
+    // set size of thumbnail size image
+    $('.thumb')
+        .css('width', imgWidth)
+        .css('height', imgWidth)
+
 }
 
 /**
@@ -18,6 +32,11 @@ function NeighbourImages() {
  */
 NeighbourImages.prototype.getImages = function(query_id) {
     var self = this;
+
+    var height = Math.round($('#plot-column').height() - 10);
+    $('#image-column')
+        .css('height', height);
+
 
     $.when(
         $.ajax({

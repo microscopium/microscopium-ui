@@ -1,5 +1,10 @@
 /* MAIN PAGE CSS */
 
+#image-column {
+    overflow: scroll;
+    height: 0;
+}
+
 .load-overlay {
     pointer-events: none;
 }
@@ -85,15 +90,11 @@
 .thumb {
     margin: 1px 1px -3px 1px;
     padding: 0 0 0 0;
-    width: 100px;
-    height: 100px;
 }
 
 .selected-image-display {
     margin: 1px 1px -3px 1px;
     padding: 0 0 0 0;
-    width: 250px;
-    height: 250px;
 }
 
 /* Centered columns for grid display in Nebula */
@@ -149,11 +150,6 @@
 }
 
 /* NEIGHBOUR PLOT CSS */
-
-.gallery {
-    height: 675px;
-    overflow: scroll;
-}
 
 .pcaplot {
     height: 500px;
