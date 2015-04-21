@@ -14,6 +14,10 @@ $(document).ready(function() {
         async: false,
         success: function (json) {
             updateSelector(json);
+            // automatically select a screen if there is only one to choose from
+            if(json.length === 1) {
+                selectScreen(json[0]._id);
+            }
         },
         dataType: 'json'
     });
