@@ -15,10 +15,11 @@ function Histogram(sampleData, element, featureNames) {
     this.sampleData = sampleData;
     this.featureNames = featureNames;
     this.feature = 0;
-
     this.element = element;
-    this.fullWidth = 420;
-    this.fullHeight = 225;
+
+    this.fullWidth = $(this.element).width();
+    this.fullHeight = Math.round(this.fullWidth * (9/16));
+
     this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 

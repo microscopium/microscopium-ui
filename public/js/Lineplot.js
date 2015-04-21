@@ -21,10 +21,11 @@ function Lineplot(sampleData, element, histogram) {
     this.activeSample = 0;
     this.activeFeature = 0;
     this.histogram = histogram;
-
     this.element = element;
-    this.fullWidth = 420;
-    this.fullHeight = 225;
+
+    this.fullWidth = $(this.element).width();
+    this.fullHeight = Math.round(this.fullWidth * (9/16));
+
     this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
