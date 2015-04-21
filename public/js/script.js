@@ -35,6 +35,7 @@ function updateSelector(screen_data) {
     }
 }
 
+// FIXME does not corectly switch between screens
 function selectScreen(screen_id) {
     var featureNames = [];
     var sampleData = [];
@@ -79,6 +80,6 @@ function mountPlots(screenData, sampleData, featureNames) {
     var neighbourImages = new NeighbourImages(sampleData[0]._id);
     var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
     var lineplot = new Lineplot(sampleData, '#lineplot', histogram);
-    var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot', lineplot, neighbourImages);
+    var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot', neighbourImages);
     var filter = new Filter(sampleData, neighbourPlot);
 }

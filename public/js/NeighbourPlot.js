@@ -31,14 +31,13 @@ d3.selection.prototype.moveToFront = function() {
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
- * @param {LinePlot} lineplot - LinePlot that will update when scatterplot
- *     points are clicked.
  * @param {NeighbourImages} neighbourImages - NeighbourImages object that will
  * update when scatterplot points are clicked.
  */
-function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
+function NeighbourPlot(sampleData, element, neighbourImages) {
+    var self = this;
+
     this.sampleData = sampleData;
-    this.lineplot = lineplot;
     this.neighbourImages = neighbourImages;
     this.element = element;
 
@@ -54,6 +53,10 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
+
+    $('body').on('updatePoint', function(event, selection, d) {
+        self.updatePoint(selection, d)
+    });
 
     this.drawScatterplot();
 }
@@ -156,13 +159,12 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                self.updatePoint(selection, d);
+                $('body').trigger('updatePoint', [d]);
             }
         });
 
     // default select first point
-    var first = d3.select('.scatterpt');
-    self.updatePoint(first, this.sampleData[0])
+    self.updatePoint(this.sampleData[0])
 };
 
 /**
@@ -177,11 +179,11 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  *     clicked scatterplot point.
  * @param {object} d - The datum attached to the clicked scatterplot point.
  */
-NeighbourPlot.prototype.updatePoint = function(selection, d) {
+NeighbourPlot.prototype.updatePoint = function(d) {
     var self = this;
 
     self.neighbourImages.getImages(d._id);
-    self.lineplot.drawLineplot(d._id);
+    $('body').trigger('redrawLineplot', [d._id]);
 
     d3.selectAll('.activept')
         .classed('activept', false)
@@ -210,7 +212,7 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
     }
 
     // set class and attr of new active point
-    selection
+    d3.select('#' + d._id)
         .classed('activept', true)
         .transition()
         .duration(self.transitionDuration)

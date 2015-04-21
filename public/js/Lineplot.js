@@ -16,6 +16,8 @@ var _ = require('lodash');
  *     a part of the Lineplot is clicked.
  */
 function Lineplot(sampleData, element, histogram) {
+    var self = this;
+
     this.sampleData = sampleData;
     this.featureLength = sampleData[0].feature_vector_std.length;
     this.activeSample = 0;
@@ -32,6 +34,10 @@ function Lineplot(sampleData, element, histogram) {
     this.margin = {top: 20, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
+
+    $('body').on('redrawLineplot', function(event, sampleId) {
+        self.drawLineplot(sampleId);
+    });
 }
 
 /**
