@@ -69,6 +69,7 @@ function NeighbourPlot(sampleData, element) {
  */
 NeighbourPlot.prototype.drawScatterplot = function() {
     var self = this;
+    var $body = $('body');
 
     this.destroy();
 
@@ -158,14 +159,14 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                $('body').trigger('updatePoint', d);
-                $('body').trigger('updateGallery', d._id);
+                $body.trigger('updatePoint', d);
+                $body.trigger('updateGallery', d._id);
             }
         });
 
     // default select first point
-    $('body').trigger('updatePoint', this.sampleData[0]);
-    $('body').trigger('updateGallery', this.sampleData[0]._id);
+    $body.trigger('updatePoint', this.sampleData[0]);
+    $body.trigger('updateGallery', this.sampleData[0]._id);
 };
 
 /**
@@ -185,14 +186,14 @@ NeighbourPlot.prototype.updatePoint = function(d) {
 
     $('body').trigger('redrawLineplot', [d._id]);
 
-    d3.selectAll('.activept')
+    self.svg.selectAll('.activept')
         .classed('activept', false)
         .classed('neighbourpt', false)
         .transition()
         .duration(self.transitionDuration)
         .attr('r', self.inactivePointRadius);
 
-    d3.selectAll('.neighbourpt')
+    self.svg.selectAll('.neighbourpt')
         .classed('neighbourpt', false)
         .attr('r', self.inactivePointRadius)
         .transition()
@@ -214,6 +215,7 @@ NeighbourPlot.prototype.updatePoint = function(d) {
     // set class and attr of new active point
     d3.select('#' + d._id)
         .classed('activept', true)
+        .moveToFront()
         .transition()
         .duration(self.transitionDuration)
         .attr('r', self.activePointRadius);
