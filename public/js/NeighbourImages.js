@@ -80,8 +80,13 @@ NeighbourImages.prototype.getImages = function(query_id) {
 NeighbourImages.prototype.setImages = function() {
     var self = this;
 
-    $('#nebula-0').attr('src', 'data:image/jpg;base64,' + self.selectedImage.image_full);
-    $('#nebula-0').attr('title', self.selectedImage.sample_id);
+    $('#nebula-0')
+        .attr('src', 'data:image/jpg;base64,' + self.selectedImage.image_full)
+        .attr('title', self.selectedImage.sample_id)
+        .on('click', function(event) {
+            // prevent browser from scrolling to top when main image clicked on
+            event.preventDefault();
+        });
 
     for(var i = 0; i < self.neighbourImages.length; i++) {
         var $nebulaSelector = $('#nebula-' + (i+1));
@@ -90,7 +95,8 @@ NeighbourImages.prototype.setImages = function() {
             .attr('title', self.neighbourImages[i].sample_id);
         $nebulaSelector.unbind('click');
         (function(j) {
-            $nebulaSelector.on('click', function() {
+            $nebulaSelector.on('click', function(event) {
+                event.preventDefault();
                 $('body').trigger('updatePoint', [self.neighbours[j]])
             });
         })(i);
