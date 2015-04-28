@@ -79,32 +79,48 @@ NeighbourImages.prototype.getImages = function(query_id) {
  */
 NeighbourImages.prototype.setImages = function() {
     var self = this;
+    var $nebula0 = $('#nebula-0');
 
-    $('#nebula-0')
-        .attr('src', 'data:image/jpg;base64,' + self.selectedImage.image_full)
-        .attr('title', self.selectedImage.sample_id)
-        .on('click', function(event) {
-            // prevent browser from scrolling to top when main image clicked on
-            event.preventDefault();
-        });
+    // make all img frames empty
+    $nebula0
+        .attr('src', '//:0')
+        .attr('title', 'not found');
 
+    $('.thumbnail > img')
+        .attr('src', '//:0')
+        .attr('title', 'not found');
+
+    // add selected main image, if it exists
+    if(self.selectedImage) {
+        $nebula0
+            .attr('src', 'data:image/jpg;base64,' +
+                self.selectedImage.image_full)
+            .attr('title', self.selectedImage.sample_id)
+    }
+
+    $nebula0.on('click', function(event) {
+        // prevent browser from scrolling to top when main image clicked on
+        event.preventDefault();
+    });
+
+
+    // iterate through all found images and add them to the gallery
     for(var i = 0; i < self.neighbourImages.length; i++) {
         var $nebulaSelector = $('#nebula-' + (i+1));
         $nebulaSelector
-            .attr('src', 'data:image/jpg;base64,' + self.neighbourImages[i].image_thumb)
+            .attr('src', 'data:image/jpg;base64,' +
+                self.neighbourImages[i].image_thumb)
             .attr('title', self.neighbourImages[i].sample_id);
         $nebulaSelector.unbind('click');
         (function(j) {
             $nebulaSelector.on('click', function(event) {
+                // prevent browser from scrolling to top when main image
+                // clicked and trigger event to update the plot
                 event.preventDefault();
                 $('body').trigger('updatePoint', [self.neighbours[j]])
             });
         })(i);
     }
 };
-
-function foo(j) {
-    console.log(s)
-}
 
 module.exports = NeighbourImages;
