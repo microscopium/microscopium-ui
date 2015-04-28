@@ -1,14 +1,20 @@
 // modules
 var express = require('express');
-var compression = require('compression')
+var compression = require('compression');
 var app = express();
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
+// read port from environment, otherwise default to 8080
+var port = process.env.PORT || 8080;
+
 // setup db
 var db = require('./config/db');
-mongoose.connect(db.url);
+mongoose.connect(db.url, {
+    user: db.mongoUser,
+    pass: db.mongoPassword
+});
 
 // setup app
 app.use(logger('dev'));
@@ -23,5 +29,5 @@ app.use(express.static(__dirname + '/public'));
 require('./app/routes')(app);
 
 //startup
-app.listen(8080);
-console.log('Server started on port 8080..');
+app.listen(port);
+console.log('Server started on port ' + port  + '..');
