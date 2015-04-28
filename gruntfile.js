@@ -68,4 +68,6 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['express:dev', 'browserify:tests',
         'browserify:dev', 'jasmine:dev', 'jshint:all', 'watch']);
 
+    grunt.registerTask('build', ['browserify:dev']);
+
 };
