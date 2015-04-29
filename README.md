@@ -99,7 +99,8 @@ Each image saved in document with format:
 var Image = {
         _id: ObjectID, // Mongo generated unique ID for this image
         sample_id: String, // The _id of the sample corresponding to this image.
-        image_full: String, // BinData of image
-        image_thumb: String // BinData of image (thumbnail)
+        image_full: String, // The fullsize image.
+        image_full: String, // A large preview image, 512px wide.
+        image_thumb: String // A smalller, thumbnail sized preview image, 150px wide.
     }
 ```

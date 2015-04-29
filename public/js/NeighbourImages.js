@@ -94,7 +94,7 @@ NeighbourImages.prototype.setImages = function() {
     if(self.selectedImage) {
         $nebula0
             .attr('src', 'data:image/jpg;base64,' +
-                self.selectedImage.image_full)
+                self.selectedImage.image_large)
             .attr('title', self.selectedImage.sample_id)
     }
 

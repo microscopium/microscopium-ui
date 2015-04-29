@@ -51,7 +51,7 @@ module.exports = function(app) {
         Sample
         .find({ 'screen': req.params.screen })
         .select('_id row column plate gene_name feature_vector_std ' +
-                'pca cluster_member neighbours')
+                'pca_vector neighbours')
         .exec(resHandler(res));
     });
 
@@ -85,11 +85,11 @@ module.exports = function(app) {
         .exec(resHandler(res))
     });
 
-    //get fullsize image
+    //get large image
     app.get('/api/image/:id', function(req, res) {
         Image
             .find({ 'sample_id': req.params.id })
-        .select('sample_id image_full')
+        .select('sample_id image_large')
         .exec(resHandler(res));
     });
 

@@ -73,10 +73,10 @@ NeighbourPlot.prototype.drawScatterplot = function() {
 
     this.destroy();
 
-    var xMin = d3.min(this.sampleData, function(d) { return d.pca[0]; });
-    var yMin = d3.min(this.sampleData, function(d) { return d.pca[1]; });
-    var xMax = d3.max(this.sampleData, function(d) { return d.pca[0]; });
-    var yMax = d3.max(this.sampleData, function(d) { return d.pca[1]; });
+    var xMin = d3.min(this.sampleData, function(d) { return d.pca_vector[0]; });
+    var yMin = d3.min(this.sampleData, function(d) { return d.pca_vector[1]; });
+    var xMax = d3.max(this.sampleData, function(d) { return d.pca_vector[0]; });
+    var yMax = d3.max(this.sampleData, function(d) { return d.pca_vector[1]; });
 
     // setup scales and axis
     self.xScale = d3.scale.linear()
@@ -142,10 +142,10 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return self.xScale(d.pca[0]);
+            return self.xScale(d.pca_vector[0]);
         })
         .attr('cy', function(d) {
-            return self.yScale(d.pca[1]);
+            return self.yScale(d.pca_vector[1]);
         })
         .attr('r', 5)
         .classed('scatterpt', true)
