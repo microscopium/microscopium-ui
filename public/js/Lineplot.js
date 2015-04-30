@@ -8,6 +8,10 @@ var _ = require('lodash');
  * lineplot triggers an update in a Histogram object showing the distribution
  * of the corresponding feature.
  *
+ * The width and height of the plot is calculated based on the size of the
+ * plot's containing DIV. The width is taken from the DIV, and the height
+ * calculated from that width such that the plot will have a 16:9 aspect ratio.
+ *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
@@ -20,7 +24,6 @@ function Lineplot(sampleData, element, histogram) {
 
     this.sampleData = sampleData;
     this.featureLength = sampleData[0].feature_vector_std.length;
-    this.activeSample = 0;
     this.activeFeature = 0;
     this.histogram = histogram;
     this.element = element;

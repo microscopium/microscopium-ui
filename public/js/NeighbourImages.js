@@ -36,9 +36,9 @@ function NeighbourImages() {
  * neighbour images.
  *
  * @this {NeighbourImages}
- * @params {string} - _id of the query sample
+ * @params {string} sample_id - The _id of the query sample
  */
-NeighbourImages.prototype.getImages = function(query_id) {
+NeighbourImages.prototype.getImages = function(sample_id) {
     var self = this;
 
     var height = Math.round($('#plot-column').height() - 10);
@@ -48,21 +48,21 @@ NeighbourImages.prototype.getImages = function(query_id) {
 
     $.when(
         $.ajax({
-            url: '/api/sample/neighbours/' + query_id,
+            url: '/api/sample/neighbours/' + sample_id,
             success: function(json) {
                 json.shift(); // don't need first document
                 self.neighbours = json;
             }
         }),
         $.ajax({
-            url: '/api/image/' + query_id,
+            url: '/api/image/' + sample_id,
             success: function(json) {
                 self.selectedImage = json[0];
             }
         }),
         $.ajax({
             type: 'GET',
-            url: '/api/images/' + query_id,
+            url: '/api/images/' + sample_id,
             success: function(json) {
                 json.shift(); // don't need first document
                 self.neighbourImages = json;
@@ -74,6 +74,9 @@ NeighbourImages.prototype.getImages = function(query_id) {
 
 /**
  * setImages: Convert base64 encoded strings to images and set them in the DOM.
+ *
+ * Clicking on 'neighbour' images sets the corresponding point in the PCA plot as the
+ * active point.
  *
  * @this {NeighbourImages}
  */
@@ -95,7 +98,7 @@ NeighbourImages.prototype.setImages = function() {
         $nebula0
             .attr('src', 'data:image/jpg;base64,' +
                 self.selectedImage.image_large)
-            .attr('title', self.selectedImage.sample_id)
+            .attr('title', self.selectedImage.sample_id);
     }
 
     $nebula0.on('click', function(event) {
@@ -117,7 +120,7 @@ NeighbourImages.prototype.setImages = function() {
                 // prevent browser from scrolling to top when main image
                 // clicked and trigger event to update the plot
                 event.preventDefault();
-                $('body').trigger('updatePoint', [self.neighbours[j]])
+                $('body').trigger('updatePoint', [self.neighbours[j]]);
             });
         })(i);
     }

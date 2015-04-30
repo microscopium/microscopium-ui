@@ -27,11 +27,14 @@ d3.selection.prototype.moveToFront = function() {
  * Clicking on scatterplot points will trigger updates of the neighbour
  * image gallery and corresponding sample lineplot.
  *
+ * The width and height of the plot is calculated based on the size of the
+ * plot's containing DIV. The width is taken from the DIV, and the height
+ * calculated from that width such that the plot will have a 16:9 aspect ratio.
+ *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
- * @param {NeighbourImages} neighbourImages - NeighbourImages object that will
  * update when scatterplot points are clicked.
  */
 function NeighbourPlot(sampleData, element) {
@@ -54,7 +57,7 @@ function NeighbourPlot(sampleData, element) {
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
     $('body').on('updatePoint', function(event, d) {
-        self.updatePoint(d)
+        self.updatePoint(d);
     });
 
     this.drawScatterplot();
@@ -177,8 +180,6 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  * lineplot and neighbour image gallery.
  *
  * @this {NeighbourPlot}
- * @param {d3-selection} selection - The d3 selection object from the
- *     clicked scatterplot point.
  * @param {object} d - The datum attached to the clicked scatterplot point.
  */
 NeighbourPlot.prototype.updatePoint = function(d) {
@@ -224,7 +225,8 @@ NeighbourPlot.prototype.updatePoint = function(d) {
 /**
  * updatePlot: Re-render plot data points given a new set of data.
  *
- * Uses D3 enter-update-select pattern to update the plot datapoints.
+ * Update the class of scatterplot points, and bring unfiltered points
+ * to the top of the SVG stack.
  *
  * @this {NeighbourPlot}
  * @param {array} newData - The new dataset to display.
@@ -235,7 +237,7 @@ NeighbourPlot.prototype.updatePlot = function(newData) {
     if(newData.length === this.sampleData.length) {
         // if no points have been filtered out, class everything as unfiltered
         self.svg.selectAll('circle')
-            .classed('filtered', false)
+            .classed('filtered', false);
     }
     else {
         // cast sample ids as id #tags so they can be used as selectors
