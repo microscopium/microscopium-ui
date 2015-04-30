@@ -79,7 +79,7 @@ function selectScreen(screen_id) {
 function mountPlots(screenData, sampleData, featureNames) {
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
-    var lineplot = new Lineplot(sampleData, '#lineplot', histogram);
+    var lineplot = new Lineplot(sampleData, '#lineplot');
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 }

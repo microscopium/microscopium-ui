@@ -16,16 +16,14 @@ var _ = require('lodash');
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
- * @param {Histogram} histogram - Histogram plot object that will update when
- *     a part of the Lineplot is clicked.
  */
-function Lineplot(sampleData, element, histogram) {
+function Lineplot(sampleData, element) {
     var self = this;
+    var $body = $('body');
 
     this.sampleData = sampleData;
     this.featureLength = sampleData[0].feature_vector_std.length;
     this.activeFeature = 0;
-    this.histogram = histogram;
     this.element = element;
 
     this.fullWidth = $(this.element).width();
@@ -38,8 +36,12 @@ function Lineplot(sampleData, element, histogram) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    $('body').on('redrawLineplot', function(event, sampleId) {
+    $body.on('redrawLineplot', function(event, sampleId) {
         self.drawLineplot(sampleId);
+    });
+
+    $body.on('linePlotUpdate', function(event, activeFeature) {
+      self.updateActiveLine(activeFeature);
     });
 }
 
@@ -188,8 +190,7 @@ Lineplot.prototype.onClickUpdate = function (d3Mouse) {
 
     if(clickedFeature <= self.featureLength && clickedFeature > 1) {
         self.activeFeature = clickedFeature;
-        self.histogram.drawHistogram(self.activeFeature-1);
-        self.updateActiveLine(self.activeFeature);
+        $('body').trigger('linePlotUpdate', self.activeFeature);
     }
 };
 
@@ -209,14 +210,12 @@ Lineplot.prototype.keypressUpdate = function(keyCode) {
 
     if(self.activeFeature) {
         if(keyCode === 39 && self.activeFeature < this.featureLength) {
-            this.activeFeature++;
-            self.histogram.drawHistogram(self.activeFeature-1);
-            self.updateActiveLine(self.activeFeature);
+            self.activeFeature++;
+            $('body').trigger('linePlotUpdate', self.activeFeature);
         }
         else if(keyCode === 37 && self.activeFeature > 1) {
-            this.activeFeature--;
-            self.histogram.drawHistogram(self.activeFeature-1);
-            self.updateActiveLine(self.activeFeature);
+            self.activeFeature--;
+            $('body').trigger('linePlotUpdate', self.activeFeature);
         }
     }
 };

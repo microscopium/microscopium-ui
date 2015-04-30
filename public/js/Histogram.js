@@ -16,6 +16,8 @@ _.mixin(require('lodash-deep'));
  * @param {array} featureNames - An array of the features used in this screen.
  */
 function Histogram(sampleData, element, featureNames) {
+    var self = this;
+
     this.sampleData = sampleData;
     this.featureNames = featureNames;
     this.feature = 0;
@@ -31,7 +33,11 @@ function Histogram(sampleData, element, featureNames) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    this.drawHistogram(0);
+    $('body').on('linePlotUpdate', function(event, activeFeature) {
+        self.drawHistogram(activeFeature-1);
+    });
+
+    self.drawHistogram(0);
 }
 
 /**
