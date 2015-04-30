@@ -17,13 +17,11 @@ function NeighbourImages() {
 
     // set size of fullsize image
     $('.selected-image-display')
-        .css('width', divWidth)
-        .css('height', divWidth);
+        .css('width', divWidth);
 
     // set size of thumbnail size image
     $('.thumb')
-        .css('width', imgWidth)
-        .css('height', imgWidth);
+        .css('width', imgWidth);
 
     $('body').on('updatePoint', function(event, d) {
         self.getImages(d._id);

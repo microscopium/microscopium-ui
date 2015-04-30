@@ -87,14 +87,10 @@
     font-weight: bold;
 }
 
-.thumb {
+.sample-image {
     margin: 1px 1px -3px 1px;
     padding: 0 0 0 0;
-}
-
-.selected-image-display {
-    margin: 1px 1px -3px 1px;
-    padding: 0 0 0 0;
+    height: 100%;
 }
 
 /* Centered columns for grid display in Nebula */
