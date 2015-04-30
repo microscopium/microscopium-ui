@@ -23,7 +23,7 @@ function Histogram(sampleData, element, featureNames) {
     this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
-    this.margin = {top: 20, right: 40, bottom: 30, left: 40};
+    this.margin = {top: 20, right: 30, bottom: 30, left: 50};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
