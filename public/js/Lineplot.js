@@ -36,6 +36,8 @@ function Lineplot(sampleData, element) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
+    $body.unbind('redrawLineplot');
+
     $body.on('redrawLineplot', function(event, sampleId) {
         self.drawLineplot(sampleId);
     });
