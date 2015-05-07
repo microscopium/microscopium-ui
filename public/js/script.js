@@ -35,7 +35,6 @@ function updateSelector(screen_data) {
     }
 }
 
-// FIXME does not corectly switch between screens
 function selectScreen(screen_id) {
     var featureNames = [];
     var sampleData = [];
