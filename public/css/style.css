@@ -106,11 +106,6 @@
     text-align: center;
 }
 
-/* Plot all D3 SVGs to center of their divs */
-.plotbox {
-    text-align: left;
-}
-
 /* GENERAL PLOT CSS */
 
 .axis path, .axis line {
