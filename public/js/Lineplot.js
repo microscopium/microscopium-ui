@@ -1,6 +1,9 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+var LEFTARROW = 37;
+var RIGHTARROW = 39;
+
 /**
  * Lineplot: Object to draw lineplot of sample feature distribution.
  *
@@ -211,11 +214,11 @@ Lineplot.prototype.keypressUpdate = function(keyCode) {
     var self = this;
 
     if(self.activeFeature) {
-        if(keyCode === 39 && self.activeFeature < this.featureLength) {
+        if(keyCode === RIGHTARROW && self.activeFeature < this.featureLength) {
             self.activeFeature++;
             $('body').trigger('linePlotUpdate', self.activeFeature);
         }
-        else if(keyCode === 37 && self.activeFeature > 1) {
+        else if(keyCode === LEFTARROW && self.activeFeature > 1) {
             self.activeFeature--;
             $('body').trigger('linePlotUpdate', self.activeFeature);
         }
