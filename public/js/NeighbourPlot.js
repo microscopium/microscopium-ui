@@ -56,10 +56,6 @@ function NeighbourPlot(sampleData, element) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    $('body').on('updatePoint', function(event, d) {
-        self.updatePoint(d);
-    });
-
     this.drawScatterplot();
 }
 
@@ -162,14 +158,9 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                $body.trigger('updatePoint', d);
-                $body.trigger('updateGallery', d._id);
+                $body.trigger('updatePoint', d._id);
             }
         });
-
-    // default select first point
-    $body.trigger('updatePoint', this.sampleData[0]);
-    $body.trigger('updateGallery', this.sampleData[0]._id);
 };
 
 /**
@@ -180,12 +171,12 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  * lineplot and neighbour image gallery.
  *
  * @this {NeighbourPlot}
- * @param {object} d - The datum attached to the clicked scatterplot point.
+ * @param {string} sampleId - The unique _id of the sample that was clicked.
  */
-NeighbourPlot.prototype.updatePoint = function(d) {
+NeighbourPlot.prototype.updatePoint = function(sampleId) {
     var self = this;
-
-    $('body').trigger('redrawLineplot', [d._id]);
+    var selectedPoint = self.svg.select('#' + sampleId);
+    var neighbours = selectedPoint.data()[0].neighbours;
 
     self.svg.selectAll('.activept')
         .classed('activept', false)
@@ -200,8 +191,6 @@ NeighbourPlot.prototype.updatePoint = function(d) {
         .transition()
         .duration(self.transitionDuration);
 
-    // add neighbour class to all neighbours
-    var neighbours = d.neighbours;
     for(var j = 1 ; j < neighbours.length; j++) {
         var neighbourTags = _.map(neighbours, function(d) {
             return '#' + d;
@@ -214,7 +203,7 @@ NeighbourPlot.prototype.updatePoint = function(d) {
     }
 
     // set class and attr of new active point
-    d3.select('#' + d._id)
+    selectedPoint
         .classed('activept', true)
         .moveToFront()
         .transition()

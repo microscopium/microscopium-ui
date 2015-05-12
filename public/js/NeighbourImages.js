@@ -22,11 +22,6 @@ function NeighbourImages() {
     // set size of thumbnail size image
     $('.thumb')
         .css('width', imgWidth);
-
-    $('body').on('updatePoint', function(event, d) {
-        self.getImages(d._id);
-    });
-
 }
 
 /**
@@ -42,7 +37,6 @@ NeighbourImages.prototype.getImages = function(sample_id) {
     var height = Math.round($('#plot-column').height() - 10);
     $('#image-column')
         .css('height', height);
-
 
     $.when(
         $.ajax({
@@ -81,6 +75,7 @@ NeighbourImages.prototype.getImages = function(sample_id) {
 NeighbourImages.prototype.setImages = function() {
     var self = this;
     var $nebula0 = $('#nebula-0');
+    var $body = $('body');
 
     // make all img frames empty
     $nebula0
@@ -104,7 +99,6 @@ NeighbourImages.prototype.setImages = function() {
         event.preventDefault();
     });
 
-
     // iterate through all found images and add them to the gallery
     for(var i = 0; i < self.neighbourImages.length; i++) {
         var $nebulaSelector = $('#nebula-' + (i+1));
@@ -115,10 +109,8 @@ NeighbourImages.prototype.setImages = function() {
         $nebulaSelector.unbind('click');
         (function(j) {
             $nebulaSelector.on('click', function(event) {
-                // prevent browser from scrolling to top when main image
-                // clicked and trigger event to update the plot
                 event.preventDefault();
-                $('body').trigger('updatePoint', [self.neighbours[j]]);
+                $body.trigger('updatePoint', self.neighbourImages[j].sample_id);
             });
         })(i);
     }

@@ -1,6 +1,4 @@
 var d3 = require('d3');
-var _ = require('lodash');
-_.mixin(require('lodash-deep'));
 
 /**
  * Histogram: Object to draw a histogram of the features across a dataset.
@@ -10,15 +8,13 @@ _.mixin(require('lodash-deep'));
  * calculated from that width such that the plot will have a 16:9 aspect ratio.
  *
  * @constructor
- * @param {array} sampleData - The sample data for the screen. Each element
- *     in the array is an instance of a Sample document.
+ * @param {string} screen - The name of the screen the features being plotted
+ *     belong to.
  * @param {string} element - The ID of the target div for this plot.
  * @param {array} featureNames - An array of the features used in this screen.
  */
-function Histogram(sampleData, element, featureNames) {
-    var self = this;
-
-    this.sampleData = sampleData;
+function Histogram(screen, featureNames, element) {
+    this.screen = screen;
     this.featureNames = featureNames;
     this.feature = 0;
     this.element = element;
@@ -33,12 +29,27 @@ function Histogram(sampleData, element, featureNames) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    $('body').on('linePlotUpdate', function(event, activeFeature) {
-        self.drawHistogram(activeFeature-1);
-    });
-
-    self.drawHistogram(0);
+    this.getFeatureDistribution(0);
 }
+
+/**
+ * getFeatureDistribution: Query feature distrubtion from DB.
+ *
+ * Send an AJAX query to the DB to get a vector of the feature distribution.
+ * Once this comes back from the database, the Histogram is redrawn.
+ *
+ * @param {Number} feature - The index of the feature to get from the database
+ */
+Histogram.prototype.getFeatureDistribution = function(feature) {
+    var self = this;
+    $.ajax({
+        type: 'GET',
+        url: '/api/feature/' + self.screen + '/' + this.featureNames[feature],
+        success: function(data) {
+            self.drawHistogram(data[0].feature_dist_std, feature)
+        }
+    });
+};
 
 /**
  * drawHistogram: Draw the histogram.
@@ -47,16 +58,15 @@ function Histogram(sampleData, element, featureNames) {
  * are calculated using d3's histogram layout function.
  *
  * @this {Histogram}
+ * @params {Array} featureDist - A vector of numeric values. These represent
+ *     the distribution of a feature across the whole database.
  * @param {number} feature - The index of the feature currently selected
  *     on the line plot.
  */
-Histogram.prototype.drawHistogram = function(feature) {
+Histogram.prototype.drawHistogram = function(featureDist, feature) {
     var self = this;
 
     self.destroy();
-
-    var featureDist = _.deepPluck(self.sampleData,
-        ['feature_vector_std', feature]);
 
     // define xScale and xAxis
     var xScale = d3.scale.linear()

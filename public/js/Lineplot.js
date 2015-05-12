@@ -20,12 +20,7 @@ var RIGHTARROW = 39;
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
  */
-function Lineplot(sampleData, element) {
-    var self = this;
-    var $body = $('body');
-
-    this.sampleData = sampleData;
-    this.featureLength = sampleData[0].feature_vector_std.length;
+function Lineplot(element) {
     this.activeFeature = 0;
     this.element = element;
 
@@ -38,45 +33,36 @@ function Lineplot(sampleData, element) {
     this.margin = {top: 20, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
+};
 
-    $body.unbind('redrawLineplot');
-
-    $body.on('redrawLineplot', function(event, sampleId) {
-        self.drawLineplot(sampleId);
-    });
-
-    $body.on('linePlotUpdate', function(event, activeFeature) {
-      self.updateActiveLine(activeFeature);
-    });
-}
-
-/**
- * drawLineplot: Draw the lineplot.
- *
- * Draw the SVG canvas, axis and SVG path for the lineplot.
- *
- * @this {Lineplot}
- * @param {String} sampleId - The string ID of the sample to display.
- */
-Lineplot.prototype.drawLineplot = function(sampleId) {
-
+Lineplot.prototype.getSampleData = function(sampleId) {
     var self = this;
+    $.ajax({
+        type: 'GET',
+        url: '/api/sample/' + sampleId + '/feature_vector_std',
+        success: function(data) {
+            self.drawLineplot(data[0]);
+        }
+    });
+};
+
+Lineplot.prototype.drawLineplot = function(sampleData) {
+    var self = this;
+    this.featureVector = sampleData.feature_vector_std;
 
     self.destroy();
 
-    var sampleIndex = _.findIndex(this.sampleData, '_id', sampleId);
-    var featureVector = this.sampleData[sampleIndex].feature_vector_std;
-
     // get min/max x/y values -- needed for scaling axis/data
-    var yMin = d3.min(featureVector);
-    var yMax = d3.max(featureVector);
+    var yMin = d3.min(this.featureVector);
+    var yMax = d3.max(this.featureVector);
 
     // var create (x, y) pairs for plot
-    var linePoints = _.zip(_.range(1, self.featureLength+1), featureVector);
+    var linePoints = _.zip(_.range(1, this.featureVector.length+1),
+        this.featureVector);
 
     // define x-scale and x-axis
     self.xScale = d3.scale.linear()
-        .domain([0, self.featureLength])
+        .domain([0, this.featureVector.length])
         .range([0, self.width]);
 
     var xAxis = d3.svg.axis()
@@ -104,7 +90,8 @@ Lineplot.prototype.drawLineplot = function(sampleId) {
         .attr('height', self.fullHeight)
         .append('g')
         .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
-        .on('click', function() {
+        .on('click', function () {
+            d3.event.stopPropagation();
             self.onClickUpdate(d3.mouse(this));
         });
 
@@ -116,6 +103,7 @@ Lineplot.prototype.drawLineplot = function(sampleId) {
         .attr('height', this.fullHeight)
         .style('fill', 'white')
         .on('click', function () {
+            d3.event.stopPropagation();
             self.onClickUpdate(d3.mouse(this));
         });
 
@@ -146,11 +134,10 @@ Lineplot.prototype.drawLineplot = function(sampleId) {
         .attr('x', self.width/2)
         .attr('y', -5)
         .style('text-anchor', 'middle')
-        .text(sampleId);
+        .text(sampleData._id);
 
     // set active line
     self.updateActiveLine(this.activeFeature);
-
 };
 
 /**
@@ -193,9 +180,9 @@ Lineplot.prototype.onClickUpdate = function (d3Mouse) {
     var xCoord = d3Mouse[0];
     var clickedFeature = Math.round(self.xScale.invert(xCoord));
 
-    if(clickedFeature <= self.featureLength && clickedFeature > 1) {
+    if(clickedFeature <= self.featureVector.length && clickedFeature > 1) {
         self.activeFeature = clickedFeature;
-        $('body').trigger('linePlotUpdate', self.activeFeature);
+        $('body').trigger('updateLineplot', self.activeFeature);
     }
 };
 
@@ -214,13 +201,14 @@ Lineplot.prototype.keypressUpdate = function(keyCode) {
     var self = this;
 
     if(self.activeFeature) {
-        if(keyCode === RIGHTARROW && self.activeFeature < this.featureLength) {
+        if(keyCode === RIGHTARROW &&
+            self.activeFeature < this.featureVector.length) {
             self.activeFeature++;
-            $('body').trigger('linePlotUpdate', self.activeFeature);
+            $('body').trigger('updateLineplot', self.activeFeature);
         }
         else if(keyCode === LEFTARROW && self.activeFeature > 1) {
             self.activeFeature--;
-            $('body').trigger('linePlotUpdate', self.activeFeature);
+            $('body').trigger('updateLineplot', self.activeFeature);
         }
     }
 };

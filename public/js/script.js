@@ -10,7 +10,7 @@ $.slidebars();
 
 $(document).ready(function() {
     $.ajax({
-        url: '/api/screen_ids/',
+        url: '/api/screens/_id',
         async: false,
         success: function (json) {
             updateSelector(json);
@@ -76,9 +76,28 @@ function selectScreen(screen_id) {
 }
 
 function mountPlots(screenData, sampleData, featureNames) {
+    var $body = $('body');
+
     var neighbourImages = new NeighbourImages();
-    var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
-    var lineplot = new Lineplot(sampleData, '#lineplot');
+    var histogram = new Histogram(screenData._id, featureNames, '#histplot');
+    var lineplot = new Lineplot('#lineplot');
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
+
+    $body.unbind('updateLineplot');
+    $body.unbind('updatePoint');
+
+    $body.on('updateLineplot', function(event, activeFeature) {
+        lineplot.updateActiveLine(activeFeature);
+        histogram.getFeatureDistribution(activeFeature-1);
+    });
+
+    $body.on('updatePoint', function(event, sampleId) {
+        lineplot.getSampleData(sampleId);
+        neighbourPlot.updatePoint(sampleId);
+        neighbourImages.getImages(sampleId);
+    });
+
+    // default select first point
+    $body.trigger('updatePoint', sampleData[0]._id);
 }
