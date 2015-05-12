@@ -51,7 +51,7 @@ module.exports = function(app) {
         Sample
         .find({ 'screen': req.params.screen })
         .select('_id row column plate gene_name feature_vector_std ' +
-                'pca cluster_member neighbours')
+                'pca_vector neighbours')
         .exec(resHandler(res));
     });
 
@@ -62,6 +62,21 @@ module.exports = function(app) {
             .exec(resHandler(res))
     });
 
+    // get all neighbours
+    app.get('/api/sample/neighbours/:id', function(req, res) {
+        Sample
+            .find({ '_id': req.params.id })
+            .select('neighbours')
+            .exec(function(err, data) {
+                Sample.find({
+                    '_id': { $in: data[0].neighbours }
+                })
+                .exec(function(err, data) {
+                    res.send(data);
+                });
+            })
+    });
+
     // get value from sample document
     app.get('/api/sample/:key/:id', function(req, res) {
       Sample
@@ -70,22 +85,27 @@ module.exports = function(app) {
         .exec(resHandler(res))
     });
 
-    //get fullsize image
+    //get large image
     app.get('/api/image/:id', function(req, res) {
         Image
             .find({ 'sample_id': req.params.id })
-        .select('sample_id image_full')
+        .select('sample_id image_large')
         .exec(resHandler(res));
     });
 
-    // get image thumbnails
-    app.get('/api/images/', function(req, res) {
-      Image
-        .find({
-          'sample_id': { $in: req.query.sample_ids }
-        })
-        .select('image_thumb sample_id')
-        .exec(resHandler(res));
+    // get thumbnails for all neighbour images
+    app.get('/api/images/:id', function(req, res) {
+        Sample
+            .find({ '_id': req.params.id })
+            .select('neighbours')
+            .exec(function(err, data) {
+                Image
+                    .find({
+                        'sample_id': { $in: data[0].neighbours }
+                    })
+                    .select('sample_id image_thumb')
+                    .exec(resHandler(res));
+            })
     });
 
     // default route

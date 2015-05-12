@@ -1,5 +1,10 @@
 /* MAIN PAGE CSS */
 
+#image-column {
+    overflow: scroll;
+    height: 0;
+}
+
 .load-overlay {
     pointer-events: none;
 }
@@ -19,6 +24,10 @@
 
 .sb-right {
     margin-top: 50px;
+}
+
+.sb-active {
+    overflow: hidden;
 }
 
 .panel {
@@ -78,18 +87,10 @@
     font-weight: bold;
 }
 
-.thumb {
+.sample-image {
     margin: 1px 1px -3px 1px;
     padding: 0 0 0 0;
-    width: 150px;
-    height: 150px;
-}
-
-.selected-image-display {
-    margin: 1px 1px -3px 1px;
-    padding: 0 0 0 0;
-    width: 300px;
-    height: 300px;
+    height: 100%;
 }
 
 /* Centered columns for grid display in Nebula */
@@ -102,11 +103,6 @@
 
 /* Centered rows for grid display in Nebula */
 .row-centered {
-    text-align: center;
-}
-
-/* Plot all D3 SVGs to center of their divs */
-.plotbox {
     text-align: center;
 }
 
@@ -145,11 +141,6 @@
 }
 
 /* NEIGHBOUR PLOT CSS */
-
-.gallery {
-    height: 500px;
-    overflow: scroll;
-}
 
 .pcaplot {
     height: 500px;

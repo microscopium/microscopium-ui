@@ -1,6 +1,9 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+var LEFTARROW = 37;
+var RIGHTARROW = 39;
+
 /**
  * Lineplot: Object to draw lineplot of sample feature distribution.
  *
@@ -8,29 +11,43 @@ var _ = require('lodash');
  * lineplot triggers an update in a Histogram object showing the distribution
  * of the corresponding feature.
  *
+ * The width and height of the plot is calculated based on the size of the
+ * plot's containing DIV. The width is taken from the DIV, and the height
+ * calculated from that width such that the plot will have a 16:9 aspect ratio.
+ *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
- * @param {Histogram} histogram - Histogram plot object that will update when
- *     a part of the Lineplot is clicked.
  */
-function Lineplot(sampleData, element, histogram) {
+function Lineplot(sampleData, element) {
+    var self = this;
+    var $body = $('body');
+
     this.sampleData = sampleData;
     this.featureLength = sampleData[0].feature_vector_std.length;
-    this.activeSample = 0;
     this.activeFeature = 0;
-    this.histogram = histogram;
-
     this.element = element;
-    this.fullWidth = 600;
-    this.fullHeight = 400;
-    this.xAxisTicks = 10;
+
+    this.fullWidth = $(this.element).width();
+    this.fullHeight = Math.round(this.fullWidth * (9/16));
+
+    this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
-    this.margin = {top: 20, right: 30, bottom: 20, left: 45};
+    this.margin = {top: 20, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
+
+    $body.unbind('redrawLineplot');
+
+    $body.on('redrawLineplot', function(event, sampleId) {
+        self.drawLineplot(sampleId);
+    });
+
+    $body.on('linePlotUpdate', function(event, activeFeature) {
+      self.updateActiveLine(activeFeature);
+    });
 }
 
 /**
@@ -178,8 +195,7 @@ Lineplot.prototype.onClickUpdate = function (d3Mouse) {
 
     if(clickedFeature <= self.featureLength && clickedFeature > 1) {
         self.activeFeature = clickedFeature;
-        self.histogram.drawHistogram(self.activeFeature-1);
-        self.updateActiveLine(self.activeFeature);
+        $('body').trigger('linePlotUpdate', self.activeFeature);
     }
 };
 
@@ -198,15 +214,13 @@ Lineplot.prototype.keypressUpdate = function(keyCode) {
     var self = this;
 
     if(self.activeFeature) {
-        if(keyCode === 39 && self.activeFeature < this.featureLength) {
-            this.activeFeature++;
-            self.histogram.drawHistogram(self.activeFeature-1);
-            self.updateActiveLine(self.activeFeature);
+        if(keyCode === RIGHTARROW && self.activeFeature < this.featureLength) {
+            self.activeFeature++;
+            $('body').trigger('linePlotUpdate', self.activeFeature);
         }
-        else if(keyCode === 37 && self.activeFeature > 1) {
-            this.activeFeature--;
-            self.histogram.drawHistogram(self.activeFeature-1);
-            self.updateActiveLine(self.activeFeature);
+        else if(keyCode === LEFTARROW && self.activeFeature > 1) {
+            self.activeFeature--;
+            $('body').trigger('linePlotUpdate', self.activeFeature);
         }
     }
 };

@@ -19,6 +19,8 @@ var $filterForm = $('#filter-form');
 var $filterAdd = $('#filter-add');
 var $filterRemove = $('#filter-remove');
 
+var ENTER = 13;
+
 
 /**
  * SampleFilter: Setup sample filter.
@@ -147,7 +149,7 @@ SampleFilter.prototype.mountEventListeners = function() {
     // using $(parent).on(event, element, function) as events must be bound to
     // elements that may not exist at time of page rendering
     $filterMenu.on('keydown dblclick', '#gene-select', function(event) {
-        if(event.which === 13 || event.type === 'dblclick') {
+        if(event.which === ENTER || event.type === 'dblclick') {
             event.preventDefault();
             self.addToFilter();
         }
@@ -155,7 +157,7 @@ SampleFilter.prototype.mountEventListeners = function() {
 
     // attach enter key and double listener to selected box
     $filterMenu.on('keydown dblclick', '#gene-selected', function(event) {
-        if(event.which === 13 || event.type === 'dblclick') {
+        if(event.which === ENTER || event.type === 'dblclick') {
             event.preventDefault();
             self.removeFromFilter();
         }
@@ -171,7 +173,7 @@ SampleFilter.prototype.mountEventListeners = function() {
 
     // update selected gene when enter pressed on textbox
     $geneFilterText.on('keypress', function(event) {
-        if(event.which === 13) {
+        if(event.which === ENTER) {
             self.addToFilter();
         }
     });

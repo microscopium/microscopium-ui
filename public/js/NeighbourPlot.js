@@ -27,23 +27,25 @@ d3.selection.prototype.moveToFront = function() {
  * Clicking on scatterplot points will trigger updates of the neighbour
  * image gallery and corresponding sample lineplot.
  *
+ * The width and height of the plot is calculated based on the size of the
+ * plot's containing DIV. The width is taken from the DIV, and the height
+ * calculated from that width such that the plot will have a 16:9 aspect ratio.
+ *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
- * @param {LinePlot} lineplot - LinePlot that will update when scatterplot
- *     points are clicked.
- * @param {NeighbourImages} neighbourImages - NeighbourImages object that will
  * update when scatterplot points are clicked.
  */
-function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
-    this.sampleData = sampleData;
-    this.lineplot = lineplot;
-    this.neighbourImages = neighbourImages;
+function NeighbourPlot(sampleData, element) {
+    var self = this;
 
+    this.sampleData = sampleData;
     this.element = element;
-    this.fullWidth = 700;
-    this.fullHeight = 500;
+
+    this.fullWidth = $(this.element).width();
+    this.fullHeight = Math.round(this.fullWidth * (9/16));
+
     this.transitionDuration = 125;
     this.inactivePointRadius = 5;
     this.activePointRadius = 7;
@@ -53,6 +55,10 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
     this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
+
+    $('body').on('updatePoint', function(event, d) {
+        self.updatePoint(d);
+    });
 
     this.drawScatterplot();
 }
@@ -66,13 +72,14 @@ function NeighbourPlot(sampleData, element, lineplot, neighbourImages) {
  */
 NeighbourPlot.prototype.drawScatterplot = function() {
     var self = this;
+    var $body = $('body');
 
     this.destroy();
 
-    var xMin = d3.min(this.sampleData, function(d) { return d.pca[0]; });
-    var yMin = d3.min(this.sampleData, function(d) { return d.pca[1]; });
-    var xMax = d3.max(this.sampleData, function(d) { return d.pca[0]; });
-    var yMax = d3.max(this.sampleData, function(d) { return d.pca[1]; });
+    var xMin = d3.min(this.sampleData, function(d) { return d.pca_vector[0]; });
+    var yMin = d3.min(this.sampleData, function(d) { return d.pca_vector[1]; });
+    var xMax = d3.max(this.sampleData, function(d) { return d.pca_vector[0]; });
+    var yMax = d3.max(this.sampleData, function(d) { return d.pca_vector[1]; });
 
     // setup scales and axis
     self.xScale = d3.scale.linear()
@@ -138,10 +145,10 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .enter()
         .append('circle')
         .attr('cx', function(d) {
-            return self.xScale(d.pca[0]);
+            return self.xScale(d.pca_vector[0]);
         })
         .attr('cy', function(d) {
-            return self.yScale(d.pca[1]);
+            return self.yScale(d.pca_vector[1]);
         })
         .attr('r', 5)
         .classed('scatterpt', true)
@@ -155,13 +162,14 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                self.updatePoint(selection, d);
+                $body.trigger('updatePoint', d);
+                $body.trigger('updateGallery', d._id);
             }
         });
 
     // default select first point
-    var first = d3.select('.scatterpt');
-    self.updatePoint(first, this.sampleData[0])
+    $body.trigger('updatePoint', this.sampleData[0]);
+    $body.trigger('updateGallery', this.sampleData[0]._id);
 };
 
 /**
@@ -172,24 +180,21 @@ NeighbourPlot.prototype.drawScatterplot = function() {
  * lineplot and neighbour image gallery.
  *
  * @this {NeighbourPlot}
- * @param {d3-selection} selection - The d3 selection object from the
- *     clicked scatterplot point.
  * @param {object} d - The datum attached to the clicked scatterplot point.
  */
-NeighbourPlot.prototype.updatePoint = function(selection, d) {
+NeighbourPlot.prototype.updatePoint = function(d) {
     var self = this;
 
-    self.neighbourImages.getImages(d._id);
-    self.lineplot.drawLineplot(d._id);
+    $('body').trigger('redrawLineplot', [d._id]);
 
-    d3.selectAll('.activept')
+    self.svg.selectAll('.activept')
         .classed('activept', false)
         .classed('neighbourpt', false)
         .transition()
         .duration(self.transitionDuration)
         .attr('r', self.inactivePointRadius);
 
-    d3.selectAll('.neighbourpt')
+    self.svg.selectAll('.neighbourpt')
         .classed('neighbourpt', false)
         .attr('r', self.inactivePointRadius)
         .transition()
@@ -209,8 +214,9 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
     }
 
     // set class and attr of new active point
-    selection
+    d3.select('#' + d._id)
         .classed('activept', true)
+        .moveToFront()
         .transition()
         .duration(self.transitionDuration)
         .attr('r', self.activePointRadius);
@@ -219,7 +225,8 @@ NeighbourPlot.prototype.updatePoint = function(selection, d) {
 /**
  * updatePlot: Re-render plot data points given a new set of data.
  *
- * Uses D3 enter-update-select pattern to update the plot datapoints.
+ * Update the class of scatterplot points, and bring unfiltered points
+ * to the top of the SVG stack.
  *
  * @this {NeighbourPlot}
  * @param {array} newData - The new dataset to display.
@@ -230,7 +237,7 @@ NeighbourPlot.prototype.updatePlot = function(newData) {
     if(newData.length === this.sampleData.length) {
         // if no points have been filtered out, class everything as unfiltered
         self.svg.selectAll('circle')
-            .classed('filtered', false)
+            .classed('filtered', false);
     }
     else {
         // cast sample ids as id #tags so they can be used as selectors

@@ -5,6 +5,10 @@ _.mixin(require('lodash-deep'));
 /**
  * Histogram: Object to draw a histogram of the features across a dataset.
  *
+ * The width and height of the plot is calculated based on the size of the
+ * plot's containing DIV. The width is taken from the DIV, and the height
+ * calculated from that width such that the plot will have a 16:9 aspect ratio.
+ *
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
@@ -12,21 +16,28 @@ _.mixin(require('lodash-deep'));
  * @param {array} featureNames - An array of the features used in this screen.
  */
 function Histogram(sampleData, element, featureNames) {
+    var self = this;
+
     this.sampleData = sampleData;
     this.featureNames = featureNames;
     this.feature = 0;
-
     this.element = element;
-    this.fullWidth = 500;
-    this.fullHeight = 400;
+
+    this.fullWidth = $(this.element).width();
+    this.fullHeight = Math.round(this.fullWidth * (9/16));
+
     this.xAxisTicks = 8;
     this.yAxisTicks = 5;
 
-    this.margin = {top: 20, right: 30, bottom: 20, left: 45};
+    this.margin = {top: 20, right: 30, bottom: 30, left: 50};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    this.drawHistogram(0);
+    $('body').on('linePlotUpdate', function(event, activeFeature) {
+        self.drawHistogram(activeFeature-1);
+    });
+
+    self.drawHistogram(0);
 }
 
 /**

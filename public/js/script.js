@@ -3,7 +3,6 @@ var Histogram = require('./Histogram.js');
 var Lineplot = require('./Lineplot.js');
 var NeighbourPlot = require('./NeighbourPlot.js');
 var NeighbourImages = require('./NeighbourImages.js');
-var ClusterPlot = require('./ClusterPlot.js');
 var Spinner = require('spin.js');
 var spinner = new Spinner();
 
@@ -15,6 +14,10 @@ $(document).ready(function() {
         async: false,
         success: function (json) {
             updateSelector(json);
+            // automatically select a screen if there is only one to choose from
+            if(json.length === 1) {
+                selectScreen(json[0]._id);
+            }
         },
         dataType: 'json'
     });
@@ -73,18 +76,9 @@ function selectScreen(screen_id) {
 }
 
 function mountPlots(screenData, sampleData, featureNames) {
-    updateTab(screenData);
-    var neighbourImages = new NeighbourImages(sampleData[0]._id);
+    var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(sampleData, '#histplot' ,featureNames);
-    var lineplot = new Lineplot(sampleData, '#lineplot', histogram);
-    var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot', lineplot, neighbourImages);
-    var clusterPlot = new ClusterPlot(sampleData, '#clusterpcaplot');
+    var lineplot = new Lineplot(sampleData, '#lineplot');
+    var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
-}
-
-// update summary tab
-function updateTab(screen_data) {
-    $('#name').text(screen_data._id);
-    $('#desc').text(screen_data.screen_desc);
-    $('#samples').text(screen_data.number_samples);
 }
