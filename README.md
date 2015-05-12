@@ -52,6 +52,11 @@ MongoDB Schema
 Documents should by default be stored in the the database ``microscopium``,
 however this can be changed by updating the ``config/db.js`` file.
 
+### Document Schemas ###
+
+While MongoDB does not enforce a schema for data, certain fields must be present in
+each document to ensure proper operation of the UI.
+
 Screen descriptions are saved in the ``screens`` collection with the
 following format:
 
@@ -103,4 +108,30 @@ var Image = {
         image_large: String, // A large preview image, 512px wide.
         image_thumb: String // A smalller, thumbnail sized preview image, 150px wide.
     }
+```
+
+For each feature belonging to each screen, a document is saved detailing the feature
+across the whole dataset. Think of this is the column axis if you were to look at the
+dataset as a dataframe or table.
+
+```
+var Feature = {
+        _id: ObjectID, // Mongo generated unique ID for this feature.
+        screen: String,
+        feature_name: String, // the actual name of the feature
+        feature_dist: Array, // A vector of unstandardised values for this feature.
+        feature_dist_std: Array, // A vector of standardised values for this feature.
+}
+```
+### Indices ###
+
+By default, MongoDB only creates indices on the primary key for each document.
+The UI makes queries to a few non-primary keys, so indices need to be created on these.
+From your Mongo terminal, load up the ``microscopium`` database and enter these commands
+to ensure you've got the right indices.
+
+```
+db.samples.createIndex({'screen':1});
+db.images.createIndex({'sample_id':1});
+db.features.createIndex({'screen':1, 'feature_name':1});
 ```
