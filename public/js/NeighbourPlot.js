@@ -176,39 +176,45 @@ NeighbourPlot.prototype.drawScatterplot = function() {
 NeighbourPlot.prototype.updatePoint = function(sampleId) {
     var self = this;
     var selectedPoint = self.svg.select('#' + sampleId);
-    var neighbours = selectedPoint.data()[0].neighbours;
+    var neighbours = [];
 
-    self.svg.selectAll('.activept')
-        .classed('activept', false)
-        .classed('neighbourpt', false)
-        .transition()
-        .duration(self.transitionDuration)
-        .attr('r', self.inactivePointRadius);
+    $.ajax({
+        url: '/api/sample/' + sampleId + '/neighbours',
+        success: function(data) {
+            neighbours = data[0].neighbours;
+            self.svg.selectAll('.activept')
+                .classed('activept', false)
+                .classed('neighbourpt', false)
+                .transition()
+                .duration(self.transitionDuration)
+                .attr('r', self.inactivePointRadius);
 
-    self.svg.selectAll('.neighbourpt')
-        .classed('neighbourpt', false)
-        .attr('r', self.inactivePointRadius)
-        .transition()
-        .duration(self.transitionDuration);
+            self.svg.selectAll('.neighbourpt')
+                .classed('neighbourpt', false)
+                .attr('r', self.inactivePointRadius)
+                .transition()
+                .duration(self.transitionDuration);
 
-    for(var j = 1 ; j < neighbours.length; j++) {
-        var neighbourTags = _.map(neighbours, function(d) {
-            return '#' + d;
-        });
-        self.svg.selectAll(neighbourTags)
-            .classed('neighbourpt', true)
-            .transition()
-            .duration(self.transitionDuration)
-            .attr('r', self.inactivePointRadius);
-    }
+            for(var j = 1 ; j < neighbours.length; j++) {
+                var neighbourTags = _.map(neighbours, function(d) {
+                    return '#' + d;
+                });
+                self.svg.selectAll(neighbourTags)
+                    .classed('neighbourpt', true)
+                    .transition()
+                    .duration(self.transitionDuration)
+                    .attr('r', self.inactivePointRadius);
+            }
 
-    // set class and attr of new active point
-    selectedPoint
-        .classed('activept', true)
-        .moveToFront()
-        .transition()
-        .duration(self.transitionDuration)
-        .attr('r', self.activePointRadius);
+            // set class and attr of new active point
+            selectedPoint
+                .classed('activept', true)
+                .moveToFront()
+                .transition()
+                .duration(self.transitionDuration)
+                .attr('r', self.activePointRadius);
+        }
+    });
 };
 
 /**

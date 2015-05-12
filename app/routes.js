@@ -56,7 +56,7 @@ module.exports = function(app) {
         Sample
         .find({ 'screen': req.params.screen })
         .select('_id row column plate gene_name ' +
-                'pca_vector neighbours')
+                'pca_vector')
         .exec(resHandler(res));
     });
 
