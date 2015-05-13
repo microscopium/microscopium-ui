@@ -7,21 +7,26 @@ var RIGHTARROW = 39;
 /**
  * Lineplot: Object to draw lineplot of sample feature distribution.
  *
- * The lineplot gives the feature distribution for a sample. Clicking on the
- * lineplot triggers an update in a Histogram object showing the distribution
- * of the corresponding feature.
+ * A lineplot is drawn to represent the distribution of the features for
+ * a particular sample. The features are mapped to the x-axis such that the
+ * first feature in the array is mapped to x=1, the second feature mapped to
+ * x=2, etc.
  *
  * The width and height of the plot is calculated based on the size of the
  * plot's containing DIV. The width is taken from the DIV, and the height
  * calculated from that width such that the plot will have a 16:9 aspect ratio.
  *
+ * Clicking on the lineplot triggers an update in a Histogram object showing
+ * the distribution of the corresponding feature. The data is fetched from
+ * MongoDB by means of an AJAX request.
+ *
  * @constructor
- * @param {array} sampleData - The sample data for the screen. Each element
- *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
  */
 function Lineplot(element) {
-    this.activeFeature = 0;
+    // this variable refers to the position of the vertical 'active feature'
+    // line on the plot, *not* the index of the feature in the feature vector.
+    this.activeFeature = 1;
     this.element = element;
 
     this.fullWidth = $(this.element).width();
@@ -33,8 +38,18 @@ function Lineplot(element) {
     this.margin = {top: 20, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
-};
+}
 
+/**
+ * onClickUpdate: Get feature vector for sample and update lineplot.
+ *
+ * Once the data has been fetched from the database, it is sent to
+ * the drawLineplot method to update the plot.
+ *
+ * @this {Lineplot}
+ * @param {string} sampleId - The _id of the sample to get from
+ *     the database.
+ */
 Lineplot.prototype.getSampleData = function(sampleId) {
     var self = this;
     $.ajax({
@@ -46,6 +61,17 @@ Lineplot.prototype.getSampleData = function(sampleId) {
     });
 };
 
+/**
+ * drawLineplot: Draw the lineplot.
+ *
+
+ *
+ * @this {Lineplot}
+ * @param {object} sampleData - An object containing two properties:
+ *     * _id: A string, the id of the sample to be drawn.
+ *     * feature_vector_std - An array, the standardised feature vector
+ *       of the sample.
+ */
 Lineplot.prototype.drawLineplot = function(sampleData) {
     var self = this;
     this.featureVector = sampleData.feature_vector_std;
@@ -147,8 +173,8 @@ Lineplot.prototype.drawLineplot = function(sampleData) {
  * corresponding feature.
  *
  * @this {Lineplot}
- * @param {number} feature - The index of the feature currently selected
- *     on the line plot.
+ * @param {number} feature - The position on the x-axis where the active
+ *    feature line should be drawn.
  */
 Lineplot.prototype.updateActiveLine = function(feature) {
     var self = this;
@@ -202,11 +228,15 @@ Lineplot.prototype.keypressUpdate = function(keyCode) {
 
     if(self.activeFeature) {
         if(keyCode === RIGHTARROW &&
+            // only let the line move right if it's not already at the
+            // rightmost feature
             self.activeFeature < this.featureVector.length) {
             self.activeFeature++;
             $('body').trigger('updateLineplot', self.activeFeature);
         }
         else if(keyCode === LEFTARROW && self.activeFeature > 1) {
+            // only let the line move left if it's not already at the
+            // left-most feature
             self.activeFeature--;
             $('body').trigger('updateLineplot', self.activeFeature);
         }
