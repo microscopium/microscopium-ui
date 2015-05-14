@@ -179,7 +179,7 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
     var neighbours = [];
 
     $.ajax({
-        url: '/api/sample/' + sampleId + '/neighbours',
+        url: '/api/samples/?id=' + sampleId + '&select=neighbours',
         success: function(data) {
             neighbours = data[0].neighbours;
             self.svg.selectAll('.activept')

@@ -9,8 +9,10 @@ var spinner = new Spinner();
 $.slidebars();
 
 $(document).ready(function() {
+    // get the _id's of all screens currently in the DB and use these to
+    // render the dropdown menu
     $.ajax({
-        url: '/api/screens/_id',
+        url: '/api/screens?select=_id',
         async: false,
         success: function (json) {
             updateSelector(json);
@@ -39,12 +41,25 @@ function selectScreen(screen_id) {
     var featureNames = [];
     var sampleData = [];
     var screenData = [];
+
+    // define which fields to get for the query to the samples collection
+    var samplesQuery =  {
+        'screen': screen_id,
+        'select': ['row', 'column', 'plate', 'gene_name', 'pca_vector']
+    };
+
+    var screensQuery = {
+        'id': screen_id,
+        'select': ['screen_features']
+    };
+
     $('.navbar-nav a[href="#summary"]').tab('show');
     $('#sb-site').addClass('load-overlay');
     spinner.spin(document.getElementById('sb-site'));
+
     $.when(
         $.ajax({
-            url: 'api/screen/' + screen_id,
+            url: 'api/screens/?' + $.param(screensQuery),
             async: true,
             success: function(json) {
                 screenData = json[0];
@@ -56,7 +71,7 @@ function selectScreen(screen_id) {
             dataType: 'json'
         }),
         $.ajax({
-            url: 'api/samples/' + screen_id,
+            url: 'api/samples/?' + $.param(samplesQuery),
             async: true,
             success: function (json) {
                 sampleData = json;
@@ -80,7 +95,7 @@ function mountPlots(screenData, sampleData, featureNames) {
 
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(screenData._id, featureNames, '#histplot');
-    var lineplot = new Lineplot('#lineplot');
+    var lineplot = new Lineplot(screenData._id, '#lineplot');
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 

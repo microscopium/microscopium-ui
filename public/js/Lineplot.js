@@ -23,11 +23,12 @@ var RIGHTARROW = 39;
  * @constructor
  * @param {string} element - The ID of the target div for this plot.
  */
-function Lineplot(element) {
+function Lineplot(screen, element) {
     // this variable refers to the position of the vertical 'active feature'
     // line on the plot, *not* the index of the feature in the feature vector.
     this.activeFeature = 1;
     this.element = element;
+    this.screen = screen;
 
     this.fullWidth = $(this.element).width();
     this.fullHeight = Math.round(this.fullWidth * (9/16));
@@ -52,9 +53,13 @@ function Lineplot(element) {
  */
 Lineplot.prototype.getSampleData = function(sampleId) {
     var self = this;
+    var query = {
+        id: sampleId,
+        select: 'feature_vector_std'
+    };
     $.ajax({
         type: 'GET',
-        url: '/api/sample/' + sampleId + '/feature_vector_std',
+        url: '/api/samples/?' + $.param(query),
         success: function(data) {
             self.drawLineplot(data[0]);
         }
@@ -63,8 +68,6 @@ Lineplot.prototype.getSampleData = function(sampleId) {
 
 /**
  * drawLineplot: Draw the lineplot.
- *
-
  *
  * @this {Lineplot}
  * @param {object} sampleData - An object containing two properties:

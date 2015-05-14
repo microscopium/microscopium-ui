@@ -42,9 +42,14 @@ function Histogram(screen, featureNames, element) {
  */
 Histogram.prototype.getFeatureDistribution = function(feature) {
     var self = this;
+    var featureQuery = {
+        screen: this.screen,
+        feature: self.featureNames[feature],
+        select: 'feature_dist_std'
+    };
     $.ajax({
         type: 'GET',
-        url: '/api/feature/' + self.screen + '/' + this.featureNames[feature],
+        url: '/api/features/?' + $.param(featureQuery),
         success: function(data) {
             self.drawHistogram(data[0].feature_dist_std, feature)
         }

@@ -38,27 +38,36 @@ NeighbourImages.prototype.getImages = function(sample_id) {
     $('#image-column')
         .css('height', height);
 
+    var sampleQuery = {
+        id: sample_id,
+        select: ['neighbours']
+    };
+
+    var imageQueryLarge = {
+        sample_id: sample_id,
+        select: ['image_large']
+    };
+
+    var imageQueryNeighbour = {
+        sample_id: sample_id,
+        select: ['image_thumb sample_id'],
+        neighbours: true
+    };
+
     $.when(
         $.ajax({
-            url: '/api/sample/neighbours/' + sample_id,
-            success: function(json) {
-                json.shift(); // don't need first document
-                self.neighbours = json;
-            }
-        }),
-        $.ajax({
-            url: '/api/image/' + sample_id,
+            url: '/api/images/?' + $.param(imageQueryLarge),
             success: function(json) {
                 self.selectedImage = json[0];
             }
         }),
         $.ajax({
-            type: 'GET',
-            url: '/api/images/' + sample_id,
+            url: '/api/images?' + $.param(imageQueryNeighbour),
             success: function(json) {
-                json.shift(); // don't need first document
+                json.shift();
                 self.neighbourImages = json;
             }
+
         })).then(function(res, status) {
             self.setImages();
         });
@@ -76,6 +85,8 @@ NeighbourImages.prototype.setImages = function() {
     var self = this;
     var $nebula0 = $('#nebula-0');
     var $body = $('body');
+
+    console.log(self.neighbourImages);
 
     // make all img frames empty
     $nebula0
