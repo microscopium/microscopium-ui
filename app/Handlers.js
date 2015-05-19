@@ -7,6 +7,15 @@ var RouteUtils = require('./RouteUtils');
 
 var Handlers = {};
 
+Handlers.sendQuery = function(model, findQuery, req, res) {
+    var selectQuery = RouteUtils.parseSelectQuery(req.query.select);
+
+    model
+        .find(findQuery)
+        .select(selectQuery)
+        .exec(Handlers.resHandler(res));
+};
+
 Handlers.resHandler = function(res) {
     return function(err, data) {
         if (err) res.json(err);
@@ -26,28 +35,18 @@ Handlers.sampleHandler = function(req, res) {
         })
     }
 
-    var selectQuery = RouteUtils.parseSelectQuery(req.query.select);
-
     var findQuery = {};
     if(req.query.id) { findQuery._id = req.query.id  }
     if(req.query.screen) { findQuery.screen = req.query.screen }
 
-    Sample
-        .find(findQuery)
-        .select(selectQuery)
-        .exec(Handlers.resHandler(res));
+    Handlers.sendQuery(Sample, findQuery, req, res);
 };
 
 Handlers.screenHandler = function(req, res) {
-    var selectQuery = RouteUtils.parseSelectQuery(req.query.select);
-
     var findQuery = {};
     if(req.query.id) { findQuery._id = req.query.id }
 
-    Screen
-        .find(findQuery)
-        .select(selectQuery)
-        .exec(Handlers.resHandler(res));
+    Handlers.sendQuery(Screen, findQuery, req, res);
 };
 
 Handlers.imageHandler = function(req, res) {
@@ -59,12 +58,11 @@ Handlers.imageHandler = function(req, res) {
         });
     }
 
-    var selectQuery = RouteUtils.parseSelectQuery(req.query.select);
     var findQuery = {};
 
     if(req.query.neighbours === 'true') {
+        var selectQuery = RouteUtils.parseSelectQuery(req.query.select);
         if(req.query.sample_id) { findQuery._id = req.query.sample_id }
-
         Sample
             .find(findQuery)
             .select('neighbours -_id')
@@ -79,11 +77,7 @@ Handlers.imageHandler = function(req, res) {
     }
     else {
         if(req.query.sample_id) { findQuery.sample_id = req.query.sample_id }
-
-        Image
-            .find(findQuery)
-            .select(selectQuery)
-            .exec(Handlers.resHandler(res));
+        Handlers.sendQuery(Image, findQuery, req, res);
     }
 };
 
@@ -96,16 +90,12 @@ Handlers.featureHandler = function(req, res) {
         });
     }
 
-    var selectQuery = RouteUtils.parseSelectQuery(req.query.select);
     var findQuery = {
         'screen': req.query.screen,
         'feature_name': req.query.feature
     };
 
-    Feature
-        .find(findQuery)
-        .select(selectQuery)
-        .exec(Handlers.resHandler(res));
+    Handlers.sendQuery(Feature, findQuery, req, res);
 };
 
 module.exports = Handlers;
