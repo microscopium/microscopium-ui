@@ -1,5 +1,7 @@
 var RouteUtils = require('../app/RouteUtils.js');
 
+// test suite for the RouteUtils object
+// below are Jasmine methods passed to Karma for testing
 describe('RouteUtils', function() {
     describe('parseSelectQuery', function() {
 

@@ -5,7 +5,7 @@ var RouteUtils = {};
  *
  * Returns null if no select parameters supplied.
  *
- * @param selectQuery {array, string} - An array of strings for multiple select
+ * @param selectQuery {string[]} - An array of strings for multiple select
  *     parameters, or a string for a single parameter.
  */
 RouteUtils.parseSelectQuery = function(selectQuery) {

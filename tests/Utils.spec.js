@@ -1,3 +1,5 @@
+// test suite for the Utils object
+// below are Jasmine methods passed to Karma for testing
 describe('Utils', function() {
     var Utils = require('../public/js/Utils.js');
 
