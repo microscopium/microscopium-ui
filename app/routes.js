@@ -1,116 +1,98 @@
-var Screen = require('./models/screen');
-var Sample = require('./models/sample');
-var Image = require('./models/image');
-
-var resHandler = function(res, sort) {
-    if(sort === true) {
-        return function(err, data) {
-            if(err) res.json(err);
-            res.json(data.sort());
-        }
-    }
-    else {
-        return function(err, data) {
-            if(err) res.json(err);
-            res.json(data);
-        }
-    }
-};
+var Handlers = require('./Handlers');
 
 module.exports = function(app) {
+    /**
+     * GET /
+     *
+     * The default route, returns the main index.html file.
+     */
+    app.get('/', Handlers.indexHandler);
 
-    // index route
-    app.get('/', function(req, res) {
-        res.sendfile('index.html');
-    });
+    /**
+     * GET /api/screens
+     *
+     * Query the screens collection. Data is returned in JSON format.
+     *
+     * Parameters
+     * ----------
+     * id: The screen ID.
+     * select: Fields to restrict the query to.
+     *
+     * Example
+     * -------
+     * /api/screens?id=BBBC017&select=screen_dec&select=feature_names
+     *
+     * Return the screen document with _id 'BBBC017' and only
+     * return the fields screen_desc and feature_names
+     */
+    app.get('/api/screens/', Handlers.screenHandler);
 
-    // get all screen ids
-    app.get('/api/screen_ids', function(req, res) {
-        Screen
-            .find({})
-            .select('_id')
-            .exec(resHandler(res));
-    });
+    /**
+     * GET /api/images
+     *
+     * Query the images collection. A sample_id must be supplied with these queries.
+     * Images are returned in binary string format.
+     *
+     * Parameters
+     * ----------
+     * sample_id: The sample id of the image to query.
+     * select: Fields to restrict the query to.
+     * neighbours: "true" if true, neighbouring images will be returned.
+     *
+     * Example
+     * -------
+     * GET /api/screens?id=BBBC017-50116000001-A05&neighbours=true&select=image_thumb
+     *
+     * Return the neighbouring images for sample with id BBBC017-50116000001-A05
+     * and restrict the fields to only return thumbnail size images.
+     */
+    app.get('/api/images/', Handlers.imageHandler);
 
-    // find unique values for given screen and field
-    app.get('/api/unique/:screen/:field', function(req, res) {
-        Sample
-            .find({'screen': req.params.screen})
-            .distinct(req.params.field, resHandler(res, true));
-    });
+    /**
+     * GET /api/samples
+     *
+     * Query the samples collection.
+     *
+     * An id or screen parameter must be supplied.
+     *
+     * Parameters
+     * ----------
+     * id: The id of the sample to query.
+     * screen: Find samples belonging to this screen.
+     * select: Fields to restrict the query to.
+     *
+     * Example
+     * -------
+     * /api/samples?screen=BBBC017&select=pca_vector
+     *
+     * Return PCA co-ordinates for all samples in the BBBC017 screen.
+     */
+    app.get('/api/samples/', Handlers.sampleHandler);
 
-    // get specific screen document
-    app.get('/api/screen/:id', function(req, res) {
-        Screen
-            .find({'_id': req.params.id})
-            .exec(resHandler(res));
-    });
-
-    // get all samples belonging to screen
-    app.get('/api/samples/:screen', function(req, res) {
-        Sample
-        .find({ 'screen': req.params.screen })
-        .select('_id row column plate gene_name feature_vector_std ' +
-                'pca_vector neighbours')
-        .exec(resHandler(res));
-    });
-
-    // get specific sample
-    app.get('/api/sample/:id', function(req, res) {
-          Sample
-            .find({ '_id': req.params.id })
-            .exec(resHandler(res))
-    });
-
-    // get all neighbours
-    app.get('/api/sample/neighbours/:id', function(req, res) {
-        Sample
-            .find({ '_id': req.params.id })
-            .select('neighbours')
-            .exec(function(err, data) {
-                Sample.find({
-                    '_id': { $in: data[0].neighbours }
-                })
-                .exec(function(err, data) {
-                    res.send(data);
-                });
-            })
-    });
-
-    // get value from sample document
-    app.get('/api/sample/:key/:id', function(req, res) {
-      Sample
-        .find({ '_id': req.params.id })
-        .select(req.params.key)
-        .exec(resHandler(res))
-    });
-
-    //get large image
-    app.get('/api/image/:id', function(req, res) {
-        Image
-            .find({ 'sample_id': req.params.id })
-        .select('sample_id image_large')
-        .exec(resHandler(res));
-    });
-
-    // get thumbnails for all neighbour images
-    app.get('/api/images/:id', function(req, res) {
-        Sample
-            .find({ '_id': req.params.id })
-            .select('neighbours')
-            .exec(function(err, data) {
-                Image
-                    .find({
-                        'sample_id': { $in: data[0].neighbours }
-                    })
-                    .select('sample_id image_thumb')
-                    .exec(resHandler(res));
-            })
-    });
+    /**
+     * GET /api/features
+     *
+     * Query the features collection.
+     *
+     * A feature name and screen parameter must be supplied with these queries.
+     *
+     * Parameters
+     * ----------
+     * screen: The screen to query.
+     * feature_name: The feature name to query.
+     * select: Fields to restrict the query to.
+     *
+     * Example
+     * -------
+     * /api/features?screen=BBBC017&feature_name=mitosis-otsu-threshold-area-percentile95
+     *
+     * Return the distribution of the mitosis-otsu-threshold-area-percentile95
+     * feature for the BBBC017 screen.
+     */
+    app.get('/api/features/', Handlers.featureHandler);
 
     // default route
     app.use(function(req, res) {
         res.redirect('/');
     });
-
 };
