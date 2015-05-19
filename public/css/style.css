@@ -47,7 +47,8 @@
     background-color: #000000;
 }
 
-.fa-filter {
+/* resize font-awesome icons (they all belong to the fa class) */
+.fa {
     font-size: 1.3em;
 }
 
