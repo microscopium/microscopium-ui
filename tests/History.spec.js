@@ -7,14 +7,6 @@ describe('History', function() {
         history = new History();
     });
 
-    describe('add', function() {
-        it('should not add the same item consecutively', function() {
-            history.add('A');
-            history.add('A');
-            expect(history.length).toEqual(1);
-        });
-    });
-
     describe('back', function() {
         it('should return null if nothing to return', function() {
             expect(history.back()).toBeNull();
@@ -47,14 +39,40 @@ describe('History', function() {
             actual.push(history.forward());
             expect(actual).toEqual(['B', 'C']);
         });
+
+        it('it should return the expected order going back, forward and adding', function() {
+            var actual = [];
+            ['A', 'B', 'C'].forEach(function(value) {
+                history.add(value);
+            });
+            history.back();
+            history.add('D');
+            actual.push(history.back());
+            actual.push(history.back());
+            actual.push(history.forward());
+            actual.push(history.forward());
+            expect(actual).toEqual(['B', 'A', 'B', 'D']);
+        });
+    });
+
+    describe('length', function() {
+        it('should return the correct length', function() {
+            ['A', 'B', 'C'].forEach(function(value) {
+                history.add(value);
+            });
+            history.back();
+            history.add('D');
+            expect(history.length).toEqual(3);
+        });
     });
 
     describe('reset', function() {
         it('should remove all items from history', function() {
-            history.add('A');
-            history.add('B');
+            var actual = [];
             history.reset();
-            expect(history.length).toEqual(0);
+            actual.push(history.back());
+            actual.push(history.forward());
+            expect(actual).toEqual([null, null]);
         });
     });
 });
