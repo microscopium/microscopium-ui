@@ -210,7 +210,6 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
             // remove click event listener
             selectedPoint
                 .classed('activept', true)
-                .on('click', null)
                 .moveToFront()
                 .transition()
                 .duration(self.transitionDuration)
