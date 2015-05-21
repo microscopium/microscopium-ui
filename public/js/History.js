@@ -8,8 +8,7 @@
 function History() {
     this.sampleHistory = [];
     this.iterator = 0;
-    this.length = this.sampleHistory.length;
-    this.lastSample = null;
+    this.length = 0;
 }
 
 /**
@@ -21,13 +20,17 @@ function History() {
  * @param {string} sampleId - The sampleID to add to the history.
  */
 History.prototype.add = function(sampleId) {
-    if(sampleId !== this.lastSample) {
-        this.sampleHistory = this.sampleHistory.slice(0, this.iterator+1);
+    this.iterator++;
+    if(this.iterator === this.sampleHistory.length) {
+        // append to the history array if needed
         this.sampleHistory.push(sampleId);
-        this.iterator = this.sampleHistory.length - 1;
-        this.length = this.sampleHistory.length;
-        this.lastSample = sampleId;
     }
+    else {
+        // otherwise overwrite old history if room in array
+        this.sampleHistory[this.iterator] = sampleId;
+    }
+    // the length of the history will be equal to the iterator after adding
+    this.length = this.iterator;
 };
 
 /**
@@ -73,8 +76,7 @@ History.prototype.forward = function() {
 History.prototype.reset = function() {
     this.sampleHistory = [];
     this.iterator = 0;
-    this.lastSample = null;
-    this.length = this.sampleHistory.length;
+    this.length = 0;
 };
 
 module.exports = History;
