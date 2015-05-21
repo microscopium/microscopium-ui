@@ -3,8 +3,20 @@ var History = require('../public/js/History.js');
 describe('History', function() {
     var history;
 
+    // reset history object before each spec
     beforeEach(function() {
         history = new History();
+    });
+
+    describe('add', function() {
+        it('should not add the same item consecutively', function() {
+            var actual = [];
+            history.add('A');
+            history.add('A');
+            actual.push(history.back());
+            actual.push(history.forward());
+            expect(actual).toEqual([null, null]);
+        });
     });
 
     describe('back', function() {
@@ -12,11 +24,20 @@ describe('History', function() {
             expect(history.back()).toBeNull();
         });
 
+        it('should return null when no more items in history', function() {
+            var actual = [];
+            history.add('A');
+            history.add('B');
+            actual.push(history.back());
+            actual.push(history.back());
+            expect(actual).toEqual(['A', null])
+        });
+
         it('should return items in expected order', function() {
+            var actual = [];
             ['A', 'B', 'C'].forEach(function(value) {
                 history.add(value);
             });
-            var actual = [];
             actual.push(history.back());
             actual.push(history.back());
             expect(actual).toEqual(['B', 'A']);
@@ -40,6 +61,16 @@ describe('History', function() {
             expect(actual).toEqual(['B', 'C']);
         });
 
+        it('should return null when no more items in history', function() {
+            var actual = [];
+            history.add('A');
+            history.add('B');
+            actual.push(history.back());
+            actual.push(history.forward());
+            actual.push(history.forward());
+            expect(actual).toEqual(['A', 'B', null]);
+        });
+
         it('it should return the expected order going back, forward and adding', function() {
             var actual = [];
             ['A', 'B', 'C'].forEach(function(value) {
@@ -52,17 +83,6 @@ describe('History', function() {
             actual.push(history.forward());
             actual.push(history.forward());
             expect(actual).toEqual(['B', 'A', 'B', 'D']);
-        });
-    });
-
-    describe('length', function() {
-        it('should return the correct length', function() {
-            ['A', 'B', 'C'].forEach(function(value) {
-                history.add(value);
-            });
-            history.back();
-            history.add('D');
-            expect(history.length).toEqual(3);
         });
     });
 
