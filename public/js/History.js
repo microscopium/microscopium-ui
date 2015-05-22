@@ -28,8 +28,8 @@ History.prototype.add = function(sampleId) {
             this.current++;
             this.sampleHistory.push(sampleId);
         }
+        // otherwise overwrite old history if room in array
         else {
-            // otherwise overwrite old history if room in array
             this.current++;
             this.sampleHistory[this.current] = sampleId;
         }
@@ -47,7 +47,7 @@ History.prototype.add = function(sampleId) {
  * @returns {string|null} The previous item in the list of samples.
  */
 History.prototype.back = function() {
-    if(this.current > 0) {
+    if(this.current > 0 && this.length > 0) {
         this.current--;
         return this.sampleHistory[this.current];
     }
@@ -64,7 +64,7 @@ History.prototype.back = function() {
  * @returns {string|null}
  */
 History.prototype.forward = function() {
-    if(this.current > -1 && this.current < this.sampleHistory.length-1) {
+    if(this.current > -1 && this.current < this.length-1) {
         this.current++;
         return this.sampleHistory[this.current];
     }
