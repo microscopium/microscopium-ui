@@ -95,4 +95,19 @@ describe('History', function() {
             expect(actual).toEqual([null, null]);
         });
     });
+
+    describe('length', function() {
+        it('should return the correct length', function() {
+            history.add('A');
+            history.add('B');
+            history.add('C');
+            history.back();
+            history.add('D');
+            history.add('E');
+            history.add('F');
+            history.back();
+            history.add('G');
+            expect(history.length).toEqual(5);
+        });
+    });
 });
