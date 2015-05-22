@@ -7,7 +7,8 @@
  */
 function History() {
     this.sampleHistory = [];
-    this.iterator = 0;
+    this.current = -1;
+    this.lastSample = null;
     this.length = 0;
 }
 
@@ -20,17 +21,21 @@ function History() {
  * @param {string} sampleId - The sampleID to add to the history.
  */
 History.prototype.add = function(sampleId) {
-    this.iterator++;
-    if(this.iterator === this.sampleHistory.length) {
-        // append to the history array if needed
-        this.sampleHistory.push(sampleId);
+    // only add a new item to the history if it was not just added
+    if(this.lastSample !== sampleId) {
+        // add new entry to array if no more space in current history
+        if(this.current === this.sampleHistory.length-1) {
+            this.current++;
+            this.sampleHistory.push(sampleId);
+        }
+        else {
+            // otherwise overwrite old history if room in array
+            this.current++;
+            this.sampleHistory[this.current] = sampleId;
+        }
+        this.lastSample = sampleId;
+        this.length = this.current+1;
     }
-    else {
-        // otherwise overwrite old history if room in array
-        this.sampleHistory[this.iterator] = sampleId;
-    }
-    // the length of the history will be equal to the iterator after adding
-    this.length = this.iterator;
 };
 
 /**
@@ -42,9 +47,9 @@ History.prototype.add = function(sampleId) {
  * @returns {string|null} The previous item in the list of samples.
  */
 History.prototype.back = function() {
-    if(this.iterator > 0) {
-        this.iterator--;
-        return this.sampleHistory[this.iterator];
+    if(this.current > 0) {
+        this.current--;
+        return this.sampleHistory[this.current];
     }
     else {
         return null;
@@ -59,9 +64,9 @@ History.prototype.back = function() {
  * @returns {string|null}
  */
 History.prototype.forward = function() {
-    if(this.iterator < this.sampleHistory.length - 1) {
-        this.iterator++;
-        return this.sampleHistory[this.iterator];
+    if(this.current > -1 && this.current < this.sampleHistory.length-1) {
+        this.current++;
+        return this.sampleHistory[this.current];
     }
     else {
         return null;
@@ -75,7 +80,7 @@ History.prototype.forward = function() {
  */
 History.prototype.reset = function() {
     this.sampleHistory = [];
-    this.iterator = 0;
+    this.current = -1;
     this.length = 0;
 };
 
