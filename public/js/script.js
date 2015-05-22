@@ -1,9 +1,12 @@
 var Filter = require('./Filter.js');
 var Histogram = require('./Histogram.js');
+var History = require('./History.js');
 var Lineplot = require('./Lineplot.js');
 var NeighbourPlot = require('./NeighbourPlot.js');
 var NeighbourImages = require('./NeighbourImages.js');
 var Spinner = require('spin.js');
+
+var history = new History();
 var spinner = new Spinner();
 
 $.slidebars();
@@ -81,17 +84,20 @@ function selectScreen(screen_id) {
             },
             dataType: 'json'
         })).then(function() {
+            $('#back-button').removeClass('hidden');
+            $('#forward-button').removeClass('hidden');
             $('.navbar-item').removeClass('hidden');
             $('#navbar-screen-name').text(screenData._id);
             mountPlots(screenData, sampleData, featureNames);
             $('#sb-site').removeClass('load-overlay');
             spinner.spin(false);
-            $('.navbar-nav a[href="#summary"]').tab('show');
         });
 }
 
 function mountPlots(screenData, sampleData, featureNames) {
     var $body = $('body');
+    var $backButton = $('#back-button');
+    var $forwardButton = $('#forward-button');
 
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(screenData._id, featureNames, '#histplot');
@@ -99,6 +105,29 @@ function mountPlots(screenData, sampleData, featureNames) {
     var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 
+    // attach behaviour to backwards and forwards buttons, unhide them
+    $backButton.unbind('click');
+    $forwardButton.unbind('click');
+
+    $backButton.on('click', function() {
+        var backId = history.back();
+        if(backId) {
+            lineplot.getSampleData(backId);
+            neighbourPlot.updatePoint(backId);
+            neighbourImages.getImages(backId);
+        }
+    });
+
+    $forwardButton.on('click', function() {
+        var forwardId = history.forward();
+        if(forwardId) {
+            lineplot.getSampleData(forwardId);
+            neighbourPlot.updatePoint(forwardId);
+            neighbourImages.getImages(forwardId);
+        }
+    });
+
+    // append listeners for plot update events
     $body.unbind('updateLineplot');
     $body.unbind('updatePoint');
 
@@ -108,6 +137,10 @@ function mountPlots(screenData, sampleData, featureNames) {
     });
 
     $body.on('updatePoint', function(event, sampleId) {
+        // add sample to history
+        history.add(sampleId);
+
+        // update plots
         lineplot.getSampleData(sampleId);
         neighbourPlot.updatePoint(sampleId);
         neighbourImages.getImages(sampleId);

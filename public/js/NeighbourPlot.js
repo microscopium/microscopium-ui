@@ -206,7 +206,8 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                     .attr('r', self.inactivePointRadius);
             }
 
-            // set class and attr of new active point
+            // set class and attr of new active point and
+            // remove click event listener
             selectedPoint
                 .classed('activept', true)
                 .moveToFront()
