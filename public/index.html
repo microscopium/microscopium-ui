@@ -58,6 +58,15 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8" id="plot-column">
+                <div id="neighbourplot-options" class="row">
+                    <label for="dimensionality-reduction-select">
+                        Dimensionality Reduction:
+                    </label>
+                    <select id="dimensionality-reduction-select" class="form-control">
+                        <option value="tnse">TSNE</option>
+                        <option value="pca">PCA</option>
+                    </select>
+                </div>
                 <div class="row">
                     <div class="row" id="neighbourplot"></div>
                 </div>

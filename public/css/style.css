@@ -197,6 +197,14 @@
 
 /* NEIGHBOUR PLOT CSS */
 
+#neighbourplot-options {
+    text-align: left;
+}
+
+#dimensionality-reduction-select {
+    width: 10%;
+}
+
 .pcaplot {
     height: 500px;
 }
