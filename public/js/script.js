@@ -9,6 +9,8 @@ var Spinner = require('spin.js');
 var history = new History();
 var spinner = new Spinner();
 
+var neighbourPlot;
+
 $.slidebars();
 
 $(document).ready(function() {
@@ -29,9 +31,10 @@ $(document).ready(function() {
 });
 
 // main page event listeners
+// update scatterplot
 $('#dimensionality-reduction-select').on('change', function() {
-    var value = $(this).value();
-    console.log(value);
+    var value = $(this).val();
+    neighbourPlot.drawScatterplot(value);
 });
 
 function updateSelector(screen_data) {
@@ -93,6 +96,7 @@ function selectScreen(screen_id) {
             $('#back-button').removeClass('hidden');
             $('#forward-button').removeClass('hidden');
             $('.navbar-item').removeClass('hidden');
+            $('#neighbourplot-options').removeClass('hidden');
             $('#navbar-screen-name').text(screenData._id);
             mountPlots(screenData, sampleData, featureNames);
             $('#sb-site').removeClass('load-overlay');
@@ -108,7 +112,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(screenData._id, featureNames, '#histplot');
     var lineplot = new Lineplot(screenData._id, '#lineplot');
-    var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
+    neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 
     // attach behaviour to backwards and forwards buttons, unhide them
