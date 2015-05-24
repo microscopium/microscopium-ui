@@ -38,12 +38,8 @@ d3.selection.prototype.moveToFront = function() {
  * update when scatterplot points are clicked.
  */
 function NeighbourPlot(sampleData, element) {
-    var self = this;
-
     this.sampleData = sampleData;
     this.element = element;
-
-    this.reduction_type = 'tnse';
 
     this.fullWidth = $(this.element).width();
     this.fullHeight = Math.round(this.fullWidth * (9/16));
@@ -68,36 +64,29 @@ function NeighbourPlot(sampleData, element) {
  *
  * @this {NeighbourPlot}
  */
-NeighbourPlot.prototype.drawScatterplot = function() {
+NeighbourPlot.prototype.drawScatterplot = function(reductionType) {
     var self = this;
     var $body = $('body');
 
+    console.log(reductionType);
+
+    this.reduction_type = reductionType || 'tnse';
+
+    // remove all SVG elements currently in container
     this.destroy();
 
-    var xMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
-    var yMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
-    var xMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
-    var yMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
+    // find scale for dataset
+    this.setScale();
 
-    // setup scales and axis
-    self.xScale = d3.scale.linear()
-        .domain([xMin-1, xMax+1])
-        .range([0, self.width]);
-    var xAxis = d3.svg.axis()
-        .scale(self.xScale)
-        .ticks(self.xAxisTicks)
-        .orient('bottom');
+    // setup canvas
+    this.svg = d3.select(this.element).append('svg')
+        .attr('width', this.fullWidth)
+        .attr('height', this.fullHeight)
+        .append('g')
+        .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
 
-    self.yScale = d3.scale.linear()
-        .domain([yMin-1, yMax+1])
-        .range([self.height, 0]);
-    var yAxis = d3.svg.axis()
-        .scale(self.yScale)
-        .ticks(self.yAxisTicks)
-        .orient('left');
-
-    // tooltip function
-    self.tip = d3.tip()
+    // define tooltip function and append to SVG
+    var tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
@@ -105,40 +94,16 @@ NeighbourPlot.prototype.drawScatterplot = function() {
                 "<p><strong>Gene: </strong>" + d.gene_name + "</span></p>";
         });
 
-    // setup canvas
-    self.svg = d3.select(this.element).append('svg')
-        .attr('width', self.fullWidth)
-        .attr('height', self.fullHeight)
-        .append('g')
-        .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
-        .call(self.tip);
+    this.svg.call(tip);
 
-    // append axis
-    self.svg.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + self.height + ')')
-        .call(xAxis);
+    // draw plot axis
+    this.drawAxis();
 
-    self.svg.append('g')
-        .attr('class', 'y axis')
-        .call(yAxis);
+    // draw plot labels
+    this.drawPlotLabels('PC1', 'PC2');
 
-    // append axis labels
-    self.svg.append('text')
-        .attr('transform', 'translate(' + (self.width / 2) + ' ,' + (self.height + self.margin.bottom) + ')')
-        .style('text-anchor', 'middle')
-        .text('PC1');
-
-    self.svg.append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0 - self.margin.left)
-        .attr('x', 0 - self.height/2)
-        .attr('dy', '1em')
-        .style('text-anchor', 'middle')
-        .text('PC2');
-
-    // draw plot
-    self.svg.selectAll('circle')
+    // draw scatterplot points
+    this.svg.selectAll('circle')
         .data(this.sampleData)
         .enter()
         .append('circle')
@@ -155,14 +120,80 @@ NeighbourPlot.prototype.drawScatterplot = function() {
         .attr('id', function(d) {
             return d._id;
         })
-        .on('mouseover', self.tip.show)
-        .on('mouseout', self.tip.hide)
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide)
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
                 $body.trigger('updatePoint', d._id);
             }
         });
+};
+
+/**
+ * drawAxis
+ *
+ * @param xMin
+ * @param xMax
+ * @param yMin
+ * @param yMax
+ */
+NeighbourPlot.prototype.setScale = function() {
+    var self = this;
+    var xMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
+    var yMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
+    var xMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
+    var yMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
+
+    this.xScale = d3.scale.linear()
+        .domain([xMin-1, xMax+1])
+        .range([0, this.width]);
+
+    this.yScale = d3.scale.linear()
+        .domain([yMin-1, yMax+1])
+        .range([this.height, 0]);
+};
+
+
+NeighbourPlot.prototype.drawAxis = function() {
+    var xAxis = d3.svg.axis()
+        .scale(this.xScale)
+        .ticks(this.xAxisTicks)
+        .orient('bottom');
+
+    var yAxis = d3.svg.axis()
+        .scale(this.yScale)
+        .ticks(this.yAxisTicks)
+        .orient('left');
+
+    this.svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + this.height + ')')
+        .call(xAxis);
+
+    this.svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis);
+};
+
+NeighbourPlot.prototype.drawPlotLabels = function(xAxisLabel, yAxisLabel) {
+    this.svg.append('text')
+        .attr('transform', 'translate(' + (this.width/2) + ' ,' +
+            (this.height + this.margin.bottom) + ')')
+        .style('text-anchor', 'middle')
+        .text(xAxisLabel);
+
+    this.svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - this.margin.left)
+        .attr('x', 0 - this.height/2)
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text(yAxisLabel);
+};
+
+NeighbourPlot.redrawScatterPlot = function() {
+
 };
 
 /**
