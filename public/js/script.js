@@ -28,6 +28,12 @@ $(document).ready(function() {
     });
 });
 
+// main page event listeners
+$('#dimensionality-reduction-select').on('change', function() {
+    var value = $(this).value();
+    console.log(value);
+});
+
 function updateSelector(screen_data) {
     for(var i = 0; i < screen_data.length; i++) {
         $('#screen-menu')
@@ -48,7 +54,7 @@ function selectScreen(screen_id) {
     // define which fields to get for the query to the samples collection
     var samplesQuery =  {
         'screen': screen_id,
-        'select': ['row', 'column', 'plate', 'gene_name', 'pca_vector']
+        'select': ['row', 'column', 'plate', 'gene_name', 'dimension_reduce']
     };
 
     var screensQuery = {
