@@ -352,13 +352,13 @@ SampleFilter.prototype.applyFilter = function() {
             result = result.findByValues('gene_name', this.selectedGenes);
         }
 
-        this.neighbourPlot.updatePlot(result.value());
+        this.neighbourPlot.applyFilterStyling(result.value());
     }
 
     // add all data back to plot when filters empty
     if(!geneActive && !plateActive && !rowActive && !colActive) {
         $filterButton.removeClass('filtering');
-        this.neighbourPlot.updatePlot(this.data);
+        this.neighbourPlot.applyFilterStyling(this.data);
     }
 
 };
