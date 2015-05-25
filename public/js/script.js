@@ -97,6 +97,7 @@ function selectScreen(screen_id) {
             $('#forward-button').removeClass('hidden');
             $('.navbar-item').removeClass('hidden');
             $('#neighbourplot-options').removeClass('hidden');
+            $('#dimensionality-reduction-select').val('tnse');
             $('#navbar-screen-name').text(screenData._id);
             mountPlots(screenData, sampleData, featureNames);
             $('#sb-site').removeClass('load-overlay');
