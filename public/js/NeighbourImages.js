@@ -6,14 +6,26 @@ var _ = require('lodash');
  * @constructor
  */
 function NeighbourImages() {
-    var self = this;
-
     this.neighbours = [];
     this.selectedImage = "";
     this.neighbourImages = [];
 
-    var divWidth = Math.round($('#image-column').width()) - 20;
-    var imgWidth = Math.round(divWidth/3) - 20;
+    // cache jquery selectors used frequency by gallery methods
+    // call these in the constructor so the DOM is traversed only once
+    // before caching.
+    this.selectors = {
+        $nebula0: $('#nebula-0'),
+        // create an array of jquery selectors for all the neighbour images
+        $nebula: _.map(_.range(1, 24), function(value) {
+            return $('#nebula-' + (value))
+        }),
+        $body:  $('body'),
+        $imgZoomButton: $('#img-zoom-button'),
+        $thumbnailChildImg: $('.thumbnail > img')
+    };
+
+    var divWidth = Math.round($('#image-column').width());
+    var imgWidth = Math.round(divWidth/3);
 
     // set size of fullsize image
     $('.selected-image-display')
@@ -22,11 +34,21 @@ function NeighbourImages() {
     // set size of thumbnail size image
     $('.thumb')
         .css('width', imgWidth);
+
+    // hide/unhide image buttons on hover
+    $('#main-image').hover(function() {
+        $('#image-buttons').removeClass('hidden');
+    }, function() {
+        $('#image-buttons').addClass('hidden');
+    });
 }
 
 /**
- * getImages: Get med-size image for selected samples, and nearest
- * neighbour images.
+ * getImages: Get images for selected sample.
+ *
+ * Sends two AJAX requests to get the medium size image of the
+ * inputed sample_id, and to get the images of the neighbouring
+ * samples.
  *
  * @this {NeighbourImages}
  * @params {string} sample_id - The _id of the query sample
@@ -34,18 +56,9 @@ function NeighbourImages() {
 NeighbourImages.prototype.getImages = function(sample_id) {
     var self = this;
 
-    var height = Math.round($('#plot-column').height() - 10);
-    $('#image-column')
-        .css('height', height);
-
-    var sampleQuery = {
-        id: sample_id,
-        select: ['neighbours']
-    };
-
     var imageQueryLarge = {
         sample_id: sample_id,
-        select: ['image_large']
+        select: ['image_large sample_id']
     };
 
     var imageQueryNeighbour = {
@@ -64,11 +77,17 @@ NeighbourImages.prototype.getImages = function(sample_id) {
         $.ajax({
             url: '/api/images?' + $.param(imageQueryNeighbour),
             success: function(json) {
-                json.shift();
                 self.neighbourImages = json;
             }
 
-        })).then(function(res, status) {
+        })).then(function() {
+
+            // matches the height of the image gallery to the plots
+            // do this *after* the images are loaded from the DB
+            var height = Math.round($('#plot-column').height());
+            $('#image-column')
+                .css('height', height);
+
             self.setImages();
         });
 };
@@ -83,48 +102,83 @@ NeighbourImages.prototype.getImages = function(sample_id) {
  */
 NeighbourImages.prototype.setImages = function() {
     var self = this;
-    var $nebula0 = $('#nebula-0');
-    var $body = $('body');
-
-    console.log(self.neighbourImages);
 
     // make all img frames empty
-    $nebula0
+    this.selectors.$nebula0
         .attr('src', '//:0')
         .attr('title', 'not found');
 
-    $('.thumbnail > img')
+    this.selectors.$thumbnailChildImg
         .attr('src', '//:0')
         .attr('title', 'not found');
 
     // add selected main image, if it exists
-    if(self.selectedImage) {
-        $nebula0
+    if(this.selectedImage) {
+        this.selectors.$nebula0
             .attr('src', 'data:image/jpg;base64,' +
-                self.selectedImage.image_large)
-            .attr('title', self.selectedImage.sample_id);
+                this.selectedImage.image_large)
+            .attr('title', this.selectedImage.sample_id);
     }
 
-    $nebula0.on('click', function(event) {
-        // prevent browser from scrolling to top when main image clicked on
+    this.selectors.$imgZoomButton.unbind('click');
+    this.selectors.$imgZoomButton.on('click', function(event) {
         event.preventDefault();
+        self.openFullModal();
     });
 
     // iterate through all found images and add them to the gallery
     for(var i = 0; i < self.neighbourImages.length; i++) {
-        var $nebulaSelector = $('#nebula-' + (i+1));
-        $nebulaSelector
+
+        this.selectors.$nebula[i]
             .attr('src', 'data:image/jpg;base64,' +
                 self.neighbourImages[i].image_thumb)
             .attr('title', self.neighbourImages[i].sample_id);
-        $nebulaSelector.unbind('click');
+        this.selectors.$nebula[i].unbind('click');
+
+        // use IIFE here as closure being called in a loop
+        // see http://www.mennovanslooten.nl/blog/post/62
         (function(j) {
-            $nebulaSelector.on('click', function(event) {
+            self.selectors.$nebula[i].on('click', function(event) {
                 event.preventDefault();
-                $body.trigger('updatePoint', self.neighbourImages[j].sample_id);
+                self.selectors.$body.trigger('updatePoint',
+                    self.neighbourImages[j].sample_id);
             });
         })(i);
     }
+};
+
+/**
+ * openFullModal: Open the modal that displays the full size image.
+ *
+ * Sends an AJAX request to get the full-size image, sets the content of
+ * the image modal and opens it.
+ *
+ * @this {NeighbourImages}
+ */
+NeighbourImages.prototype.openFullModal = function() {
+    var imageQuery = {
+        sample_id: this.selectedImage.sample_id,
+        select: ['image_full image_large sample_id']
+    };
+    $.ajax({
+        type: 'GET',
+        url: '/api/images/?' + $.param(imageQuery),
+        success: function(data) {
+            // TODO some collections don't have a fullsize image, use the large image in lieu
+            var image = data[0].image_full || data[0].image_large;
+
+            // add image title
+            $('#full-size-img-title').html(data[0].sample_id);
+
+            // add image to modal HTML
+            $('#full-size-img')
+                .attr('src', 'data:image/jpg;base64,' +
+                image)
+                .attr('title', data[0].sample_id);
+            // open the modal!
+            $('#image-modal').modal('show');
+        }
+    })
 };
 
 module.exports = NeighbourImages;
