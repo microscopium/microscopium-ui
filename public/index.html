@@ -74,12 +74,12 @@
             </div>
             <div class="col-lg-4" id="image-column">
                 <div class="col-lg-12">
-                    <div class="row row-centered">
+                    <div id="main-image" class="row row-centered">
                         <div class="col-lg-12 col-centered sample-image">
-                            <div class="img-button large add">
+                            <div class="img-button large add hidden">
                                 <i class="fa fa-plus fa-2x"></i>
                             </div>
-                            <div class="img-button large zoom">
+                            <div id="img-zoom-button" class="img-button large zoom hidden">
                                 <i class="fa fa-search fa-2x"></i>
                             </div>
                             <a class="thumbnail" href="#">
@@ -287,6 +287,22 @@
             <button id="filter-reset" type="reset" value="Reset">Reset</button>
         </div>
     </form>
+</div>
+<!-- IMAGE MODAL -->
+<div id="image-modal" class="modal fade full-img-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="full-size-img-title" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <img id="full-size-image" src="" alt="">
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <!-- BROWSERIFIED FILES -->

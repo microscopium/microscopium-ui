@@ -25,7 +25,7 @@ function NeighbourImages() {
         $body:  $('body'),
         $imgZoomButton: $('#img-zoom-button'),
         $thumbnailChildImg: $('.thumbnail > img'),
-        $imageButtons: $('#image-buttons')
+        $imageButtons: $('.img-button')
     };
 
     var divWidth = Math.round($('#image-column').width());
@@ -181,9 +181,8 @@ NeighbourImages.prototype.openFullModal = function() {
             $('#full-size-img-title').html(data[0].sample_id);
 
             // add image to modal HTML
-            $('#full-size-img')
-                .attr('src', 'data:image/jpg;base64,' +
-                image)
+            $('#full-size-image')
+                .attr('src', 'data:image/jpg;base64,' + image)
                 .attr('title', data[0].sample_id);
             // open the modal!
             $('#image-modal').modal('show');
