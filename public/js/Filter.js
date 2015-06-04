@@ -209,7 +209,7 @@ SampleFilter.prototype.mountEventListeners = function() {
         // for an explanation of this hack
         setTimeout(function() {
             $geneFilterText.focus();
-        }, 400)
+        }, 400);
     });
 };
 

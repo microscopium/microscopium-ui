@@ -250,7 +250,7 @@ NeighbourPlot.prototype.drawPoints = function() {
             })
             .attr('cy', function(d) {
                 return self.yScale(d.dimension_reduce[self.reduction_type][1]);
-            })
+            });
     }
 };
 

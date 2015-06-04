@@ -125,8 +125,8 @@ NeighbourImages.prototype.setImages = function() {
         this.selectors.$nebula0
             .attr('src', 'data:image/jpg;base64,' +
                 this.selectedImage.image_large)
-            .attr('title', this.selectedImage.sample_id + '&#013;'
-                + this.selectedImage.gene_name);
+            .attr('title', this.selectedImage.sample_id + '&#013;' +
+                this.selectedImage.gene_name);
     }
 
     this.selectors.$imgZoomButton.unbind('click');
@@ -187,7 +187,7 @@ NeighbourImages.prototype.openFullModal = function() {
             // open the modal!
             $('#image-modal').modal('show');
         }
-    })
+    });
 };
 
 module.exports = NeighbourImages;

@@ -51,7 +51,7 @@ Histogram.prototype.getFeatureDistribution = function(feature) {
         type: 'GET',
         url: '/api/features/?' + $.param(featureQuery),
         success: function(data) {
-            self.drawHistogram(data[0].feature_dist_std, feature)
+            self.drawHistogram(data[0].feature_dist_std, feature);
         }
     });
 };
