@@ -113,6 +113,7 @@ NeighbourPlot.prototype.drawScatterplot = function(reductionType) {
  */
 NeighbourPlot.prototype.setScale = function() {
     var self = this;
+    // get minimum and maximum values for the x and y axis
     var xMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
     var yMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
     var xMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
@@ -133,7 +134,10 @@ NeighbourPlot.prototype.setScale = function() {
 };
 
 /**
- * drawAxis: Append axis to plot.
+ * drawAxis: Draw the plot axis.
+ *
+ * If the axis have not been drawn yet, they will be drawn. If the axis already
+ * exist, they are updated with an animation.
  *
  * @this {NeighbourPlot}
  */
@@ -148,6 +152,7 @@ NeighbourPlot.prototype.drawAxis = function() {
         .ticks(this.yAxisTicks)
         .orient('left');
 
+    // append containers for the x and y axis if they have not been defined yet
     if(!this.xAxisSvg) {
         this.xAxisSvg = this.svg.append('g')
             .attr('class', 'x axis')
@@ -159,6 +164,7 @@ NeighbourPlot.prototype.drawAxis = function() {
             .attr('class', 'y axis');
     }
 
+    // apply the axis to the containers, an animation is applied when they're being updated
     this.xAxisSvg
         .transition()
         .duration(750)
@@ -204,6 +210,8 @@ NeighbourPlot.prototype.drawPlotLabels = function(xAxisLabel, yAxisLabel) {
 /**
  * drawPoints: Draw the scatterplot points.
  *
+ * Draw the plot points, otherwise change their positions using a transition animation.
+ *
  * A listener is attached to each point that triggers the
  * 'updatePoint' and passes the clicked sample ID as event data.
  *
@@ -213,6 +221,7 @@ NeighbourPlot.prototype.drawPoints = function() {
     var self = this;
     var $body = $('body');
 
+    // if the plot has not been drawn yet, define all the points and append them to the plot
     if(!this.plotPointsSvg) {
         this.plotPointsSvg = this.svg.selectAll('circle')
             .data(this.sampleData)
@@ -240,6 +249,7 @@ NeighbourPlot.prototype.drawPoints = function() {
                 }
             });
     }
+    // otherwise apply an animation and move them to their new positions
     else {
         this.plotPointsSvg
             .data(this.sampleData)
