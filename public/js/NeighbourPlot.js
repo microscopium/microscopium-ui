@@ -49,6 +49,7 @@ function NeighbourPlot(sampleData, element) {
     this.activePointRadius = 7;
     this.xAxisTicks = 10;
     this.yAxisTicks = 10;
+    this.axisMargin = 0.02;
 
     this.margin = {top: 10, right: 40, bottom: 40, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
@@ -114,22 +115,29 @@ NeighbourPlot.prototype.drawScatterplot = function(reductionType) {
 NeighbourPlot.prototype.setScale = function() {
     var self = this;
     // get minimum and maximum values for the x and y axis
-    var xMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
-    var yMin = d3.min(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
-    var xMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][0]; });
-    var yMax = d3.max(this.sampleData, function(d) { return d.dimension_reduce[self.reduction_type][1]; });
+    var xMinMax = d3.extent(this.sampleData, function(d) {
+        return d.dimension_reduce[self.reduction_type][0];
+    });
+    var yMinMax = d3.extent(this.sampleData, function(d) {
+        return d.dimension_reduce[self.reduction_type][1];
+    });
+
+    // add a 'buffer zone' between the min and max values so their respective points aren't
+    // rendered right on the axis
+    var xMargin = (xMinMax[1]-xMinMax[0])*this.axisMargin;
+    var yMargin = (yMinMax[1]-yMinMax[0])*this.axisMargin;
 
     if(!this.xScale) {
         this.xScale = d3.scale.linear()
             .range([0, this.width]);
     }
-    this.xScale.domain([xMin-1, xMax+1]);
+    this.xScale.domain([xMinMax[0]-xMargin, xMinMax[1]+xMargin]);
 
     if(!this.yScale) {
         this.yScale = d3.scale.linear()
             .range([this.height, 0]);
     }
-    this.yScale.domain([yMin-1, yMax+1]);
+    this.yScale.domain([yMinMax[0]-yMargin, yMinMax[1]+yMargin]);
 
 };
 
