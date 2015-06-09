@@ -67,7 +67,7 @@ function NeighbourPlot(sampleData, element) {
  * @this {NeighbourPlot}
  */
 NeighbourPlot.prototype.drawScatterplot = function(reductionType) {
-    this.reduction_type = reductionType || 'tnse';
+    this.reduction_type = reductionType || 'tsne';
 
     // find scale for dataset
     this.setScale();
