@@ -92,7 +92,7 @@ var Sample = {
                      // e.g. 'A', 'B', 'C', etc.
         dimension_reduce: {
             pca: Array // the co-ordinates for the sample's point after PCA dimension reduction
-            tsne:Arrow // the co-ordinates for the sample's point after TSNE dimension reduction
+            tsne: Array // the co-ordinates for the sample's point after TSNE dimension reduction
         },
         image: ObjectID, // image_id  The ID of the samples image document
                          // (see below).
