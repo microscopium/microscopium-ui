@@ -90,7 +90,10 @@ var Sample = {
                          // e.g. '01', '02', '03', etc.
         row: String, // The row the sample is on in the plate
                      // e.g. 'A', 'B', 'C', etc.
-        pca_vector: Array,  //  The first and second principal components.
+        dimension_reduce: {
+            pca: Array // the co-ordinates for the sample's point after PCA dimension reduction
+            tsne:Arrow // the co-ordinates for the sample's point after TSNE dimension reduction
+        },
         image: ObjectID, // image_id  The ID of the samples image document
                          // (see below).
         cluster_member: Array // Array of integers showing cluster memberships
