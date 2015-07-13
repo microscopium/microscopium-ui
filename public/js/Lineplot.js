@@ -1,3 +1,4 @@
+var config = require('../config/plots').linePlot;
 var d3 = require('d3');
 var _ = require('lodash');
 
@@ -30,13 +31,16 @@ function Lineplot(screen, element) {
     this.element = element;
     this.screen = screen;
 
+    this.xAxisTicks = config.xAxisTicks;
+    this.yAxisTicks = config.yAxisTicks;
+    this.margin = config.margin;
+    this.axisMargin = config.axisMargin;
+
+    var aspectWidth = config.aspectRatio.width;
+    var aspectHeight = config.aspectRatio.height;
     this.fullWidth = $(this.element).width();
-    this.fullHeight = Math.round(this.fullWidth * (9/16));
+    this.fullHeight = Math.round(this.fullWidth * (aspectHeight/aspectWidth));
 
-    this.xAxisTicks = 8;
-    this.yAxisTicks = 5;
-
-    this.margin = {top: 20, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 }
@@ -99,9 +103,11 @@ Lineplot.prototype.drawLineplot = function(sampleData) {
         .orient('bottom')
         .ticks(self.xAxisTicks);
 
-    // define y-scale and y-axis
+    // create margin
+    var yMargin = (yMax-yMin)*this.axisMargin;
+
     self.yScale = d3.scale.linear()
-        .domain([yMin-1, yMax+1])
+        .domain([yMin-yMargin, yMax+yMargin])
         .range([self.height, 0]);
 
     var yAxis = d3.svg.axis()
