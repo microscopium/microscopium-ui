@@ -1,3 +1,4 @@
+var config = require('../config/plots').neighbourPlot;
 var d3 = require('d3');
 var _ = require('lodash');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
@@ -41,17 +42,20 @@ function NeighbourPlot(sampleData, element) {
     this.sampleData = sampleData;
     this.element = element;
 
-    this.fullWidth = $(this.element).width();
-    this.fullHeight = Math.round(this.fullWidth * (9/16));
-
-    this.transitionDuration = 125;
-    this.inactivePointRadius = 5;
-    this.activePointRadius = 7;
-    this.xAxisTicks = 10;
-    this.yAxisTicks = 10;
+    this.pointTransitionDuration = config.pointTransitionDuration;
+    this.inactivePointRadius = config.inactivePointRadius;
+    this.activePointRadius = config.activePointRadius;
+    this.xAxisTicks = config.xAxisTicks;
+    this.yAxisTicks = config.yAxisTicks;
+    this.axisTransitionDuration = config.axisTransitionDuration;
     this.axisMargin = 0.02;
+    this.margin = config.margin;
 
-    this.margin = {top: 10, right: 40, bottom: 40, left: 40};
+    var aspectWidth = config.aspectRatio.width;
+    var aspectHeight = config.aspectRatio.height;
+    this.fullWidth = $(this.element).width();
+    this.fullHeight = Math.round(this.fullWidth * (aspectHeight/aspectWidth));
+
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
@@ -175,13 +179,13 @@ NeighbourPlot.prototype.drawAxis = function() {
     // apply the axis to the containers, an animation is applied when they're being updated
     this.xAxisSvg
         .transition()
-        .duration(750)
+        .duration(this.axisTransitionDuration)
         .ease('sin-in-out')
         .call(xAxis);
 
     this.yAxisSvg
         .transition()
-        .duration(750)
+        .duration(this.axisTransitionDuration)
         .ease('sin-in-out')
         .call(yAxis);
 };
@@ -241,7 +245,7 @@ NeighbourPlot.prototype.drawPoints = function() {
             .attr('cy', function(d) {
                 return self.yScale(d.dimension_reduce[self.reduction_type][1]);
             })
-            .attr('r', 5)
+            .attr('r', this.inactivePointRadius)
             .classed('scatterpt', true)
             .classed('activept', false)
             .classed('neighbourpt', false)
@@ -262,7 +266,7 @@ NeighbourPlot.prototype.drawPoints = function() {
         this.plotPointsSvg
             .data(this.sampleData)
             .transition()
-            .duration(750)
+            .duration(this.axisTransitionDuration)
             .attr('cx', function(d) {
                 return self.xScale(d.dimension_reduce[self.reduction_type][0]);
             })
@@ -295,14 +299,14 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 .classed('activept', false)
                 .classed('neighbourpt', false)
                 .transition()
-                .duration(self.transitionDuration)
+                .duration(self.pointTransitionDuration)
                 .attr('r', self.inactivePointRadius);
 
             self.svg.selectAll('.neighbourpt')
                 .classed('neighbourpt', false)
                 .attr('r', self.inactivePointRadius)
                 .transition()
-                .duration(self.transitionDuration);
+                .duration(self.pointTransitionDuration);
 
             for(var j = 1 ; j < neighbours.length; j++) {
                 var neighbourTags = _.map(neighbours, function(d) {
@@ -311,7 +315,7 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 self.svg.selectAll(neighbourTags)
                     .classed('neighbourpt', true)
                     .transition()
-                    .duration(self.transitionDuration)
+                    .duration(self.pointTransitionDuration)
                     .attr('r', self.inactivePointRadius);
             }
 
@@ -321,7 +325,7 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 .classed('activept', true)
                 .moveToFront()
                 .transition()
-                .duration(self.transitionDuration)
+                .duration(self.pointTransitionDuration)
                 .attr('r', self.activePointRadius);
         }
     });
