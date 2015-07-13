@@ -1,3 +1,4 @@
+var config = require('../config/plots').histogram;
 var d3 = require('d3');
 
 /**
@@ -19,13 +20,15 @@ function Histogram(screen, featureNames, element) {
     this.feature = 0;
     this.element = element;
 
+    this.xAxisTicks = config.xAxisTicks;
+    this.yAxisTicks = config.yAxisTicks;
+    this.margin = config.margin;
+
+    var aspectWidth = config.aspectRatio.width;
+    var aspectHeight = config.aspectRatio.height;
     this.fullWidth = $(this.element).width();
-    this.fullHeight = Math.round(this.fullWidth * (9/16));
+    this.fullHeight = Math.round(this.fullWidth * (aspectHeight/aspectWidth));
 
-    this.xAxisTicks = 8;
-    this.yAxisTicks = 5;
-
-    this.margin = {top: 20, right: 30, bottom: 30, left: 50};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
@@ -63,7 +66,7 @@ Histogram.prototype.getFeatureDistribution = function(feature) {
  * are calculated using d3's histogram layout function.
  *
  * @this {Histogram}
- * @params {Array} featureDist - A vector of numeric values. These represent
+ * @param {Array} featureDist - A vector of numeric values. These represent
  *     the distribution of a feature across the whole database.
  * @param {number} feature - The index of the feature currently selected
  *     on the line plot.
