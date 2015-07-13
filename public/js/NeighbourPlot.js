@@ -92,8 +92,8 @@ NeighbourPlot.prototype.drawScatterplot = function(reductionType) {
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-                return "<p><strong>ID: </strong>" + d._id + "</span></p>" +
-                    "<p><strong>Gene: </strong>" + d.gene_name + "</span></p>";
+                return '<p>ID: ' + d._id + '</p>' +
+                    '<p>Gene: ' + d.gene_name + '</p>';
             });
         this.svg.call(this.tip);
     }
