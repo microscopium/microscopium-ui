@@ -1,7 +1,7 @@
 module.exports = {
     neighbourPlot: {
-        // create space between the x and y axis. this value is a proportion
-        // of the range between the min and max. eg 0.02 creates a 2% margin
+        // create space between the x and y axis. this value is a pct of the
+        // range of the data plotted to the axis. eg 0.02 creates a 2% margin
         // between the points and x/y axis
         axisMargin: 0.02,
         // the duration of the transition between changes in the axis scale
@@ -35,8 +35,8 @@ module.exports = {
         }
     },
     linePlot: {
-        // create space between the x and y axis. this value is a proportion
-        // of the range between the min and max. eg 0.02 creates a 2% margin
+        // create space between the x and y axis. this value is a pct of the
+        // range of the data plotted to the axis. eg 0.02 creates a 2% margin
         // between the points and x/y axis
         axisMargin: 0.02,
         // the number of ticks to use in the x-axis, d3 will use
