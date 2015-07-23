@@ -1,2 +1,5 @@
+# bower packages
 components/
+
+# browserified JSfiles
 build.js
