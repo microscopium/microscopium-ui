@@ -1,0 +1,35 @@
+#filter-button.filtering {
+  color: red;
+}
+
+.filter-arrows,
+.submit-buttons {
+  width: 100%;
+  text-align: justify;
+}
+
+#filter-add,
+#filter-remove {
+  color: #9d9d9d;
+}
+
+#filter-add:hover,
+#filter-remove:hover {
+  color: #ffffff;
+}
+
+#gene-select,
+#gene-selected {
+  margin-top: 10px;
+  width: 100%;
+  length: 50%;
+}
+
+#gene-filter-text {
+  margin-top: 10px;
+  width: 100%;
+}
+
+#filter-reset {
+  margin-left: 15px;
+}

@@ -1,0 +1,39 @@
+/* NEIGHBOUR PLOT CSS */
+
+.axis path, .axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+#neighbourplot-options {
+  text-align: left;
+}
+
+#dimensionality-reduction-select {
+  width: 10%;
+}
+
+.pcaplot {
+  height: 500px;
+}
+
+.scatterpt {
+  fill: steelblue;
+  stroke: white;
+  opacity: 1;
+  stroke-width: 1;
+}
+
+.scatterpt.activept {
+  fill: red !important;
+}
+
+.scatterpt.neighbourpt {
+  fill: #ffb323;
+}
+
+.scatterpt.filtered {
+  opacity: 0.25;
+  stroke-width: 0;
+}
