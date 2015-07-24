@@ -1,2 +1,6 @@
-.idea/
+# NPM packages
 node_modules/
+
+# IntelliJ IDE config files
+.idea/
+*.iml

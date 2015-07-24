@@ -9,6 +9,8 @@ var Spinner = require('spin.js');
 var history = new History();
 var spinner = new Spinner();
 
+var neighbourPlot;
+
 $.slidebars();
 
 $(document).ready(function() {
@@ -26,6 +28,18 @@ $(document).ready(function() {
         },
         dataType: 'json'
     });
+});
+
+// main page event listeners
+// update scatterplot
+$('.btn-dim-select').on('click', function() {
+    // ignore clicks from already active button
+    if(!$(this).hasClass('active')) {
+        var val = $(this).val();
+        $('.btn-dim-select').removeClass('active');
+        $(this).addClass('active');
+        neighbourPlot.drawScatterplot(val);
+    }
 });
 
 function updateSelector(screen_data) {
@@ -48,7 +62,7 @@ function selectScreen(screen_id) {
     // define which fields to get for the query to the samples collection
     var samplesQuery =  {
         'screen': screen_id,
-        'select': ['row', 'column', 'plate', 'gene_name', 'pca_vector']
+        'select': ['row', 'column', 'plate', 'gene_name', 'dimension_reduce']
     };
 
     var screensQuery = {
@@ -87,6 +101,8 @@ function selectScreen(screen_id) {
             $('#back-button').removeClass('hidden');
             $('#forward-button').removeClass('hidden');
             $('.navbar-item').removeClass('hidden');
+            $('#neighbourplot-options').removeClass('hidden');
+            $('#dimensionality-reduction-select').val('tsne');
             $('#navbar-screen-name').text(screenData._id);
             mountPlots(screenData, sampleData, featureNames);
             $('#sb-site').removeClass('load-overlay');
@@ -102,7 +118,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(screenData._id, featureNames, '#histplot');
     var lineplot = new Lineplot(screenData._id, '#lineplot');
-    var neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
+    neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 
     // attach behaviour to backwards and forwards buttons, unhide them

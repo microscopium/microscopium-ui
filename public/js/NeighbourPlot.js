@@ -1,3 +1,4 @@
+var config = require('../config/plots').neighbourPlot;
 var d3 = require('d3');
 var _ = require('lodash');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
@@ -35,27 +36,30 @@ d3.selection.prototype.moveToFront = function() {
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
  * @param {string} element - The ID of the target div for this plot.
- * update when scatterplot points are clicked.
+ *     update when scatterplot points are clicked.
  */
 function NeighbourPlot(sampleData, element) {
-    var self = this;
-
     this.sampleData = sampleData;
     this.element = element;
 
+    this.pointTransitionDuration = config.pointTransitionDuration;
+    this.inactivePointRadius = config.inactivePointRadius;
+    this.activePointRadius = config.activePointRadius;
+    this.xAxisTicks = config.xAxisTicks;
+    this.yAxisTicks = config.yAxisTicks;
+    this.axisTransitionDuration = config.axisTransitionDuration;
+    this.axisMargin = 0.02;
+    this.margin = config.margin;
+
+    var aspectWidth = config.aspectRatio.width;
+    var aspectHeight = config.aspectRatio.height;
     this.fullWidth = $(this.element).width();
-    this.fullHeight = Math.round(this.fullWidth * (9/16));
+    this.fullHeight = Math.round(this.fullWidth * (aspectHeight/aspectWidth));
 
-    this.transitionDuration = 125;
-    this.inactivePointRadius = 5;
-    this.activePointRadius = 7;
-    this.xAxisTicks = 10;
-    this.yAxisTicks = 10;
-
-    this.margin = {top: 10, right: 40, bottom: 30, left: 40};
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
+    this.destroy();
     this.drawScatterplot();
 }
 
@@ -66,109 +70,220 @@ function NeighbourPlot(sampleData, element) {
  *
  * @this {NeighbourPlot}
  */
-NeighbourPlot.prototype.drawScatterplot = function() {
+NeighbourPlot.prototype.drawScatterplot = function(reductionType) {
+    this.reduction_type = reductionType || 'tsne';
+
+    // find scale for dataset
+    this.setScale();
+
+    // draw a new canvas if it does not exist yet
+    if(!this.svg) {
+        this.svg = d3.select(this.element).append('svg')
+            .attr('width', this.fullWidth)
+            .attr('height', this.fullHeight)
+            .append('g')
+            .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+    }
+
+
+    // define tooltip function and append to SVG
+    if(!this.tip) {
+        this.tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+                var treatment = d.treatment || d.gene_name;
+
+                return '<p>ID: ' + d._id + '</p>' +
+                    '<p>Gene: ' + treatment + '</p>';
+            });
+        this.svg.call(this.tip);
+    }
+
+    // draw plot axis
+    this.drawAxis();
+
+    // draw plot labels
+    this.drawPlotLabels('Component 1', 'Component 2');
+
+    // draw scatterplot points
+    this.drawPoints();
+
+};
+
+/**
+ * setScale: Set the scale of the plot.
+ *
+ * Set the plot scale. Must be called before axis or plot points can be drawn.
+ *
+ * @this {NeighbourPlot}
+ */
+NeighbourPlot.prototype.setScale = function() {
+    var self = this;
+    // get minimum and maximum values for the x and y axis
+    var xMinMax = d3.extent(this.sampleData, function(d) {
+        return d.dimension_reduce[self.reduction_type][0];
+    });
+    var yMinMax = d3.extent(this.sampleData, function(d) {
+        return d.dimension_reduce[self.reduction_type][1];
+    });
+
+    // add a 'buffer zone' between the min and max values so their respective points aren't
+    // rendered right on the axis
+    var xMargin = (xMinMax[1]-xMinMax[0])*this.axisMargin;
+    var yMargin = (yMinMax[1]-yMinMax[0])*this.axisMargin;
+
+    if(!this.xScale) {
+        this.xScale = d3.scale.linear()
+            .range([0, this.width]);
+    }
+    this.xScale.domain([xMinMax[0]-xMargin, xMinMax[1]+xMargin]);
+
+    if(!this.yScale) {
+        this.yScale = d3.scale.linear()
+            .range([this.height, 0]);
+    }
+    this.yScale.domain([yMinMax[0]-yMargin, yMinMax[1]+yMargin]);
+
+};
+
+/**
+ * drawAxis: Draw the plot axis.
+ *
+ * If the axis have not been drawn yet, they will be drawn. If the axis already
+ * exist, they are updated with an animation.
+ *
+ * @this {NeighbourPlot}
+ */
+NeighbourPlot.prototype.drawAxis = function() {
+    var xAxis = d3.svg.axis()
+        .scale(this.xScale)
+        .ticks(this.xAxisTicks)
+        .orient('bottom');
+
+    var yAxis = d3.svg.axis()
+        .scale(this.yScale)
+        .ticks(this.yAxisTicks)
+        .orient('left');
+
+    // append containers for the x and y axis if they have not been defined yet
+    if(!this.xAxisSvg) {
+        this.xAxisSvg = this.svg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + this.height + ')');
+    }
+
+    if(!this.yAxisSvg) {
+        this.yAxisSvg = this.svg.append('g')
+            .attr('class', 'y axis');
+    }
+
+    // apply the axis to the containers, an animation is applied when they're being updated
+    this.xAxisSvg
+        .transition()
+        .duration(this.axisTransitionDuration)
+        .ease('sin-in-out')
+        .call(xAxis);
+
+    this.yAxisSvg
+        .transition()
+        .duration(this.axisTransitionDuration)
+        .ease('sin-in-out')
+        .call(yAxis);
+};
+
+/**
+ * drawPlotLabels: Append labels to plot axis.
+ *
+ * @this {NeighbourPlot}
+ * @param {string} xAxisLabel - The label for the xAxis.
+ * @param {string} yAxisLabel - The label for the yAxis.
+ */
+NeighbourPlot.prototype.drawPlotLabels = function(xAxisLabel, yAxisLabel) {
+    if(!this.xAxisSvgLabelSvg) {
+        this.xAxisSvgLabelSvg = this.svg.append('text')
+            .attr('transform', 'translate(' + (this.width/2) + ' ,' +
+            (this.height + this.margin.bottom - 10) + ')')
+            .style('text-anchor', 'middle');
+    }
+
+    this.xAxisSvgLabelSvg.text(xAxisLabel);
+
+    if(!this.yAxisSvgLabelSvg) {
+        this.yAxisSvgLabelSvg = this.svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', 0 - this.margin.left)
+            .attr('x', 0 - this.height/2)
+            .attr('dy', '1em')
+            .style('text-anchor', 'middle');
+    }
+
+    this.yAxisSvgLabelSvg.text(yAxisLabel);
+};
+
+/**
+ * drawPoints: Draw the scatterplot points.
+ *
+ * Draw the plot points, otherwise change their positions using a transition animation.
+ *
+ * A listener is attached to each point that triggers the
+ * 'updatePoint' and passes the clicked sample ID as event data.
+ *
+ * @this {NeighbourPlot}
+ */
+NeighbourPlot.prototype.drawPoints = function() {
     var self = this;
     var $body = $('body');
 
-    this.destroy();
-
-    var xMin = d3.min(this.sampleData, function(d) { return d.pca_vector[0]; });
-    var yMin = d3.min(this.sampleData, function(d) { return d.pca_vector[1]; });
-    var xMax = d3.max(this.sampleData, function(d) { return d.pca_vector[0]; });
-    var yMax = d3.max(this.sampleData, function(d) { return d.pca_vector[1]; });
-
-    // setup scales and axis
-    self.xScale = d3.scale.linear()
-        .domain([xMin-1, xMax+1])
-        .range([0, self.width]);
-    var xAxis = d3.svg.axis()
-        .scale(self.xScale)
-        .ticks(self.xAxisTicks)
-        .orient('bottom');
-
-    self.yScale = d3.scale.linear()
-        .domain([yMin-1, yMax+1])
-        .range([self.height, 0]);
-    var yAxis = d3.svg.axis()
-        .scale(self.yScale)
-        .ticks(self.yAxisTicks)
-        .orient('left');
-
-    // tooltip function
-    self.tip = d3.tip()
-        .attr('class', 'd3-tip')
-        .offset([-10, 0])
-        .html(function(d) {
-            return "<p><strong>ID: </strong>" + d._id + "</span></p>" +
-                "<p><strong>Gene: </strong>" + d.gene_name + "</span></p>";
-        });
-
-    // setup canvas
-    self.svg = d3.select(this.element).append('svg')
-        .attr('width', self.fullWidth)
-        .attr('height', self.fullHeight)
-        .append('g')
-        .attr('transform', 'translate(' + self.margin.left + ',' + self.margin.top + ')')
-        .call(self.tip);
-
-    // append axis
-    self.svg.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + self.height + ')')
-        .call(xAxis);
-
-    self.svg.append('g')
-        .attr('class', 'y axis')
-        .call(yAxis);
-
-    // append axis labels
-    self.svg.append('text')
-        .attr('transform', 'translate(' + (self.width / 2) + ' ,' + (self.height + self.margin.bottom) + ')')
-        .style('text-anchor', 'middle')
-        .text('PC1');
-
-    self.svg.append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0 - self.margin.left)
-        .attr('x', 0 - self.height/2)
-        .attr('dy', '1em')
-        .style('text-anchor', 'middle')
-        .text('PC2');
-
-    // draw plot
-    self.svg.selectAll('circle')
-        .data(this.sampleData)
-        .enter()
-        .append('circle')
-        .attr('cx', function(d) {
-            return self.xScale(d.pca_vector[0]);
-        })
-        .attr('cy', function(d) {
-            return self.yScale(d.pca_vector[1]);
-        })
-        .attr('r', 5)
-        .classed('scatterpt', true)
-        .classed('activept', false)
-        .classed('neighbourpt', false)
-        .attr('id', function(d) {
-            return d._id;
-        })
-        .on('mouseover', self.tip.show)
-        .on('mouseout', self.tip.hide)
-        .on('click', function(d) {
-            var selection = d3.select(this);
-            if(!selection.classed('activept')) {
-                $body.trigger('updatePoint', d._id);
-            }
-        });
+    // if the plot has not been drawn yet, define all the points and append them to the plot
+    if(!this.plotPointsSvg) {
+        this.plotPointsSvg = this.svg.selectAll('circle')
+            .data(this.sampleData)
+            .enter()
+            .append('circle')
+            .attr('cx', function(d) {
+                return self.xScale(d.dimension_reduce[self.reduction_type][0]);
+            })
+            .attr('cy', function(d) {
+                return self.yScale(d.dimension_reduce[self.reduction_type][1]);
+            })
+            .attr('r', this.inactivePointRadius)
+            .classed('scatterpt', true)
+            .classed('activept', false)
+            .classed('neighbourpt', false)
+            .attr('id', function(d) {
+                return d._id;
+            })
+            .on('mouseover', this.tip.show)
+            .on('mouseout', this.tip.hide)
+            .on('click', function(d) {
+                var selection = d3.select(this);
+                if(!selection.classed('activept')) {
+                    $body.trigger('updatePoint', d._id);
+                }
+            });
+    }
+    // otherwise apply an animation and move them to their new positions
+    else {
+        this.plotPointsSvg
+            .data(this.sampleData)
+            .transition()
+            .duration(this.axisTransitionDuration)
+            .attr('cx', function(d) {
+                return self.xScale(d.dimension_reduce[self.reduction_type][0]);
+            })
+            .attr('cy', function(d) {
+                return self.yScale(d.dimension_reduce[self.reduction_type][1]);
+            });
+    }
 };
 
 /**
  * updatePoint: Update scatterplot point on click.
  *
- * This method is attached to all scatterplot points, and updates
- * the styling of the points and triggers updates in the associated samples
- * lineplot and neighbour image gallery.
+ * When this method is called, an ajax request is sent to get the IDs of the
+ * neighbouring points from the database. Once this request is complete the plot
+ * stylings are updated accordingly.
  *
  * @this {NeighbourPlot}
  * @param {string} sampleId - The unique _id of the sample that was clicked.
@@ -186,14 +301,14 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 .classed('activept', false)
                 .classed('neighbourpt', false)
                 .transition()
-                .duration(self.transitionDuration)
+                .duration(self.pointTransitionDuration)
                 .attr('r', self.inactivePointRadius);
 
             self.svg.selectAll('.neighbourpt')
                 .classed('neighbourpt', false)
                 .attr('r', self.inactivePointRadius)
                 .transition()
-                .duration(self.transitionDuration);
+                .duration(self.pointTransitionDuration);
 
             for(var j = 1 ; j < neighbours.length; j++) {
                 var neighbourTags = _.map(neighbours, function(d) {
@@ -202,7 +317,7 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 self.svg.selectAll(neighbourTags)
                     .classed('neighbourpt', true)
                     .transition()
-                    .duration(self.transitionDuration)
+                    .duration(self.pointTransitionDuration)
                     .attr('r', self.inactivePointRadius);
             }
 
@@ -212,14 +327,14 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 .classed('activept', true)
                 .moveToFront()
                 .transition()
-                .duration(self.transitionDuration)
+                .duration(self.pointTransitionDuration)
                 .attr('r', self.activePointRadius);
         }
     });
 };
 
 /**
- * updatePlot: Re-render plot data points given a new set of data.
+ * applyFilterStyling: Update styling of points according to filter status.
  *
  * Update the class of scatterplot points, and bring unfiltered points
  * to the top of the SVG stack.
@@ -227,7 +342,7 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
  * @this {NeighbourPlot}
  * @param {array} newData - The new dataset to display.
  */
-NeighbourPlot.prototype.updatePlot = function(newData) {
+NeighbourPlot.prototype.applyFilterStyling = function(newData) {
     var self = this;
 
     if(newData.length === this.sampleData.length) {
@@ -251,7 +366,6 @@ NeighbourPlot.prototype.updatePlot = function(newData) {
             .moveToFront();
     }
 };
-
 
 /**
  * destroy: Remove all child SVG elements of the plot objects containing div.

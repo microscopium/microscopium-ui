@@ -5,7 +5,7 @@
   "dependencies": {
         "bootstrap": "latest",
         "jquery": "latest",
-        "slidebars": "latest",
+        "slidebars": "0.10.3",
         "fontawesome": "latest",
         "jquery.serializeJSON": "latest"
   }
