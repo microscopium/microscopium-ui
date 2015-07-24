@@ -32,9 +32,14 @@ $(document).ready(function() {
 
 // main page event listeners
 // update scatterplot
-$('#dimensionality-reduction-select').on('change', function() {
-    var value = $(this).val();
-    neighbourPlot.drawScatterplot(value);
+$('.btn-dim-select').on('click', function() {
+    // ignore clicks from already active button
+    if(!$(this).hasClass('active')) {
+        var val = $(this).val();
+        $('.btn-dim-select').removeClass('active');
+        $(this).addClass('active');
+        neighbourPlot.drawScatterplot(val);
+    }
 });
 
 function updateSelector(screen_data) {
