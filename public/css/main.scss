@@ -1,0 +1,57 @@
+/* Main Side Styles */
+
+.load-overlay {
+  pointer-events: none;
+}
+
+.container {
+  width: 95%;
+}
+
+.navbar-inverse {
+  border-radius: 0 !important;
+  border-color: #222222;
+}
+
+.sb-right {
+  margin-top: 50px;
+}
+
+.sb-active {
+  overflow: hidden;
+}
+
+.panel {
+  background-color: #222222;
+}
+
+.panel-heading a {
+  color: #9d9d9d;
+}
+
+.panel-body label,
+.panel-body p {
+  color: #ffffff;
+}
+
+.panel-heading .active {
+  background-color: #000000;
+}
+
+/* resize font-awesome icons (they all belong to the fa class) */
+.fa {
+  font-size: 1.3em;
+}
+
+/* Image Modal Styles */
+
+.modal-dialog {
+  width: 80%;
+}
+
+#full-size-image {
+  display: block;
+  margin: auto;
+  max-width:100%;
+  max-height:100%;
+}
