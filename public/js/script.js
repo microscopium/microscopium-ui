@@ -117,7 +117,7 @@ function mountPlots(screenData, sampleData, featureNames) {
 
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(screenData._id, featureNames, '#histplot');
-    var lineplot = new Lineplot(screenData._id, '#lineplot');
+    var lineplot = new Lineplot('#lineplot');
     neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 
@@ -128,7 +128,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     $backButton.on('click', function() {
         var backId = history.back();
         if(backId) {
-            lineplot.getSampleData(backId);
+            lineplot.drawLineplot(backId);
             neighbourPlot.updatePoint(backId);
             neighbourImages.getImages(backId);
         }
@@ -137,7 +137,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     $forwardButton.on('click', function() {
         var forwardId = history.forward();
         if(forwardId) {
-            lineplot.getSampleData(forwardId);
+            lineplot.drawLineplot(forwardId);
             neighbourPlot.updatePoint(forwardId);
             neighbourImages.getImages(forwardId);
         }
@@ -148,7 +148,6 @@ function mountPlots(screenData, sampleData, featureNames) {
     $body.unbind('updatePoint');
 
     $body.on('updateLineplot', function(event, activeFeature) {
-        lineplot.updateActiveLine(activeFeature);
         histogram.getFeatureDistribution(activeFeature-1);
     });
 
@@ -157,7 +156,7 @@ function mountPlots(screenData, sampleData, featureNames) {
         history.add(sampleId);
 
         // update plots
-        lineplot.getSampleData(sampleId);
+        lineplot.drawLineplot(sampleId);
         neighbourPlot.updatePoint(sampleId);
         neighbourImages.getImages(sampleId);
     });
