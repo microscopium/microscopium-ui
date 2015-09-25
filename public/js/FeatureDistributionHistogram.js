@@ -62,7 +62,7 @@ FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
             this._setScaleAndBin();
             this._drawAxis();
             this._drawBars();
-            this._drawTitle(this.feature);
+            this._drawTitle(this.featureNames[feature]);
         }.bind(this)
     });
 };
