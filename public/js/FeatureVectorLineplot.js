@@ -72,7 +72,7 @@ FeatureVectorLineplot.prototype.drawLineplot = function(sampleId) {
             this._drawLine();
             this._drawTitle(data[0]._id);
             this._addEventListeners();
-            this._updateActiveLine(this.activeFeature);
+            this._updateSelectedFeatureLine(this.activeFeature);
         }.bind(this)
     });
 };
@@ -202,7 +202,7 @@ FeatureVectorLineplot.prototype._drawTitle = function(titleText) {
  * @private
  */
 FeatureVectorLineplot.prototype._handleFeatureChange = function() {
-    this._updateActiveLine();
+    this._updateSelectedFeatureLine();
     $('body').trigger('updateLineplot', this.activeFeature);
 };
 
@@ -282,12 +282,12 @@ FeatureVectorLineplot.prototype._setScale = function() {
 };
 
 /**
- * updateActiveLine: Redraw the line overlaying selected feature in the plot.
+ * updateSelectedFeatureLine: Redraw the line showing the selected feature.
  *
  * @this {FeatureVectorLineplot}
  * @private
  */
-FeatureVectorLineplot.prototype._updateActiveLine = function() {
+FeatureVectorLineplot.prototype._updateSelectedFeatureLine = function() {
     var xCoord = this.xScale(this.activeFeature);
     this.svg.selectAll('.selectedFeatureLine').remove();
     this.svg.append('line')
