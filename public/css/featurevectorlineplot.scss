@@ -9,3 +9,9 @@
     stroke: steelblue;
     stroke-width: 2px;
 }
+
+.selectedFeatureLine {
+    stroke: red;
+    stroke-width: 0.75;
+    stroke-dasharray: 5, 5;
+}

@@ -290,16 +290,13 @@ FeatureVectorLineplot.prototype._setScale = function() {
  */
 FeatureVectorLineplot.prototype._updateActiveLine = function() {
     var xCoord = this.xScale(this.activeFeature);
-    this.svg.selectAll('.selectedLine').remove();
+    this.svg.selectAll('.selectedFeatureLine').remove();
     this.svg.append('line')
+        .classed('selectedFeatureLine', true)
         .attr('x1', xCoord)
         .attr('y1', 0)
         .attr('x2', xCoord)
-        .attr('y2', this.height)
-        .attr('stroke', 'red')
-        .attr('stroke-width', 0.75)
-        .attr('stroke-dasharray', '5, 5')
-        .classed('selectedLine', true);
+        .attr('y2', this.height);
 };
 
 module.exports = FeatureVectorLineplot;
