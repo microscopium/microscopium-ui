@@ -34,7 +34,7 @@ module.exports = {
             height: 9
         }
     },
-    linePlot: {
+    featureVectorlinePlot: {
         // create space between the x and y axis. this value is a pct of the
         // range of the data plotted to the axis. eg 0.02 creates a 2% margin
         // between the points and x/y axis

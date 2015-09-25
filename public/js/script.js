@@ -1,7 +1,7 @@
 var Filter = require('./Filter.js');
 var Histogram = require('./Histogram.js');
 var History = require('./History.js');
-var Lineplot = require('./Lineplot.js');
+var FeatureVectorLineplot = require('./FeatureVectorLineplot.js');
 var NeighbourPlot = require('./NeighbourPlot.js');
 var NeighbourImages = require('./NeighbourImages.js');
 var Spinner = require('spin.js');
@@ -117,7 +117,8 @@ function mountPlots(screenData, sampleData, featureNames) {
 
     var neighbourImages = new NeighbourImages();
     var histogram = new Histogram(screenData._id, featureNames, '#histplot');
-    var lineplot = new Lineplot(screenData._id, '#lineplot');
+    var featureVectorLineplot =
+        new FeatureVectorLineplot('#featureVectorLineplot');
     neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 
@@ -128,7 +129,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     $backButton.on('click', function() {
         var backId = history.back();
         if(backId) {
-            lineplot.getSampleData(backId);
+            featureVectorLineplot.drawLineplot(backId);
             neighbourPlot.updatePoint(backId);
             neighbourImages.getImages(backId);
         }
@@ -137,7 +138,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     $forwardButton.on('click', function() {
         var forwardId = history.forward();
         if(forwardId) {
-            lineplot.getSampleData(forwardId);
+            featureVectorLineplot.drawLineplot(forwardId);
             neighbourPlot.updatePoint(forwardId);
             neighbourImages.getImages(forwardId);
         }
@@ -148,7 +149,6 @@ function mountPlots(screenData, sampleData, featureNames) {
     $body.unbind('updatePoint');
 
     $body.on('updateLineplot', function(event, activeFeature) {
-        lineplot.updateActiveLine(activeFeature);
         histogram.getFeatureDistribution(activeFeature-1);
     });
 
@@ -157,7 +157,7 @@ function mountPlots(screenData, sampleData, featureNames) {
         history.add(sampleId);
 
         // update plots
-        lineplot.getSampleData(sampleId);
+        featureVectorLineplot.drawLineplot(sampleId);
         neighbourPlot.updatePoint(sampleId);
         neighbourImages.getImages(sampleId);
     });
