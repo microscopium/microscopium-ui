@@ -37,13 +37,10 @@ function FeatureVectorLineplot(element) {
     var aspectWidth = config.aspectRatio.width;
     var aspectHeight = config.aspectRatio.height;
     this.fullWidth = $(this.element).width();
-    this.fullHeight = Math.round(this.fullWidth *
-        (aspectHeight / aspectWidth));
+    this.fullHeight = Math.round(this.fullWidth * aspectHeight / aspectWidth);
 
-    this.width = this.fullWidth - this.margin.left -
-        this.margin.right;
-    this.height = this.fullHeight - this.margin.top -
-        this.margin.bottom;
+    this.width = this.fullWidth - this.margin.left - this.margin.right;
+    this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 }
 
 /**
@@ -166,6 +163,11 @@ FeatureVectorLineplot.prototype._drawAxis = function() {
  * @private
  */
 FeatureVectorLineplot.prototype._drawLine = function() {
+    // features are mapped to the range [1, ..., n + 1] so the first
+    // feature in the lineplot isn't being drawn in the 0-th position
+    // on the lineplot. this causes the line to be drawn over the y axis,
+    // and makes the selected feature line difficult to see when
+    // the first feature is selected.
     var linePoints = d3.zip(d3.range(1, this.featureVector.length + 1),
         this.featureVector);
 
