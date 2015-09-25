@@ -1,6 +1,5 @@
 var config = require('../config/plots').featureVectorlinePlot;
 var d3 = require('d3');
-var _ = require('lodash');
 
 var LEFTARROW = 37;
 var RIGHTARROW = 39;
@@ -167,7 +166,7 @@ FeatureVectorLineplot.prototype._drawAxis = function() {
  * @private
  */
 FeatureVectorLineplot.prototype._drawLine = function() {
-    var linePoints = _.zip(_.range(1, this.featureVector.length + 1),
+    var linePoints = d3.zip(d3.range(1, this.featureVector.length + 1),
         this.featureVector);
 
     var line = d3.svg.line()
