@@ -31,8 +31,6 @@ function FeatureDistributionHistogram(screen, featureNames, element) {
 
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
-
-    this.drawHistogram(0);
 }
 
 /**
