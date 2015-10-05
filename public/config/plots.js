@@ -56,7 +56,7 @@ module.exports = {
             height: 9
         }
     },
-    histogram: {
+    featureDistributionHistogram: {
         // the number of ticks to use in the x-axis, d3 will use
         // this number of ticks, otherwise something close to it.
         xAxisTicks: 8,

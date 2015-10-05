@@ -1,5 +1,5 @@
 var Filter = require('./Filter.js');
-var Histogram = require('./Histogram.js');
+var FeatureDistributionHistogram = require('./FeatureDistributionHistogram.js');
 var History = require('./History.js');
 var FeatureVectorLineplot = require('./FeatureVectorLineplot.js');
 var NeighbourPlot = require('./NeighbourPlot.js');
@@ -116,9 +116,11 @@ function mountPlots(screenData, sampleData, featureNames) {
     var $forwardButton = $('#forward-button');
 
     var neighbourImages = new NeighbourImages();
-    var histogram = new Histogram(screenData._id, featureNames, '#histplot');
+    var featureDistributionHistogram =
+        new FeatureDistributionHistogram(screenData._id,
+            featureNames, '#histplot');
     var featureVectorLineplot =
-        new FeatureVectorLineplot('#featureVectorLineplot');
+        new FeatureVectorLineplot('#lineplot');
     neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
     var filter = new Filter(sampleData, neighbourPlot);
 
@@ -149,7 +151,7 @@ function mountPlots(screenData, sampleData, featureNames) {
     $body.unbind('updatePoint');
 
     $body.on('updateLineplot', function(event, activeFeature) {
-        histogram.getFeatureDistribution(activeFeature-1);
+        featureDistributionHistogram.drawHistogram(activeFeature-1);
     });
 
     $body.on('updatePoint', function(event, sampleId) {
