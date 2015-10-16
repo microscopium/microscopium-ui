@@ -38,7 +38,7 @@ $('.btn-dim-select').on('click', function() {
         var val = $(this).val();
         $('.btn-dim-select').removeClass('active');
         $(this).addClass('active');
-        neighbourPlot.drawScatterplot(val);
+        neighbourPlot.update(val);
     }
 });
 
