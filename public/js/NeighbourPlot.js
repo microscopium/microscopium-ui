@@ -1,6 +1,7 @@
 var config = require('../config/plots').neighbourPlot;
 var d3 = require('d3');
 var _ = require('lodash');
+var Utils = require('./Utils.js');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
 
 /**
@@ -40,7 +41,7 @@ d3.selection.prototype.moveToFront = function() {
  */
 function NeighbourPlot(sampleData, element) {
     this.sampleData = sampleData;
-    this.element = element;
+    this.element = Utils.makeSelector(element);
     this.reductionType = 'tsne';
 
     this.pointTransitionDuration = config.pointTransitionDuration;
@@ -83,9 +84,7 @@ NeighbourPlot.prototype.applyFilterStyling = function(newData) {
     }
     else {
         // cast sample ids as id #tags so they can be used as selectors
-        var tags = _.map(_.pluck(newData, '_id'), function(d) {
-            return '#' + d;
-        });
+        var tags = _.map(_.pluck(newData, '_id'), Utils.makeSelector);
 
         // all points are filtered..
         self.svg.selectAll('circle')
@@ -127,13 +126,14 @@ NeighbourPlot.prototype.update = function(reductionType) {
  */
 NeighbourPlot.prototype.updatePoint = function(sampleId) {
     var self = this;
-    var selectedPoint = self.svg.select('#' + sampleId);
-    var neighbours = [];
+    var selectedPoint = self.svg.select(Utils.makeSelector(sampleId));
 
     $.ajax({
         url: '/api/samples/?id=' + sampleId + '&select=neighbours',
         success: function(data) {
-            neighbours = data[0].neighbours;
+            var neighbours = data[0].neighbours;
+            var neighbourTags = _.map(neighbours, Utils.makeSelector);
+
             self.svg.selectAll('.activept')
                 .classed('activept', false)
                 .classed('neighbourpt', false)
@@ -147,16 +147,11 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 .transition()
                 .duration(self.pointTransitionDuration);
 
-            for(var j = 1 ; j < neighbours.length; j++) {
-                var neighbourTags = _.map(neighbours, function(d) {
-                    return '#' + d;
-                });
-                self.svg.selectAll(neighbourTags)
-                    .classed('neighbourpt', true)
-                    .transition()
-                    .duration(self.pointTransitionDuration)
-                    .attr('r', self.inactivePointRadius);
-            }
+            self.svg.selectAll(neighbourTags)
+                .classed('neighbourpt', true)
+                .transition()
+                .duration(self.pointTransitionDuration)
+                .attr('r', self.inactivePointRadius);
 
             // set class and attr of new active point and
             // remove click event listener
