@@ -75,11 +75,9 @@ function NeighbourPlot(sampleData, element) {
  * @param {array} newData - The new dataset to display.
  */
 NeighbourPlot.prototype.applyFilterStyling = function(newData) {
-    var self = this;
-
     if(newData.length === this.sampleData.length) {
         // if no points have been filtered out, class everything as unfiltered
-        self.svg.selectAll('circle')
+        this.svg.selectAll('circle')
             .classed('filtered', false);
     }
     else {
@@ -87,16 +85,21 @@ NeighbourPlot.prototype.applyFilterStyling = function(newData) {
         var tags = _.map(_.pluck(newData, '_id'), Utils.makeSelector);
 
         // all points are filtered..
-        self.svg.selectAll('circle')
+        this.svg.selectAll('circle')
             .classed('filtered', true);
 
         // until proven otherwise..
-        self.svg.selectAll(tags)
+        this.svg.selectAll(tags)
             .classed('filtered', false)
             .moveToFront();
     }
 };
 
+/**
+ * draw: Draw the lineplot.
+ *
+ * @this {NeighbourPlot}
+ */
 NeighbourPlot.prototype.draw = function() {
     d3.select(this.element + ' > svg').remove(); // clear canvas
     this._addBackground();
@@ -106,9 +109,16 @@ NeighbourPlot.prototype.draw = function() {
     this._drawAxisLabels();
 };
 
+/**
+ * update: Change the dimensionality reduction used to display plot points.
+ *
+ * @this {NeighbourPlot}
+ * @param {string} reductionType - The dimensionality reduction method
+ *     to be used to display the sample points. Should be one of 'pca'
+ *     or 'tsne'
+ */
 NeighbourPlot.prototype.update = function(reductionType) {
     this.reductionType = reductionType;
-
     this._setScale();
     this._updateAxis();
     this._updatePoints();
@@ -125,33 +135,32 @@ NeighbourPlot.prototype.update = function(reductionType) {
  * @param {string} sampleId - The unique _id of the sample that was clicked.
  */
 NeighbourPlot.prototype.updatePoint = function(sampleId) {
-    var self = this;
-    var selectedPoint = self.svg.select(Utils.makeSelector(sampleId));
+    var selectedPoint = this.svg.select(Utils.makeSelector(sampleId));
 
     $.ajax({
         url: '/api/samples/?id=' + sampleId + '&select=neighbours',
         success: function(data) {
-            var neighbours = data[0].neighbours;
-            var neighbourTags = _.map(neighbours, Utils.makeSelector);
+            // create an array of DOM selectors from the list of neighbours
+            var neighbourTags = _.map(data[0].neighbours, Utils.makeSelector);
 
-            self.svg.selectAll('.activept')
+            this.svg.selectAll('.activept')
                 .classed('activept', false)
                 .classed('neighbourpt', false)
                 .transition()
-                .duration(self.pointTransitionDuration)
-                .attr('r', self.inactivePointRadius);
+                .duration(this.pointTransitionDuration)
+                .attr('r', this.inactivePointRadius);
 
-            self.svg.selectAll('.neighbourpt')
+            this.svg.selectAll('.neighbourpt')
                 .classed('neighbourpt', false)
-                .attr('r', self.inactivePointRadius)
+                .attr('r', this.inactivePointRadius)
                 .transition()
-                .duration(self.pointTransitionDuration);
+                .duration(this.pointTransitionDuration);
 
-            self.svg.selectAll(neighbourTags)
+            this.svg.selectAll(neighbourTags)
                 .classed('neighbourpt', true)
                 .transition()
-                .duration(self.pointTransitionDuration)
-                .attr('r', self.inactivePointRadius);
+                .duration(this.pointTransitionDuration)
+                .attr('r', this.inactivePointRadius);
 
             // set class and attr of new active point and
             // remove click event listener
@@ -159,19 +168,24 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
                 .classed('activept', true)
                 .moveToFront()
                 .transition()
-                .duration(self.pointTransitionDuration)
-                .attr('r', self.activePointRadius);
-        }
+                .duration(this.pointTransitionDuration)
+                .attr('r', this.activePointRadius);
+        }.bind(this)
     });
 };
 
+/**
+ * addBackground: Add SVG container to hold plot elements.
+ *
+ * @private
+ */
 NeighbourPlot.prototype._addBackground = function() {
     this.svg = d3.select(this.element).append('svg')
         .attr('width', this.fullWidth)
         .attr('height', this.fullHeight)
         .append('g')
         .attr('transform', 'translate(' + this.margin.left + ',' +
-        this.margin.top + ')');
+            this.margin.top + ')');
 };
 
 /**
@@ -192,6 +206,15 @@ NeighbourPlot.prototype._defineToolTip = function() {
     this.svg.call(this.tip);
 };
 
+/**
+ * drawAxis: Draw the X and Y axis on the plot.
+ *
+ * The scale should be set before this method is called.
+ *
+ * See: _setScale
+ *
+ * @private
+ */
 NeighbourPlot.prototype._drawAxis = function() {
     var xAxis = d3.svg.axis()
         .scale(this.xScale)
@@ -244,6 +267,14 @@ NeighbourPlot.prototype._drawAxisLabels = function(xAxisLabel, yAxisLabel) {
         .text(yAxisLabel);
 };
 
+/**
+ * drawPoints: Draw the plot points.
+ *
+ * A background should be drawn and a scale should be set before this method
+ * is called.
+ *
+ * @private
+ */
 NeighbourPlot.prototype._drawPoints = function() {
     this.plotPointsSvg = this.svg.selectAll('circle')
         .data(this.sampleData)
@@ -301,6 +332,13 @@ NeighbourPlot.prototype._setScale = function() {
         .domain([yMinMax[0] - yMargin, yMinMax[1] + yMargin]);
 };
 
+/**
+ * updateAxis: Update the plot axis.
+ *
+ * Called when the dimensionality reduction used in the plot changes.
+ *
+ * @private
+ */
 NeighbourPlot.prototype._updateAxis = function() {
     var xAxis = d3.svg.axis()
         .scale(this.xScale)
@@ -325,6 +363,13 @@ NeighbourPlot.prototype._updateAxis = function() {
         .call(yAxis);
 };
 
+/**
+ * updatePoints: Update the position of the plot points.
+ *
+ * Called when the dimensionality reduction used in the plot changes.
+ *
+ * @private
+ */
 NeighbourPlot.prototype._updatePoints = function() {
     this.plotPointsSvg
         .data(this.sampleData)
