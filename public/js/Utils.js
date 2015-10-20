@@ -6,6 +6,7 @@ Utils.regexFilter = regexFilter;
 Utils.uniqueData = uniqueData;
 Utils.findByValues = findByValues;
 Utils.sortedPush = sortedPush;
+Utils.makeSelector = makeSelector;
 
 /**
  * regexFilter: Return regex function for use in filter.
@@ -57,6 +58,17 @@ function findByValues(collection, property, values) {
  */
 function sortedPush(array, value) {
     array.splice(_.sortedIndex(array, value), 0, value);
+}
+
+/**
+ * makeSelector: Add '#' before input string. Makes item selectable in jQuery.
+ *
+ * Returns input element if it already begins with #.
+ *
+ * @param {string} element
+ */
+function makeSelector(element) {
+    return element.charAt(0) === '#' ? element : '#' + element;
 }
 
 module.exports = Utils;
