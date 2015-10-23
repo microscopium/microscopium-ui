@@ -52,6 +52,7 @@ function NeighbourPlot(sampleData, element) {
     this.axisTransitionDuration = config.axisTransitionDuration;
     this.axisMargin = 0.02;
     this.margin = config.margin;
+    this.toolTipOffset = config.toolTipOffset;
 
     var aspectWidth = config.aspectRatio.width;
     var aspectHeight = config.aspectRatio.height;
@@ -198,9 +199,11 @@ NeighbourPlot.prototype._addBackground = function() {
  * @private
  */
 NeighbourPlot.prototype._defineToolTip = function() {
+    console.log(config);
+
     this.tip = d3.tip()
         .attr('class', 'd3-tip')
-        .offset([-10, 0])
+        .offset([this.toolTipOffset.top, this.toolTipOffset.left])
         .html(function(d) {
             var treatment = d.treatment || d.gene_name;
 
