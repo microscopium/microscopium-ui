@@ -61,7 +61,6 @@ function NeighbourPlot(sampleData, element) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
-    console.log(this.sampleData);
     this.draw();
 }
 
@@ -105,6 +104,7 @@ NeighbourPlot.prototype.draw = function() {
     this._addBackground();
     this._setScale();
     this._drawAxis();
+    this._defineToolTip();
     this._drawPoints();
     this._drawAxisLabels();
 };
@@ -190,6 +190,10 @@ NeighbourPlot.prototype._addBackground = function() {
 
 /**
  * defineToolTip: Add d3-tip plugin logic to plot.
+ *
+ * The tooltip function is attached to the plot points when they are
+ * first drawn, so this function should be called before the plot points
+ * are drawn.
  *
  * @private
  */
@@ -293,8 +297,8 @@ NeighbourPlot.prototype._drawPoints = function() {
         .attr('id', function(d) {
             return d._id;
         })
-        //.on('mouseover', this.tip.show)
-        //.on('mouseout', this.tip.hide)
+        .on('mouseover', this.tip.show)
+        .on('mouseout', this.tip.hide)
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
