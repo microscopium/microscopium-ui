@@ -78,7 +78,7 @@ NeighbourPlot.prototype.applyFilterStyling = function(newData) {
     if(newData.length === this.sampleData.length) {
         // if no points have been filtered out, class everything as unfiltered
         this.svg.selectAll('circle')
-            .classed('filtered', false);
+            .classed('filtered-out', false);
     }
     else {
         // cast sample ids as id #tags so they can be used as selectors
@@ -86,11 +86,11 @@ NeighbourPlot.prototype.applyFilterStyling = function(newData) {
 
         // all points are filtered..
         this.svg.selectAll('circle')
-            .classed('filtered', true);
+            .classed('filtered-out', true);
 
         // until proven otherwise..
         this.svg.selectAll(tags)
-            .classed('filtered', false)
+            .classed('filtered-out', false)
             .moveToFront();
     }
 };
