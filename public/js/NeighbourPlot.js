@@ -230,7 +230,7 @@ NeighbourPlot.prototype._defineToolTip = function() {
 };
 
 /**
- * drawAxis: Draw the X and Y axis on the plot.
+ * drawAxis: Draw the X and Y axes on the plot.
  *
  * The scale should be set before this method is called.
  *
@@ -262,8 +262,8 @@ NeighbourPlot.prototype._drawAxis = function() {
 /**
  * drawPlotLabels: Add labels to plot axis.
  *
- * @param {string} xAxisLabel - The label for the xAxis.
- * @param {string} yAxisLabel - The label for the yAxis.
+ * @param {string} xAxisLabel - The label for the x axis.
+ * @param {string} yAxisLabel - The label for the y axis.
  * @private
  */
 NeighbourPlot.prototype._drawAxisLabels = function(xAxisLabel, yAxisLabel) {
