@@ -72,17 +72,17 @@ function NeighbourPlot(sampleData, element) {
  * to the top of the SVG stack.
  *
  * @this {NeighbourPlot}
- * @param {array} newData - The new dataset to display.
+ * @param {array} filterOutIds - A list of sample IDs to be filtered out.
  */
-NeighbourPlot.prototype.applyFilterStyling = function(newData) {
-    if(newData.length === this.sampleData.length) {
+NeighbourPlot.prototype.applyFilterStyling = function(filterOutIds) {
+    if(filterOutIds.length === this.sampleData.length) {
         // if no points have been filtered out, class everything as unfiltered
         this.svg.selectAll('circle')
             .classed('filtered-out', false);
     }
     else {
         // cast sample ids as id #tags so they can be used as selectors
-        var tags = _.map(_.pluck(newData, '_id'), Utils.makeSelector);
+        var tags = _.map(filterOutIds, Utils.makeSelector);
 
         // all points are filtered..
         this.svg.selectAll('circle')
