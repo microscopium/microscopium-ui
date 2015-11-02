@@ -141,21 +141,11 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
     $.ajax({
         url: '/api/samples/?id=' + sampleId + '&select=neighbours',
         success: function(data) {
+            // remove current plot stylings
+            this._clearCurrentSelection();
+
             // create an array of DOM selectors from the list of neighbours
             var neighbourTags = _.map(data[0].neighbours, Utils.makeSelector);
-
-            this.svg.selectAll('.activept')
-                .classed('activept', false)
-                .classed('neighbourpt', false)
-                .transition()
-                .duration(this.pointTransitionDuration)
-                .attr('r', this.inactivePointRadius);
-
-            this.svg.selectAll('.neighbourpt')
-                .classed('neighbourpt', false)
-                .attr('r', this.inactivePointRadius)
-                .transition()
-                .duration(this.pointTransitionDuration);
 
             this.svg.selectAll(neighbourTags)
                 .classed('neighbourpt', true)
@@ -187,6 +177,32 @@ NeighbourPlot.prototype._addBackground = function() {
         .append('g')
         .attr('transform', 'translate(' + this.margin.left + ',' +
             this.margin.top + ')');
+};
+
+/**
+ * clearCurrentSelection: Remove selected point styling.
+ *
+ * When a point is selected, a new colour is applied to
+ * both the point and its neighbours (see updatePoint).
+ *
+ * This function clears any styling currently applied to
+ * the points.
+ *
+ * @private
+ */
+NeighbourPlot.prototype._clearCurrentSelection = function() {
+    this.svg.selectAll('.activept')
+        .classed('activept', false)
+        .classed('neighbourpt', false)
+        .transition()
+        .duration(this.pointTransitionDuration)
+        .attr('r', this.inactivePointRadius);
+
+    this.svg.selectAll('.neighbourpt')
+        .classed('neighbourpt', false)
+        .attr('r', this.inactivePointRadius)
+        .transition()
+        .duration(this.pointTransitionDuration);
 };
 
 /**
