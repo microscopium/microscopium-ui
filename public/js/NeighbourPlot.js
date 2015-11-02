@@ -208,7 +208,7 @@ NeighbourPlot.prototype._defineToolTip = function() {
             var treatment = d.treatment || d.gene_name;
 
             return '<p>ID: ' + d._id + '</p>' +
-                '<p>Gene: ' + treatment + '</p>';
+                '<p>Treatment: ' + treatment + '</p>';
         });
     this.svg.call(this.tip);
 };
