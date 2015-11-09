@@ -1,11 +1,11 @@
 var _ = require('lodash');
-var utils = require('./Utils.js');
+var Utils = require('./Utils.js');
 
 // add findByValues and uniqueData functions to lodash namespace
 // so they can be used in lodash chains
 _.mixin({
-    'findByValues': utils.findByValues,
-    'uniqueData': utils.uniqueData
+    'findByValues': Utils.findByValues,
+    'uniqueData': Utils.uniqueData
 });
 
 // cache all jQuery selectors where possible.
@@ -254,7 +254,7 @@ SampleFilter.prototype.removeFromFilter = function() {
 
     if(index !== -1 && value) {
         this.selectedGenes.splice(index, 1);
-        utils.sortedPush(this.genes, value);
+        Utils.sortedPush(this.genes, value);
         this.updateGeneList();
         this.updateSelectedGeneList();
     }
@@ -352,13 +352,13 @@ SampleFilter.prototype.applyFilter = function() {
             result = result.findByValues('gene_name', this.selectedGenes);
         }
 
-        this.neighbourPlot.applyFilterStyling(result.value());
+        this.neighbourPlot.applyFilterStyling(_.pluck(result.value(), '_id'));
     }
 
     // add all data back to plot when filters empty
     if(!geneActive && !plateActive && !rowActive && !colActive) {
         $filterButton.removeClass('filtering');
-        this.neighbourPlot.applyFilterStyling(this.data);
+        this.neighbourPlot.applyFilterStyling(_.pluck(this.data, '_id'));
     }
 
 };

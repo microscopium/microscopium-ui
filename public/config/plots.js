@@ -32,6 +32,11 @@ module.exports = {
         aspectRatio: {
             width: 16,
             height: 9
+        },
+        // offset the tooltip relative to the
+        toolTipOffset: {
+            top: -10,
+            left: 0
         }
     },
     featureVectorlinePlot: {

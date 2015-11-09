@@ -66,4 +66,16 @@ describe('Utils', function() {
             expect(sortedArray).toEqual([1, 2, 3, 4, 5]);
         });
     });
+
+    describe('makeSelector', function() {
+        it('adds # to beginning of input', function() {
+            var actual = Utils.makeSelector('element');
+            expect(actual).toEqual('#element');
+        });
+
+        it('returns input string if it begins with #', function() {
+            var actual = Utils.makeSelector('#element');
+            expect(actual).toEqual('#element');
+        });
+    })
 });
