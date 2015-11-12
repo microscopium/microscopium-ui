@@ -205,7 +205,7 @@ FeatureVectorLineplot.prototype._drawTitle = function(titleText) {
  */
 FeatureVectorLineplot.prototype._handleFeatureChange = function() {
     this._updateSelectedFeatureLine();
-    $('body').trigger('updateLineplot', this.activeFeature);
+    $('body').trigger('updateFeature', this.activeFeature);
 };
 
 /**
