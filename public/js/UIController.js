@@ -78,10 +78,6 @@ UIController.prototype.updateFeature = function(activeFeature) {
 UIController.prototype.updateSample = function(sampleId) {
     this.history.add(sampleId);
 
-    console.log('UIController updateSample');
-    console.log(sampleId);
-
-    // update plots
     this.featureVectorLineplot.drawLineplot(sampleId);
     this.neighbourPlot.updatePoint(sampleId);
     this.neighbourImages.getImages(sampleId);

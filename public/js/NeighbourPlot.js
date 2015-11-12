@@ -218,8 +218,6 @@ NeighbourPlot.prototype._clearCurrentSelection = function() {
  * @private
  */
 NeighbourPlot.prototype._defineToolTip = function() {
-    console.log(config);
-
     this.tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([this.toolTipOffset.top, this.toolTipOffset.left])
