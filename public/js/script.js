@@ -1,15 +1,9 @@
-var Filter = require('./Filter.js');
-var FeatureDistributionHistogram = require('./FeatureDistributionHistogram.js');
-var History = require('./History.js');
-var FeatureVectorLineplot = require('./FeatureVectorLineplot.js');
-var NeighbourPlot = require('./NeighbourPlot.js');
 var NeighbourImages = require('./NeighbourImages.js');
 var Spinner = require('spin.js');
 
-var history = new History();
-var spinner = new Spinner();
+var UIController = require('./UIController.js');
 
-var neighbourPlot;
+var spinner = new Spinner();
 
 $.slidebars();
 
@@ -30,18 +24,7 @@ $(document).ready(function() {
     });
 });
 
-// main page event listeners
-// update scatterplot
-$('.btn-dim-select').on('click', function() {
-    // ignore clicks from already active button
-    if(!$(this).hasClass('active')) {
-        var val = $(this).val();
-        $('.btn-dim-select').removeClass('active');
-        $(this).addClass('active');
-        neighbourPlot.update(val);
-    }
-});
-
+// this function will be removed once client-side rendering added
 function updateSelector(screen_data) {
     for(var i = 0; i < screen_data.length; i++) {
         $('#screen-menu')
@@ -54,8 +37,10 @@ function updateSelector(screen_data) {
     }
 }
 
+// this function populates the dropped down menu
+// used to select screen -- this will be removed once
+// we move to server-side templating
 function selectScreen(screen_id) {
-    var featureNames = [];
     var sampleData = [];
     var screenData = [];
 
@@ -70,7 +55,6 @@ function selectScreen(screen_id) {
         'select': ['screen_features']
     };
 
-    $('.navbar-nav a[href="#summary"]').tab('show');
     $('#sb-site').addClass('load-overlay');
     spinner.spin(document.getElementById('sb-site'));
 
@@ -80,7 +64,6 @@ function selectScreen(screen_id) {
             async: true,
             success: function(json) {
                 screenData = json[0];
-                featureNames = json[0].screen_features;
             },
             error: function(err) {
                 alert(err);
@@ -104,66 +87,65 @@ function selectScreen(screen_id) {
             $('#neighbourplot-options').removeClass('hidden');
             $('#dimensionality-reduction-select').val('tsne');
             $('#navbar-screen-name').text(screenData._id);
-            mountPlots(screenData, sampleData, featureNames);
+            mountUI(screenData, sampleData);
             $('#sb-site').removeClass('load-overlay');
             spinner.spin(false);
         });
 }
 
-function mountPlots(screenData, sampleData, featureNames) {
+/**
+ * mountUI: Add all event handling to page.
+ *
+ * Connects front-end UI elements to the UI controller logic.
+ *
+ * @param screenData - Screen document for the selected screen.
+ * @param sampleData - Sample document for the selected screen.
+ */
+function mountUI(screenData, sampleData) {
     var $body = $('body');
     var $backButton = $('#back-button');
     var $forwardButton = $('#forward-button');
+    var $btnDimension = $('.btn-dim-select');
 
-    var neighbourImages = new NeighbourImages();
-    var featureDistributionHistogram =
-        new FeatureDistributionHistogram(screenData._id,
-            featureNames, '#histplot');
-    var featureVectorLineplot =
-        new FeatureVectorLineplot('#lineplot');
-    neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
-    var filter = new Filter(sampleData, neighbourPlot);
-
-    // attach behaviour to backwards and forwards buttons, unhide them
-    $backButton.unbind('click');
-    $forwardButton.unbind('click');
+    var uiController = new UIController(screenData, sampleData);
 
     $backButton.on('click', function() {
-        var backId = history.back();
-        if(backId) {
-            featureVectorLineplot.drawLineplot(backId);
-            neighbourPlot.updatePoint(backId);
-            neighbourImages.getImages(backId);
-        }
+        uiController.back();
     });
 
     $forwardButton.on('click', function() {
-        var forwardId = history.forward();
-        if(forwardId) {
-            featureVectorLineplot.drawLineplot(forwardId);
-            neighbourPlot.updatePoint(forwardId);
-            neighbourImages.getImages(forwardId);
+        uiController.forward();
+    });
+
+    $body.on('updateFeature', function(event, activeFeature) {
+        uiController.updateFeature(activeFeature);
+    });
+
+    $body.on('updateFilter', function(event, filterOutId) {
+        console.log('on updateFilter');
+        console.log(filterOutId);
+        uiController.updateFilter(filterOutId);
+    });
+
+    $body.on('updateSample', function(event, sampleId) {
+        uiController.updateSample(sampleId);
+    });
+
+    $btnDimension.on('click', function() {
+        // ignore clicks from already active button
+        if(!$(this).hasClass('active')) {
+
+            // update styling of button group
+            // eg select tsne, deselect PCA
+            var val = $(this).val();
+            $('.btn-dim-select').removeClass('active');
+            $(this).addClass('active');
+
+            // handle plot/ui update logic
+            uiController.updateDimensionReduction(val);
         }
     });
 
-    // append listeners for plot update events
-    $body.unbind('updateLineplot');
-    $body.unbind('updatePoint');
-
-    $body.on('updateLineplot', function(event, activeFeature) {
-        featureDistributionHistogram.drawHistogram(activeFeature-1);
-    });
-
-    $body.on('updatePoint', function(event, sampleId) {
-        // add sample to history
-        history.add(sampleId);
-
-        // update plots
-        featureVectorLineplot.drawLineplot(sampleId);
-        neighbourPlot.updatePoint(sampleId);
-        neighbourImages.getImages(sampleId);
-    });
-
     // default select first point
-    $body.trigger('updatePoint', sampleData[0]._id);
+    $body.trigger('updateSample', sampleData[0]._id);
 }
