@@ -150,7 +150,7 @@ NeighbourImages.prototype.setImages = function() {
         (function(j) {
             self.selectors.$nebula[i].on('click', function(event) {
                 event.preventDefault();
-                self.selectors.$body.trigger('updatePoint',
+                self.selectors.$body.trigger('updateSample',
                     self.neighbourImages[j].sample_id);
             });
         })(i);
