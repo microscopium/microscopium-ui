@@ -9,14 +9,11 @@ var d3 = require('d3');
  * calculated from that width such that the plot will have a 16:9 aspect ratio.
  *
  * @constructor
- * @param {string} screen - The name of the screen the features being plotted
- *     belong to.
+ * @param {Object} screen - The Screen document for the selected screen.
  * @param {string} element - The ID of the target div for this plot.
- * @param {array} featureNames - An array of the features used in this screen.
  */
-function FeatureDistributionHistogram(screen, featureNames, element) {
+function FeatureDistributionHistogram(screen, element) {
     this.screen = screen;
-    this.featureNames = featureNames;
     this.feature = 0;
     this.element = element;
 
@@ -31,6 +28,8 @@ function FeatureDistributionHistogram(screen, featureNames, element) {
 
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
+
+    this.drawHistogram(0);
 }
 
 /**
@@ -45,8 +44,8 @@ function FeatureDistributionHistogram(screen, featureNames, element) {
  */
 FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
     var featureQuery = {
-        screen: this.screen,
-        feature: this.featureNames[feature],
+        screen: this.screen._id,
+        feature: this.screen.screen_features[feature],
         select: 'feature_dist_std'
     };
     $.ajax({
@@ -60,7 +59,7 @@ FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
             this._setScaleAndBin();
             this._drawAxis();
             this._drawBars();
-            this._drawTitle(this.featureNames[feature]);
+            this._drawTitle(this.screen.screen_features[feature]);
         }.bind(this)
     });
 };
