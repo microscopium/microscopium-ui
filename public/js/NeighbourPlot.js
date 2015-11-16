@@ -75,12 +75,6 @@ function NeighbourPlot(sampleData, element) {
  * @param {array} filterOutIds - A list of sample IDs to be filtered out.
  */
 NeighbourPlot.prototype.applyFilterStyling = function(filterOutIds) {
-    if(filterOutIds.length === this.sampleData.length) {
-        // if no points have been filtered out, class everything as unfiltered
-        this.svg.selectAll('circle')
-            .classed('filtered-out', false);
-    }
-    else {
         // cast sample ids as id #tags so they can be used as selectors
         var tags = _.map(filterOutIds, Utils.makeSelector);
 
@@ -92,7 +86,6 @@ NeighbourPlot.prototype.applyFilterStyling = function(filterOutIds) {
         this.svg.selectAll(tags)
             .classed('filtered-out', false)
             .moveToFront();
-    }
 };
 
 /**
@@ -108,6 +101,16 @@ NeighbourPlot.prototype.draw = function() {
     this._defineToolTip();
     this._drawPoints();
     this._drawAxisLabels();
+};
+
+/**
+ * removeFilterStyling: Remove styling for filtered out points.
+ *
+ * @this {NeighbourPlot}
+ */
+NeighbourPlot.prototype.removeFilterStyling = function() {
+    this.svg.selectAll('circle')
+        .classed('filtered-out', false);
 };
 
 /**
@@ -215,8 +218,6 @@ NeighbourPlot.prototype._clearCurrentSelection = function() {
  * @private
  */
 NeighbourPlot.prototype._defineToolTip = function() {
-    console.log(config);
-
     this.tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([this.toolTipOffset.top, this.toolTipOffset.left])
@@ -321,7 +322,7 @@ NeighbourPlot.prototype._drawPoints = function() {
         .on('click', function(d) {
             var selection = d3.select(this);
             if(!selection.classed('activept')) {
-                $('body').trigger('updatePoint', d._id);
+                $('body').trigger('updateSample', d._id);
             }
         });
 };

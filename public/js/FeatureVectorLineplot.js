@@ -1,8 +1,6 @@
 var config = require('../config/plots').featureVectorlinePlot;
 var d3 = require('d3');
-
-var LEFTARROW = 37;
-var RIGHTARROW = 39;
+var key = require('./enums/keyboard.js');
 
 /**
  * FeatureVectorLineplot: Object to draw lineplot of sample feature distribution.
@@ -205,7 +203,7 @@ FeatureVectorLineplot.prototype._drawTitle = function(titleText) {
  */
 FeatureVectorLineplot.prototype._handleFeatureChange = function() {
     this._updateSelectedFeatureLine();
-    $('body').trigger('updateLineplot', this.activeFeature);
+    $('body').trigger('updateFeature', this.activeFeature);
 };
 
 /**
@@ -245,14 +243,14 @@ FeatureVectorLineplot.prototype._onClickUpdate = function (d3Mouse) {
 FeatureVectorLineplot.prototype._onKeydownUpdate = function(keyCode) {
     // only let the line move right if it's not already at the
     // rightmost feature
-    if(keyCode === RIGHTARROW &&
+    if(keyCode === key.RIGHT_ARROW &&
         this.activeFeature < this.featureVector.length) {
         this.activeFeature++;
         this._handleFeatureChange();
     }
     // only let the line move left if it's not already at the
     // left-most feature
-    else if(keyCode === LEFTARROW && this.activeFeature > 1) {
+    else if(keyCode === key.LEFT_ARROW && this.activeFeature > 1) {
         this.activeFeature--;
         this._handleFeatureChange();
     }
