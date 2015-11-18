@@ -62,25 +62,29 @@ NeighbourImages.prototype.getImages = function(sample_id) {
 
     var imageQueryLarge = {
         sample_id: sample_id,
-        select: ['image_large sample_id'],
+        select: ['image_large', 'sample_id'],
         include: ['gene_name']
     };
 
     var imageQueryNeighbour = {
         sample_id: sample_id,
-        select: ['image_thumb sample_id gene_name'],
+        select: ['image_thumb', 'sample_id', 'gene_name'],
         neighbours: true
     };
 
     $.when(
         $.ajax({
-            url: '/api/images/?' + $.param(imageQueryLarge),
+            type: 'GET',
+            url: '/api/images?' + $.param(imageQueryLarge),
+            dataType: 'json',
             success: function(json) {
                 self.selectedImage = json[0];
             }
         }),
         $.ajax({
+            type: 'GET',
             url: '/api/images?' + $.param(imageQueryNeighbour),
+            dataType: 'json',
             success: function(json) {
                 self.neighbourImages = json;
             }
@@ -124,7 +128,7 @@ NeighbourImages.prototype.setImages = function() {
     if(this.selectedImage) {
         this.selectors.$nebula0
             .attr('src', 'data:image/jpg;base64,' +
-                this.selectedImage.image_large)
+                this.selectedImage.image_large.$binary)
             .attr('title', this.selectedImage.sample_id + '&#013;' +
                 this.selectedImage.gene_name);
     }
@@ -140,7 +144,7 @@ NeighbourImages.prototype.setImages = function() {
 
         this.selectors.$nebula[i]
             .attr('src', 'data:image/jpg;base64,' +
-                self.neighbourImages[i].image_thumb)
+                self.neighbourImages[i].image_thumb.$binary)
             .attr('title', self.neighbourImages[i].sample_id);
         this.selectors.$nebula[i].unbind('click');
 
@@ -172,7 +176,7 @@ NeighbourImages.prototype.openFullModal = function() {
     };
     $.ajax({
         type: 'GET',
-        url: '/api/images/?' + $.param(imageQuery),
+        url: '/api/images?' + $.param(imageQuery),
         success: function(data) {
             // TODO remove once all collections reliably have a fullsize image
             var image = data[0].image_full || data[0].image_large;

@@ -57,7 +57,8 @@ FeatureVectorLineplot.prototype.drawLineplot = function(sampleId) {
     };
     $.ajax({
         type: 'GET',
-        url: '/api/samples/?' + $.param(query),
+        url: '/api/samples?' + $.param(query, true),
+        dataType: 'json',
         success: function(data) {
             this.featureVector = data[0].feature_vector_std;
             d3.select(this.element + ' > svg').remove(); // clear canvas
@@ -68,7 +69,7 @@ FeatureVectorLineplot.prototype.drawLineplot = function(sampleId) {
             this._drawTitle(data[0]._id);
             this._addEventListeners();
             this._updateSelectedFeatureLine(this.activeFeature);
-        }.bind(this)
+        }.bind(this),
     });
 };
 

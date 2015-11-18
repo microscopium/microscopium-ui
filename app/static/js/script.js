@@ -60,7 +60,7 @@ function selectScreen(screen_id) {
 
     $.when(
         $.ajax({
-            url: 'api/screens/?' + $.param(screensQuery),
+            url: 'api/screens?' + $.param(screensQuery, true),
             async: true,
             success: function(json) {
                 screenData = json[0];
@@ -71,7 +71,7 @@ function selectScreen(screen_id) {
             dataType: 'json'
         }),
         $.ajax({
-            url: 'api/samples/?' + $.param(samplesQuery),
+            url: 'api/samples?' + $.param(samplesQuery, true),
             async: true,
             success: function (json) {
                 sampleData = json;

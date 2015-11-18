@@ -50,9 +50,10 @@ FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
     };
     $.ajax({
         type: 'GET',
-        url: '/api/features/?' + $.param(featureQuery),
+        url: '/api/features?' + $.param(featureQuery, true),
+        dataType: 'json',
         success: function(data) {
-            this.featureDist = data[0].feature_dist_std;
+            this.featureDist = data[0].feature_dist_std,
             this.feature = feature;
             d3.select(this.element + ' > svg').remove();
             this._addBackground();
