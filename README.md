@@ -5,21 +5,29 @@ The web interface for [Microscopium](https://github.com/microscopium/microscopiu
 Prerequisites
 -------------
 
-* Node.js version > v0.10.35
+* Python (2.7 or 2.4)
+* NPM package manager
+* Bower package manager
 * MongoDB version > 2.6
-* A modern browser, at least IE9+.
+* A modern browser, at least IE10+ or equivalent.
 
-Install Instructions
---------------------
+Install Instructions (Development)
+----------------------------------
 
-First install dependencies using NPM and Bower.
+Install Python package dependencies.
+
+```console
+$ pip install -r path/to/requirements.txt
+```
+
+Install JavaScript dependencies using NPM and Bower.
 
 ```console
 $ npm install
 $ bower install
 ```
 
-Then then run this locally using grunt.
+Run grunt. The grunt tasks browserifies, lints and tests the JavaScript code upon any changes.
 
 ```console
 $ grunt
@@ -32,25 +40,24 @@ with:
 $ sudo npm install -g grunt-cli
 ```
 
-The dev gruntfile is currently configured to run the following tasks:
-* Run JSHint with [default settings](https://github.com/jshint/jshint/blob/master/examples/.jshintrc)
-with the following excepions:
+Run the Flask server.
 
+```console
+$ python manage.py runserver -r
 ```
-white: false,
-indent: 4
-```
-* Browserify all JS files.
-* Run the express server.
-* Watch all JS files for changes and run the above tasks on change.
 
-After running grunt, the UI should be up and running on http://localhost:8080.
+The interface will now be available in ``localhost:5000``. The port can be changed using the ``-p``
+flag when using ``runserver``, e.ge
+
+```console
+$ python manage.py runserver -r -p 8080
+```
 
 MongoDB Schema
 --------------
 
 Documents should by default be stored in the the database ``microscopium``,
-however this can be changed by updating the ``config/db.js`` file.
+however this can be changed by updating the ``config.py`` file.
 
 ### Document Schemas ###
 
