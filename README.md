@@ -5,7 +5,7 @@ The web interface for [Microscopium](https://github.com/microscopium/microscopiu
 Prerequisites
 -------------
 
-* Python (2.7 or 2.4)
+* Python 3.4
 * NPM package manager
 * Bower package manager
 * MongoDB version > 2.6
