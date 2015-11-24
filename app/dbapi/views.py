@@ -1,6 +1,5 @@
 from bson.json_util import dumps
 from flask import request
-
 from app.dbapi import dbapi
 from app import mongo
 
@@ -56,6 +55,17 @@ def get_samples(screen_id, sample_id):
     select_query = request.args.getlist("select")
 
     result = mongo.db.samples.find(find_query, fields=select_query)
+
+    return dumps(result)
+
+
+# this route is defined for consistency with the "/images/<sample_id>/neighbours" route
+@dbapi.route("/samples/<screen_id>/<sample_id>/neighbours")
+def get_samples_neighbours(screen_id, sample_id):
+    find_query = {"screen": screen_id, "_id": sample_id}
+
+    result = mongo.db.samples.find(find_query,
+                                   fields={"_id": False, "neighbours": True})
 
     return dumps(result)
 
