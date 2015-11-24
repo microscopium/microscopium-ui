@@ -44,13 +44,15 @@ function FeatureDistributionHistogram(screen, element) {
  */
 FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
     var featureQuery = {
-        screen: this.screen._id,
-        feature: this.screen.screen_features[feature],
         select: 'feature_dist_std'
     };
+
+    var feature_ = this.screen.screen_features[feature];
+
     $.ajax({
         type: 'GET',
-        url: '/api/features?' + $.param(featureQuery, true),
+        url: '/api/features/' + this.screen._id + '/' + feature_ + '?' +
+            $.param(featureQuery, true),
         dataType: 'json',
         success: function(data) {
             this.featureDist = data[0].feature_dist_std,

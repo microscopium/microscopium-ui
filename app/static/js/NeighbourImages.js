@@ -61,21 +61,17 @@ NeighbourImages.prototype.getImages = function(sample_id) {
     var self = this;
 
     var imageQueryLarge = {
-        sample_id: sample_id,
-        select: ['image_large', 'sample_id'],
-        include: ['gene_name']
+        select: ['image_large', 'sample_id']
     };
 
     var imageQueryNeighbour = {
-        sample_id: sample_id,
-        select: ['image_thumb', 'sample_id', 'gene_name'],
-        neighbours: true
+        select: ['image_thumb', 'sample_id', 'gene_name']
     };
 
     $.when(
         $.ajax({
             type: 'GET',
-            url: '/api/images?' + $.param(imageQueryLarge),
+            url: '/api/images/' + sample_id + '?' + $.param(imageQueryLarge, true),
             dataType: 'json',
             success: function(json) {
                 self.selectedImage = json[0];
@@ -83,7 +79,7 @@ NeighbourImages.prototype.getImages = function(sample_id) {
         }),
         $.ajax({
             type: 'GET',
-            url: '/api/images?' + $.param(imageQueryNeighbour),
+            url: '/api/images/' + sample_id + '/neighbours' + '?' + $.param(imageQueryNeighbour, true),
             dataType: 'json',
             success: function(json) {
                 self.neighbourImages = json;
