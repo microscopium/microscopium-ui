@@ -95,7 +95,7 @@ module.exports = {
     FORWARD_SLASH: 191,
     GRAVE_ACCENT: 192,
     OPEN_BRACKET: 219,
-    BACK_SLASH: 220,
+    BACKSLASH: 220,
     CLOSE_BRACKET: 221,
     SINGLE_QUOTE: 222
 };
