@@ -8,9 +8,26 @@ bootstrap = Bootstrap()
 mongo = PyMongo()
 
 def create_app(config_name):
+    """
+    An "application factory" used to initialise the app object. Configs and
+    extensions are loaded here.
+
+    See Flask docs for additional information:
+    http://flask.pocoo.org/docs/0.10/patterns/appfactories/
+
+    Parameters
+    ----------
+    config_name : str
+        The configuration to run. Currently should be one of "development"
+        or "default".
+
+    Returns
+    -------
+    app : flask.app.Flask
+        Flask application object.
+    """
     app = Flask(__name__, static_url_path="/static")
     app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
 
     bootstrap.init_app(app)
     mongo.init_app(app)

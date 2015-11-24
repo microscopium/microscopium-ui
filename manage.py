@@ -7,6 +7,11 @@ from app import create_app
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 def make_shell_context():
+    """Create dictionary for flask-script shell context
+
+    Any objects that should be available in the flask shell context
+    should be added to the dictionary returned by this function.
+    """
     return dict(app=app)
 
 manager = Manager(app)

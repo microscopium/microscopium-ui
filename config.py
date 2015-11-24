@@ -1,7 +1,11 @@
+"""
+Classes for managing app configurations.
+
+See Flask docs: http://flask.pocoo.org/docs/0.10/config/
+"""
+
 class Config:
-    @staticmethod
-    def init_app(app):
-        pass
+    pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
