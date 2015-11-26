@@ -1,10 +1,10 @@
 from flask import Flask
 from flask.ext.bootstrap import Bootstrap
+from flask.ext.compress import Compress
 from flask.ext.pymongo import PyMongo
 
 from config import config
 
-bootstrap = Bootstrap()
 mongo = PyMongo()
 
 def create_app(config_name):
@@ -29,7 +29,11 @@ def create_app(config_name):
     app = Flask(__name__, static_url_path="/static")
     app.config.from_object(config[config_name])
 
+    bootstrap = Bootstrap()
+    compress = Compress()
+
     bootstrap.init_app(app)
+    compress.init_app(app)
     mongo.init_app(app)
 
     from app.main import main as main_blueprint
