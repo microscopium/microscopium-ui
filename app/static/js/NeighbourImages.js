@@ -5,7 +5,9 @@ var _ = require('lodash');
  *
  * @constructor
  */
-function NeighbourImages() {
+function NeighbourImages(screenID) {
+    this.screenID = screenID;
+
     var self = this;
     this.neighbours = [];
     this.selectedImage = "";
@@ -71,7 +73,8 @@ NeighbourImages.prototype.getImages = function(sample_id) {
     $.when(
         $.ajax({
             type: 'GET',
-            url: '/api/images/' + sample_id + '?' + $.param(imageQueryLarge, true),
+            url: '/api/' + this.screenID + '/samples/' + sample_id +
+                '/images?' + $.param(imageQueryLarge, true),
             dataType: 'json',
             success: function(json) {
                 self.selectedImage = json[0];
@@ -79,7 +82,8 @@ NeighbourImages.prototype.getImages = function(sample_id) {
         }),
         $.ajax({
             type: 'GET',
-            url: '/api/images/' + sample_id + '/neighbours' + '?' + $.param(imageQueryNeighbour, true),
+            url: '/api/' + this.screenID + '/samples/' + sample_id +
+                '/images/neighbours?' + $.param(imageQueryNeighbour, true),
             dataType: 'json',
             success: function(json) {
                 self.neighbourImages = json;

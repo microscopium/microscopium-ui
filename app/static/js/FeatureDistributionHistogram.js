@@ -51,7 +51,7 @@ FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
 
     $.ajax({
         type: 'GET',
-        url: '/api/features/' + this.screen._id + '/' + feature_ + '?' +
+        url: '/api/' + this.screen._id + '/features/' + feature_ + '?' +
             $.param(featureQuery, true),
         dataType: 'json',
         success: function(data) {

@@ -57,8 +57,7 @@ FeatureVectorLineplot.prototype.drawLineplot = function(sampleId) {
     };
     $.ajax({
         type: 'GET',
-        url: '/api/samples/' + this.screenID + '/' + sampleId + '?' +
-            $.param(query, true),
+        url: '/api/' + this.screenID + '/samples/' + sampleId + '?' + $.param(query, true),
         dataType: 'json',
         success: function(data) {
             this.featureVector = data[0].feature_vector_std;

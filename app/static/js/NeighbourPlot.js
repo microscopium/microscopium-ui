@@ -143,8 +143,7 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
     var selectedPoint = this.svg.select(Utils.makeSelector(sampleId));
 
     $.ajax({
-        url: '/api/samples/' + this.screenID + '/' + sampleId +
-            '?select=neighbours',
+        url: '/api/' + this.screenID + '/samples/' + sampleId + '/neighbours',
         dataType: 'json',
         success: function(data) {
             // remove current plot stylings
