@@ -1,4 +1,4 @@
-# using bson.json_util here as json and ujson can't serialise mongo cursors
+﻿# using bson.json_util here as json and ujson can't serialise mongo cursors
 from bson.json_util import dumps
 
 from flask import request
@@ -11,7 +11,7 @@ def get_images(screen_id, sample_id):
 
     Fields to return should be specified using the "select" URL parameter.
 
-    e.g /api/images/BBBC017-50115070001-A01?select=image_large
+    e.g /api/BBBC017/samples/BBBC017-50115070001-A01/images?select=image_large
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def get_images(screen_id, sample_id):
 def get_images_neighbours(screen_id, sample_id):
     """Get the neighbouring images for a sample from the images collection.
 
-    e.g /api/images/BBBC017-50115070001-A01/neighbours?select=image_thumb
+    e.g /api/BBBC017/samples/BBBC017-50115070001-A01/images/neighbours?select=image_thumb
 
     Fields to return should be specified using the "select" URL parameter.
 
@@ -144,7 +144,7 @@ def get_sample(screen_id, sample_id):
     return dumps(result)
 
 
-# this route is defined for consistency with the "/images/<sample_id>/neighbours" route
+# this route is defined for consistency with the "/<screen_id>/samples/<sample_id>/images/neighbours" route
 @dbapi.route("/<screen_id>/samples/<sample_id>/neighbours")
 def get_samples_neighbours(screen_id, sample_id):
     """Get the neighbouring samples for a sample in the collection.
