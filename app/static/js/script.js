@@ -46,12 +46,10 @@ function selectScreen(screen_id) {
 
     // define which fields to get for the query to the samples collection
     var samplesQuery =  {
-        'screen': screen_id,
         'select': ['row', 'column', 'plate', 'gene_name', 'dimension_reduce']
     };
 
     var screensQuery = {
-        'id': screen_id,
         'select': ['screen_features']
     };
 
@@ -60,7 +58,7 @@ function selectScreen(screen_id) {
 
     $.when(
         $.ajax({
-            url: 'api/screens/?' + $.param(screensQuery),
+            url: 'api/screens/' + screen_id + '?' + $.param(screensQuery, true),
             async: true,
             success: function(json) {
                 screenData = json[0];
@@ -71,7 +69,7 @@ function selectScreen(screen_id) {
             dataType: 'json'
         }),
         $.ajax({
-            url: 'api/samples/?' + $.param(samplesQuery),
+            url: 'api/' + screen_id + '/samples?' + $.param(samplesQuery, true),
             async: true,
             success: function (json) {
                 sampleData = json;

@@ -1,4 +1,4 @@
-var History = require('../public/js/History.js');
+var History = require('../app/static/js/History.js');
 
 describe('History', function() {
     var history;

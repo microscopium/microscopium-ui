@@ -39,7 +39,8 @@ d3.selection.prototype.moveToFront = function() {
  * @param {string} element - The ID of the target div for this plot.
  *     update when scatterplot points are clicked.
  */
-function NeighbourPlot(sampleData, element) {
+function NeighbourPlot(screenID, sampleData, element) {
+    this.screenID = screenID;
     this.sampleData = sampleData;
     this.element = Utils.makeSelector(element);
     this.reductionType = 'tsne';
@@ -142,7 +143,8 @@ NeighbourPlot.prototype.updatePoint = function(sampleId) {
     var selectedPoint = this.svg.select(Utils.makeSelector(sampleId));
 
     $.ajax({
-        url: '/api/samples/?id=' + sampleId + '&select=neighbours',
+        url: '/api/' + this.screenID + '/samples/' + sampleId + '/neighbours',
+        dataType: 'json',
         success: function(data) {
             // remove current plot stylings
             this._clearCurrentSelection();

@@ -1,5 +1,5 @@
 # bower packages
-components/
+bower_components/
 
 # browserified JSfiles
 js-build.js

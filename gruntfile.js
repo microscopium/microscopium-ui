@@ -1,18 +1,9 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
-        express: {
-            dev: {
-                options: {
-                    script: 'server.js'
-                }
-            }
-        },
-
         jshint: {
-            all: ['*.js', 'public/js/*.js'],
+            all: ['app/static/js/*.js'],
             options: {
-                ignores: ['public/js/build.js'],
                 white: false,
                 indent: 4,
                 force: true
@@ -27,8 +18,8 @@ module.exports = function(grunt) {
                 options: {
                     debug: true
                 },
-                src: 'public/js/script.js',
-                dest: 'public/js-build.js'
+                src: 'app/static/js/script.js',
+                dest: 'app/static/js-build.js'
             },
             // separate browserify tasks that handles test spec files
             tests: {
@@ -43,7 +34,6 @@ module.exports = function(grunt) {
 
         jasmine: {
             dev: {
-                src: ['public/js/bundle.js'],
                 options: {
                     specs: 'tests/testSpecs.js'
                 }
@@ -54,20 +44,15 @@ module.exports = function(grunt) {
         // to avoid needless build steps. e.g. no point in browserifying
         // and testing javascript if only the CSS was changed
         watch: {
-            // restart server when node files updated
-            node: {
-                files: ['server.js','app/**/*.js', 'config/*.js'],
-                tasks: ['jshint', 'express:dev']
-            },
             // browserify, jshint and test JS when JS updated
             js: {
-                files: ['public/js/*.js'],
+                files: ['app/static/js/*.js'],
                 tasks: ['jshint', 'browserify:tests', 'browserify:dev',
                     'jasmine:dev']
             },
             // rebuild CSS/SASS when updated
             css: {
-                files: ['public/css/*.css', 'public/css/*.scss'],
+                files: ['app/static/css/*.scss'],
                 tasks: ['sass:dev']
             }
         },
@@ -77,7 +62,7 @@ module.exports = function(grunt) {
             // development as another task will also minify the CSS ultimately
             dev: {
                 files: {
-                    'public/style-build.css': 'public/css/style.scss'
+                    'app/static/style-build.css': 'app/static/css/style.scss'
                 }
             }
         },
@@ -88,13 +73,12 @@ module.exports = function(grunt) {
             options: {
                 logConcurrentOutput: true
             },
-            watch: ['watch:node', 'watch:js', 'watch:css']
+            watch: ['watch:js', 'watch:css']
         }
     });
 
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-concurrent');
-    grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-sass');
@@ -102,7 +86,7 @@ module.exports = function(grunt) {
 
     // run this task for development
     grunt.registerTask('default', ['jshint', 'browserify:tests', 'browserify:dev', 'jasmine:dev',
-        'sass:dev', 'express:dev', 'concurrent:watch']);
+        'sass:dev', 'concurrent:watch']);
     // run this task only when you want to build JS/CSS files (eg deployment)
     grunt.registerTask('build', ['jshint', 'jasmine:dev', 'browserify:dev', 'sass:dev']);
 };

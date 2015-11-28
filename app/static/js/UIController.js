@@ -24,12 +24,13 @@ function UIController(screenData, sampleData) {
  * @private
  */
 UIController.prototype._mountPlots = function(screenData, sampleData) {
-    this.neighbourImages = new NeighbourImages();
+    this.neighbourImages = new NeighbourImages(sampleData._id);
     this.featureDistributionHistogram =
         new FeatureDistributionHistogram(screenData, '#histplot');
     this.featureVectorLineplot =
-        new FeatureVectorLineplot('#lineplot');
-    this.neighbourPlot = new NeighbourPlot(sampleData, '#neighbourplot');
+        new FeatureVectorLineplot(screenData._id, '#lineplot');
+    this.neighbourPlot =
+        new NeighbourPlot(screenData._id, sampleData, '#neighbourplot');
     this.filter = new Filter(sampleData, this.neighbourPlot);
 };
 

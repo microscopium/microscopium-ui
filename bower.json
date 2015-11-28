@@ -1,9 +1,8 @@
 {
   "name": "microscopium-ui",
   "version": "0.0.1",
-  "directory": "public/bower_components",
+  "directory": "app/static/bower_components",
   "dependencies": {
-        "bootstrap": "latest",
         "jquery": "latest",
         "slidebars": "0.10.3",
         "fontawesome": "latest",

@@ -21,11 +21,12 @@ var key = require('./enums/keyboard.js');
  * @constructor
  * @param {string} element - The ID of the target div for this plot.
  */
-function FeatureVectorLineplot(element) {
+function FeatureVectorLineplot(screenID, element) {
+    this.screenID = screenID;
+    this.element = element;
     // this variable refers to the position of the vertical 'active feature'
     // line on the plot, *not* the index of the feature in the feature vector.
     this.activeFeature = 1;
-    this.element = element;
 
     this.xAxisTicks = config.xAxisTicks;
     this.yAxisTicks = config.yAxisTicks;
@@ -52,12 +53,12 @@ function FeatureVectorLineplot(element) {
  */
 FeatureVectorLineplot.prototype.drawLineplot = function(sampleId) {
     var query = {
-        id: sampleId,
         select: 'feature_vector_std'
     };
     $.ajax({
         type: 'GET',
-        url: '/api/samples/?' + $.param(query),
+        url: '/api/' + this.screenID + '/samples/' + sampleId + '?' + $.param(query, true),
+        dataType: 'json',
         success: function(data) {
             this.featureVector = data[0].feature_vector_std;
             d3.select(this.element + ' > svg').remove(); // clear canvas
