@@ -1,0 +1,30 @@
+<div id="image-column" class="col-lg-4">
+    <!-- Add main selected sample image -->
+    <div id="main-image" class="row row-centered">
+        <div class="col-lg-12 col-centered sample-image">
+            <div class="img-button large add hidden">
+                <i class="fa fa-plus fa-2x"></i>
+            </div>
+            <div id="img-zoom-button" class="img-button large zoom hidden">
+                <i class="fa fa-search fa-2x"></i>
+            </div>
+            <a class="thumbnail" href="#">
+                <img id="nebula-0" src="" alt="">
+            </a>
+        </div>
+    </div>
+    <!-- Generate 8 rows, 3 column divs for the neighbour image gallery -->
+    {% for i in range(0, 8) %}
+        <div class="row row-centered">
+            {% for j in range(0, 3) %}
+                <div class="col-lg-4 col-centered sample-image">
+                    <a class="thumbnail" href="#">
+                        <img id="{{ "nebula-" + (3*i + j + 1)|string }}" src="" alt="">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+
