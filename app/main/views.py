@@ -1,4 +1,4 @@
-from flask import current_app, render_template
+from flask import current_app, redirect, render_template, url_for
 
 from htmlmin.main import minify
 
@@ -19,6 +19,12 @@ def load_screen(screen_id):
     The screen_id parameter is passed to the JavaScript variable
     SCREEN_ID in the pages HTML.
     """
+    # verify that requested screen ID exists, redirect to index
+    # if it does not
+    screen_result = mongo.db.screens.find_one({"_id": screen_id})
+    if screen_result is None:
+        return redirect(url_for(".index"))
+
     return render_template("screen_ui.html",
                            screen_id=screen_id)
 
