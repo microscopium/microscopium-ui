@@ -9,12 +9,12 @@
             <div id="gene-menu" class="collapse in">
                 <div class="panel-body">
                     <input id="gene-filter-text" type="text" autocomplete="off">
-                    <select id="gene-select" size="7"></select>
+                    <select id="gene-select" size="{{ config["UI_GENELIST_HEIGHT"]  }}"></select>
                     <div class="container-fluid filter-arrows">
                         <i id="filter-add" class="fa fa-chevron-down fa-2x"></i>
                         <i id="filter-remove" class="fa fa-chevron-up fa-2x"></i>
                     </div>
-                    <select id="gene-selected" size="7"></select>
+                    <select id="gene-selected" size="{{ config["UI_GENELIST_HEIGHT"]  }}"></select>
                 </div>
             </div>
         </div>

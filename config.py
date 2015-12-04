@@ -13,6 +13,11 @@ class Config:
     # This should be False during development
     MINIFY_HTML = True
 
+    # the height of the selection box for the genes in the filter menu
+    # the number represents the number of items in the menu
+    # corresponds to the "size" property in the HTML tag <select>
+    UI_GENELIST_HEIGHT = 7
+
 class DevelopmentConfig(Config):
     DEBUG = True
 
