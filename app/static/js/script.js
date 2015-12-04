@@ -39,7 +39,7 @@ $(document).ready(function() {
     startLoadingSpinner(spinner);
     $.when(screenQuery, sampleQuery)
         .done(function(screenData, sampleData) {
-            $('.navbar-right > ul > a').removeClass('hidden');
+            $('.navbar-right').removeClass('hidden');
             $('#neighbourplot-options').removeClass('hidden');
             $('#dimensionality-reduction-select').val('tsne');
             mountUI(screenData[0][0], sampleData[0]);
