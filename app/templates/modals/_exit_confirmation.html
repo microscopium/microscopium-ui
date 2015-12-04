@@ -8,7 +8,9 @@
                 <h4 class="modal-title">Confirm</h4>
             </div>
             <div class="modal-body">
-                Are you sure you want to exit this screen and return to the main menu?
+                <p>Are you sure you want to exit this screen and return to the main menu? Alternatively, select a new
+                screen to work with.</p><br>
+                {% include "index_components/_screen_table.html" %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">
