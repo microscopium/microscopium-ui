@@ -55,7 +55,6 @@ $(document).ready(function() {
      * @param spinnerObject - The spin.js spinner to start.
      */
     function startLoadingSpinner(spinnerObject) {
-        console.log('startLoadingSpinner');
         $('#sb-site').addClass('load-overlay');
         spinnerObject.spin(document.getElementById('sb-site'));
     }
@@ -83,18 +82,13 @@ $(document).ready(function() {
      */
     function mountUI(screenData, sampleData) {
         var $body = $('body');
-        var $backButton = $('#back-button');
-        var $forwardButton = $('#forward-button');
-        var $btnDimension = $('.btn-dim-select');
-        var $brandHeader = $('a.navbar-brand');
-
         var uiController = new UIController(screenData, sampleData);
 
-        $backButton.on('click', function() {
+        $('#back-button').on('click', function() {
             uiController.back();
         });
 
-        $forwardButton.on('click', function() {
+        $('#forward-button').on('click', function() {
             uiController.forward();
         });
 
@@ -103,8 +97,6 @@ $(document).ready(function() {
         });
 
         $body.on('updateFilter', function(event, filterOutId) {
-            console.log('on updateFilter');
-            console.log(filterOutId);
             uiController.updateFilter(filterOutId);
         });
 
@@ -112,7 +104,7 @@ $(document).ready(function() {
             uiController.updateSample(sampleId);
         });
 
-        $btnDimension.on('click', function() {
+        $('.btn-dim-select').on('click', function() {
             // ignore clicks from already active button
             if(!$(this).hasClass('active')) {
 
@@ -127,7 +119,7 @@ $(document).ready(function() {
             }
         });
 
-        $brandHeader.on('click', function() {
+        $('a.navbar-brand').on('click', function() {
             $('#exit-confirmation').modal('show');
         });
 
