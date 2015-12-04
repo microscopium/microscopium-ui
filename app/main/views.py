@@ -1,4 +1,4 @@
-from flask import current_app, redirect, render_template, url_for
+from flask import current_app, flash, redirect, render_template, url_for
 
 from htmlmin.main import minify
 
@@ -23,6 +23,7 @@ def load_screen(screen_id):
     # if it does not
     screen_result = mongo.db.screens.find_one({"_id": screen_id})
     if screen_result is None:
+        flash("Unable to find screen %s." % screen_id)
         return redirect(url_for(".index"))
 
     return render_template("screen_ui.html",
