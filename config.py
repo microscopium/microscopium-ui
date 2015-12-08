@@ -23,7 +23,8 @@ class DevelopmentConfig(Config):
 
     MINIFY_HTML = False
 
-    # secret key needed for sessions
+    # sessions which are used for managing flash messages. a secret
+    # key must be declared in order to use sessions.
     SECRET_KEY = os.environ.get("MICROSCOPIUM_SECRET_KEY") or "secret string"
 
     MONGO_DBNAME = "microscopium"
