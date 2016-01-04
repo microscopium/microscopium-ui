@@ -1,7 +1,7 @@
 var config = require('../config/plots').neighbourPlot;
 var d3 = require('d3');
 var _ = require('lodash');
-var Utils = require('./Utils.js');
+var Utils = require('./utils/Utils.js');
 require('d3-tip')(d3); // add d3-tip plugin to d3 namespace
 
 /**

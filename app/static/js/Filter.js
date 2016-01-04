@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var Utils = require('./Utils.js');
+var Utils = require('./utils/Utils.js');
 
 var key = require('./enums/keyboard.js');
 
