@@ -171,13 +171,16 @@ NeighbourImages.prototype.setImages = function() {
  */
 NeighbourImages.prototype.openFullModal = function() {
     var imageQuery = {
-        sample_id: this.selectedImage.sample_id,
-        select: ['image_full image_large sample_id']
+        select: ['sample_id', 'image_full', 'image_large']
     };
     $.ajax({
         type: 'GET',
-        url: '/api/images?' + $.param(imageQuery),
+        url: '/api/' + this.screenID + '/samples/' + this.selectedImage.sample_id +
+            '/images?' + $.param(imageQuery, true),
+        dataType: 'json',
         success: function(data) {
+            console.log(data[0]);
+
             // TODO remove once all collections reliably have a fullsize image
             var image = data[0].image_full || data[0].image_large;
 
@@ -186,7 +189,7 @@ NeighbourImages.prototype.openFullModal = function() {
 
             // add image to modal HTML
             $('#full-size-image')
-                .attr('src', 'data:image/jpg;base64,' + image)
+                .attr('src', 'data:image/jpg;base64,' + image.$binary)
                 .attr('title', data[0].sample_id);
             // open the modal!
             $('#image-modal').modal('show');

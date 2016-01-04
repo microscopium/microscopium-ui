@@ -24,7 +24,7 @@ function UIController(screenData, sampleData) {
  * @private
  */
 UIController.prototype._mountPlots = function(screenData, sampleData) {
-    this.neighbourImages = new NeighbourImages(sampleData._id);
+    this.neighbourImages = new NeighbourImages(screenData._id);
     this.featureDistributionHistogram =
         new FeatureDistributionHistogram(screenData, '#histplot');
     this.featureVectorLineplot =

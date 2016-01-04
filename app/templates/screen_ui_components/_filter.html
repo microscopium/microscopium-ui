@@ -1,0 +1,56 @@
+<form role="form" id="filter-form">
+    <div id="filter-menu" class="container panel-group">
+        <div class="panel">
+            <div class="panel-heading" role="tab">
+                <a data-toggle="collapse" data-parent="#filter-menu" href="#gene-menu">
+                    Gene
+                </a>
+            </div>
+            <div id="gene-menu" class="collapse in">
+                <div class="panel-body">
+                    <input id="gene-filter-text" type="text" autocomplete="off">
+                    <select id="gene-select" size="{{ config["UI_GENELIST_HEIGHT"]  }}"></select>
+                    <div class="container-fluid filter-arrows">
+                        <i id="filter-add" class="fa fa-chevron-down fa-2x"></i>
+                        <i id="filter-remove" class="fa fa-chevron-up fa-2x"></i>
+                    </div>
+                    <select id="gene-selected" size="{{ config["UI_GENELIST_HEIGHT"]  }}"></select>
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" role="tab">
+                <a data-toggle="collapse" data-parent="#filter-menu" href="#plate-menu">
+                    Plate
+                </a>
+            </div>
+            <div id="plate-menu" class="collapse">
+                <div id="plate-filter" class="filter-menu-item panel-body">
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" role="tab">
+                <a data-toggle="collapse" data-parent="#filter-menu" href="#row-menu">
+                    Row
+                </a>
+            </div>
+            <div id="row-menu" class="collapse">
+                <div id="row-filter" class="filter-menu-item panel-body">
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" role="tab">
+                <a data-toggle="collapse" data-parent="#filter-menu" href="#column-menu">
+                    Column
+                </a>
+            </div>
+            <div id="column-menu" class="collapse">
+                <div id="col-filter" class="filter-menu-item panel-body">
+                </div>
+            </div>
+        </div>
+        <button id="filter-reset" type="reset" value="Reset">Reset</button>
+    </div>
+</form>

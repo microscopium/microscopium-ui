@@ -1,0 +1,26 @@
+<!-- Create divs for d3 plots to mount to -->
+<div class="col-lg-8" id="plot-column">
+    <div class="row">
+        <div id="neighbourplot-options" class="row hidden">
+            <!-- SELECT DIMENSIONALITY REDUCTION METHOD FOR SCATTERPLOT -->
+            <b>Scatterplot view:&nbsp;</b>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary btn-dim-select active" value="tsne">TSNE</button>
+                <button type="button" class="btn btn-primary btn-dim-select" value="pca">PCA</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row" id="neighbourplot"></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="row"  id="lineplot">
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="row" id="histplot">
+            </div>
+        </div>
+    </div>
+</div>

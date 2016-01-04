@@ -54,7 +54,6 @@ function SampleFilter(sampleData, neighbourPlot) {
     this.mountFilterComponent(this.uniquePlate, 'plate', 2);
     this.mountEventListeners();
     this.updateGeneList();
-    $filterButton.removeClass('hidden');
 }
 
 /**

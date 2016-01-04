@@ -1,0 +1,19 @@
+<table class="table table-hover">
+    <tr>
+        <th>Screen</th>
+        <th>Description</th>
+        <th>Samples</th>
+        <th></th>
+    </tr>
+    {% for screen in screens %}
+        <tr>
+            <td>{{ screen._id }}</td>
+            <td>{{ screen.screen_desc }}</td>
+            <td>{{ screen.number_samples }}</td>
+            <td>
+                <a href="{{ url_for("main.load_screen", screen_id=screen._id) }}"
+                   class="btn btn-info btn-sm" role="button">Load</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>

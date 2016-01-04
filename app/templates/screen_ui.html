@@ -1,0 +1,52 @@
+{#
+Screen UI. Forms basis for the Microscopium UI.
+
+The following variables are sent back with this template:
+
+sample_id - The sample ID of the screen loaded.
+screens - All screen documents from the database.
+
+See docs: http://flask.pocoo.org/docs/0.10/templating/ for
+globals passed to template.
+#}
+
+{% extends "base.html" %}
+
+{% block title %}
+    Microscopium - {{ screen_id }}
+{% endblock %}
+
+{% block content %}
+
+<div id="sb-site" class="sb-site">
+    {% include "_navbar.html" %}
+    <div class="container">
+        <div class="row">
+            {% include "screen_ui_components/_plots.html" %}
+            {% include "screen_ui_components/_neighbour_images.html" %}
+        </div>
+    </div>
+</div>
+
+<div class="sb-style-overlay sb-slidebar sb-right">
+    {% include "screen_ui_components/_filter.html" %}
+</div>
+
+{% include "modals/_image_modal.html" %}
+{% include "modals/_exit_confirmation.html" %}
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // make screen_id available as global javascript variable
+        var SCREEN_ID = "{{ screen_id }}";
+    </script>
+    <script type="text/javascript"
+            src="{{ url_for("static", filename="bower_components/slidebars/dist/slidebars.min.js") }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for("static", filename="bower_components/jquery.serializeJSON/jquery.serializejson.min.js") }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for("static", filename="js-build.js") }}"></script>
+{% endblock %}

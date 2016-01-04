@@ -1,0 +1,32 @@
+<div id="exit-confirmation" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Confirm</h4>
+            </div>
+            <div class="modal-body">
+                Change working screen? All changes and history on this screen will be lost.
+            </div>
+            <div class="modal-body text-center">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                    Cancel - Return to current screen
+                </button>
+                <a class="btn btn-primary" href="{{ url_for("main.index")}}" target="_blank">
+                    New window - Open screen selection page in new browser window
+                </a>
+                <a class="btn btn-danger" href="{{ url_for("main.index")}}">
+                    Exit - return to screen selection page
+                </a>
+            </div>
+            <div class="modal-body">
+                Or, just go straight to an existing screen, below:
+            </div>
+            <div class="modal-body">
+                {% include "index_components/_screen_table.html" %}
+            </div>
+        </div>
+    </div>
+</div>
