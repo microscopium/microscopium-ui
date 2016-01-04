@@ -2,11 +2,6 @@
 var _ = require('lodash');
 
 var Utils = {};
-Utils.regexFilter = regexFilter;
-Utils.uniqueData = uniqueData;
-Utils.findByValues = findByValues;
-Utils.sortedPush = sortedPush;
-Utils.makeSelector = makeSelector;
 
 /**
  * regexFilter: Return regex function for use in filter.
@@ -17,11 +12,11 @@ Utils.makeSelector = makeSelector;
  * @param {string} pattern - The query pattern.
  * @returns {Function} - The query function.
  */
-function regexFilter(pattern) {
+Utils.regexFilter = function(pattern) {
     return function(element) {
         return element.match(new RegExp(pattern, 'i'));
     };
-}
+};
 
 /**
  * uniqueData: Return all unique data values.
@@ -33,9 +28,9 @@ function regexFilter(pattern) {
  * @param {string} field - The key to find the unique values of.
  * @returns {array} - An array of unique values.
  */
-function uniqueData(data, field) {
+Utils.uniqueData = function(data, field) {
     return _.uniq(_.pluck(_.flatten(data), field)).sort();
-}
+};
 
 /**
  * findByValues: Filter an array of objects on multiple values of a property.
@@ -44,11 +39,11 @@ function uniqueData(data, field) {
  * @param {string} property - The object property to filter on.
  * @param {array} values - An array of values to filter the data.
  */
-function findByValues(collection, property, values) {
+Utils.findByValues = function(collection, property, values) {
     return _.filter(collection, function(item) {
         return _.contains(values, item[property]);
     });
-}
+};
 
 /**
  * sortedPush: Insert an item into an array while preserving the ordering.
@@ -56,9 +51,9 @@ function findByValues(collection, property, values) {
  * @param {array} array - A sorted array of primitives.
  * @param {string, number} value - A value to insert into the array.
  */
-function sortedPush(array, value) {
+Utils.sortedPush = function(array, value) {
     array.splice(_.sortedIndex(array, value), 0, value);
-}
+};
 
 /**
  * makeSelector: Add '#' before input string. Makes item selectable in jQuery.
@@ -67,8 +62,8 @@ function sortedPush(array, value) {
  *
  * @param {string} element
  */
-function makeSelector(element) {
+Utils.makeSelector = function(element) {
     return element.charAt(0) === '#' ? element : '#' + element;
-}
+};
 
 module.exports = Utils;
