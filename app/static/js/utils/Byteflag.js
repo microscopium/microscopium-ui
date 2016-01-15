@@ -3,10 +3,10 @@
 var Byteflag = {};
 
 /**
- * add: Add bit to byteflag.
+ * add: Return new byteflag with newBit added to existing flag.
  *
  * @param flag {number} - Query byteflag.
- * @param newBit {number} - New bit too add.
+ * @param newBit {number} - New bit to add.
  * @returns {number} - Updated byteflag.
  */
 Byteflag.add = function(flag, newBit) {
@@ -14,7 +14,7 @@ Byteflag.add = function(flag, newBit) {
 };
 
 /**
- * remove: Remove bit from byteflag.
+ * remove: Return new byteflag with removeBit removed from existing flag.
  *
  * @param flag {number} - Query byteflag.
  * @param removeBit {number} - Bit to remove.
@@ -25,7 +25,7 @@ Byteflag.remove = function(flag, removeBit) {
 };
 
 /**
- * check: Checks if bit in byteflag.
+ * check: Check if checkBit is in byteflag.
  *
  * @param flag {number} - Query byteflag.
  * @param checkBit {number} - Bit to check.
