@@ -77,5 +77,12 @@ describe('Utils', function() {
             var actual = Utils.makeSelector('#element');
             expect(actual).toEqual('#element');
         });
-    })
+    });
+
+    describe('euclideanDistance', function() {
+        it('finds correct distance between two points', function() {
+            var actual = Utils.euclideanDistance(1, 1, 2, 2);
+            expect(actual).toBeCloseTo(Math.sqrt(2), 5);
+        });
+    });
 });

@@ -66,4 +66,17 @@ Utils.makeSelector = function(element) {
     return element.charAt(0) === '#' ? element : '#' + element;
 };
 
+/**
+ * euclideanDistance: Find the Euclidean distance between two points.
+ *
+ * @param x1 {number} - X co-ordinate of first point.
+ * @param y1 {number} - Y co-ordinate of first point.
+ * @param x2 {number} - X co-ordinate of second point.
+ * @param y2 {number} - Y co-ordinate of second point.
+ * @returns {number} - The Euclidean distance.
+ */
+Utils.euclideanDistance = function(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+};
+
 module.exports = Utils;
