@@ -37,7 +37,7 @@ describe('Byteflag', function() {
             expect(check).toBe(true);
         });
 
-        it('should return true when query bit not present', function() {
+        it('should return false when query bit not present', function() {
             var flag = (0x01 | 0x04);
             var check = Byteflag.check(flag, 0x02);
             expect(check).toBe(false);
