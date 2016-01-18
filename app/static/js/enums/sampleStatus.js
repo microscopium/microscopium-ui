@@ -1,6 +1,7 @@
 'use strict';
 module.exports = {
-	SELECTED: 0x01,
-	NEIGHBOUR: 0x02,
-	FILTERED_OUT: 0x03
+	ACTIVE: 0x01,
+	SELECTED: 0x02,
+	NEIGHBOUR: 0x04,
+	FILTERED_OUT: 0x08
 };
