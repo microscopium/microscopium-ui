@@ -38,11 +38,20 @@ Utils.uniqueData = function(data, field) {
  * @param {array} collection - An array of objects.
  * @param {string} property - The object property to filter on.
  * @param {array} values - An array of values to filter the data.
+ * @param {boolean} invert - If true, return objects not satisfying the
+ *     query values.
  */
-Utils.findByValues = function(collection, property, values) {
-    return _.filter(collection, function(item) {
-        return _.contains(values, item[property]);
-    });
+Utils.findByValues = function(collection, property, values, invert) {
+    if(invert) {
+        return _.filter(collection, function(item) {
+            return !_.contains(values, item[property]);
+        });
+    }
+    else {
+        return _.filter(collection, function(item) {
+            return _.contains(values, item[property]);
+        });
+    }
 };
 
 /**
