@@ -92,6 +92,10 @@ $(document).ready(function() {
             uiController.forward();
         });
 
+        $('#reset-button').on('click', function () {
+            uiController.reset();
+        });
+
         $body.on('updateFeature', function(event, activeFeature) {
             uiController.updateFeature(activeFeature);
         });
@@ -115,7 +119,7 @@ $(document).ready(function() {
                 $(this).addClass('active');
 
                 // handle plot/ui update logic
-                uiController.updateDimensionReduction(val);
+                uiController.updateView(val);
             }
         });
 
@@ -124,7 +128,23 @@ $(document).ready(function() {
         });
 
         // default select first point
-        $body.trigger('updateSample', sampleData[0]._id);
+        $body.trigger('updateSample', sampleData[1]._id);
+
+        positionElements();
     }
 
+    /**
+     * positionElements: Resize div housing neighbourplot.
+     *
+     * Due to the absolute positioning used for the canvas and SVG
+     * elements used by the neighbourplot, JS is needed to position
+     * a few elements to their right place.
+     */
+    function positionElements() {
+        var height = $('#main-svg').height();
+        var height2 = $('#neighbourplot-options').height();
+
+        $('#neighbourplot')
+            .css('height', height + height2);
+    }
 });
