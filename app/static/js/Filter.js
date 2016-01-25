@@ -341,16 +341,22 @@ SampleFilter.prototype.applyFilter = function() {
     if(geneActive || plateActive || rowActive || colActive) {
         $filterButton.addClass('filtering');
 
+        // want the samples that match the list of rows, cols, plates
+        // currently checked in the filter here
         var result = _.chain(this.data)
-            .findByValues('column', cols)
-            .findByValues('row', rows)
-            .findByValues('plate', plates);
+            .findByValues('column', cols, false)
+            .findByValues('row', rows, false)
+            .findByValues('plate', plates, false);
 
-        if(geneActive) {
-            result = result.findByValues('gene_name', this.selectedGenes);
-        }
+         // want which genes are NOT in the list, so we invert the results here
+         if(geneActive) {
+             result = result.findByValues('gene_name', this.selectedGenes, true);
+         }
 
-        $('body').trigger('updateFilter', [_.pluck(result.value(), '_id')]);
+        // create list of sample indices to be filtered out and
+        // send the list to the updateFilter event
+        var filterOut = _.pluck(result.value(), 'i');
+        $('body').trigger('updateFilter', [filterOut]);
     }
 
     // return null if filter empty
