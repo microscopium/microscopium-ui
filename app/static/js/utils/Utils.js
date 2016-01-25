@@ -42,7 +42,7 @@ Utils.uniqueData = function(data, field) {
  *     query values.
  */
 Utils.findByValues = function(collection, property, values, invert) {
-    if(invert) {
+    if(invert === true) {
         return _.filter(collection, function(item) {
             return !_.contains(values, item[property]);
         });
