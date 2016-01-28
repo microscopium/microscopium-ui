@@ -81,7 +81,7 @@ function NeighbourPlotCanvas(screenID, sampleData, element) {
         });
 
     // get random indices for drawing subset of data during pan/zoom
-    this.randomIndex = _.sample(this.sampleManager.dataRange, 200);
+    this.randomIndex = _.sample(this.sampleManager.allIndices, 200);
 
     // set scales
     this.updateView(this.view);

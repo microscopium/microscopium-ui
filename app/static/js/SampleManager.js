@@ -20,7 +20,7 @@ function SampleManager(data) {
 
     // generate and save a reference to an array [0, 1, ..., n] where
     // n is the length of the dataset
-    this.dataRange = _.range(this.data.length);
+    this.allIndices = _.range(this.data.length);
 
     this.data.forEach(function(d, i) {
         // add index as property to all items -- need these to preserve original ordering

@@ -39,7 +39,7 @@ PointsDrawer.prototype.redraw = function (data, indices) {
     }
     else {
         // otherwise reference it to the cached array of indices
-        drawIndex = data.dataRange;
+        drawIndex = data.allIndices;
     }
 
     // the indices of points are iterated and stored in different arrays
