@@ -256,7 +256,7 @@ NeighbourPlotCanvas.prototype._mouseMoveHandler = function(mouse, args) {
             var y = this.yScale(d.dimension_reduce[this.view][1]);
 
             this.tip
-                .offset([y + config.toolTipOffset.top, x])
+                .offset([y + config.tooltip.offset.top, x])
                 .html(function() {
                     var treatment = d.treatment || d.gene_name;
 
@@ -267,7 +267,7 @@ NeighbourPlotCanvas.prototype._mouseMoveHandler = function(mouse, args) {
             this.tip.show.apply(null, args);
         }
 
-    }.bind(this), 500);
+    }.bind(this), config.tooltip.timeout);
 };
 
 /**
@@ -324,7 +324,7 @@ NeighbourPlotCanvas.prototype._onNavigateEnd = function() {
         // full plot being re-drawn
         this.navigateTimeoutFunction = setTimeout(function() {
             this.pointsDrawer.draw(this.sampleManager);
-        }.bind(this), 350);
+        }.bind(this), config.navigateTimeout);
 
         this.NAVIGATING = false;
     }
