@@ -54,22 +54,23 @@ function SampleManager(data) {
 SampleManager.prototype.findSampleFromMouse = function(mouse, r) {
     // find closest point to given (xd, yd) pair
     // need to apply the scale used to make sure we're working
-    // in the right co-ordinate spaceindex
-    var xd = this.xScale.invert(mouse[0]);
-    var yd = this.yScale.invert(mouse[1]);
+    // in the right co-ordinate space
+    var xInverse = this.xScale.invert(mouse[0]);
+    var yInverse = this.yScale.invert(mouse[1]);
 
-    var closest = this.quadTree.find([xd, yd]);
+    var nearest = this.quadTree.find([xInverse, yInverse]);
 
     // closest point must be within given radius ie "was the point clicked on?"
     // only want to register hits within radius of circle, so we
     // need to work in the space of the plot that called this method
-    var x_c = this.xScale(closest.dimension_reduce[this.view][0]);
-    var y_c = this.yScale(closest.dimension_reduce[this.view][1]);
-    var distance = utils.euclideanDistance(mouse[0], mouse[1], x_c, y_c);
+    var xNearest = this.xScale(nearest.dimension_reduce[this.view][0]);
+    var yNearest = this.yScale(nearest.dimension_reduce[this.view][1]);
+    var distance = utils.euclideanDistance(mouse[0], mouse[1],
+        xNearest, yNearest);
 
     // if the distance is within the point radius, update the index of
     // the current active sample
-    return distance < r ? closest.i : -1;
+    return distance < r ? nearest.i : -1;
 };
 
 /**
