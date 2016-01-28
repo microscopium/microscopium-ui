@@ -4,7 +4,7 @@ var status = require('../app/static/js/enums/sampleStatus.js');
 var d3 = require('d3');
 var _ = require('lodash');
 
-// dummy data for testing the sample manager functiomns
+// dummy data for testing the SampleManager functions
 // the tsne and pca values do not in any way reflect a real dataset!!
 var testData = [
     {
