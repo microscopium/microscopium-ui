@@ -56,9 +56,9 @@ describe('SampleManager', function() {
         sampleManager.setScale(xScale, yScale);
     });
 
-    describe('addStatusToIndex', function() {
+    describe('setStatusToIndex', function() {
         it('should add the correct status to a single index', function() {
-            sampleManager.addStatusToIndex(0, status.ACTIVE);
+            sampleManager.setStatusToIndex(0, status.ACTIVE);
 
             var expected = [status.ACTIVE, 0, 0, 0];
             var actual = _.pluck(sampleManager.data, 'status');
@@ -67,7 +67,7 @@ describe('SampleManager', function() {
         });
 
         it('should add the correct status to a set of indices', function() {
-            sampleManager.addStatusToIndex([0, 2], status.FILTERED_OUT);
+            sampleManager.setStatusToIndex([0, 2], status.FILTERED_OUT);
 
             var expected = [status.FILTERED_OUT, 0, status.FILTERED_OUT, 0];
             var actual = _.pluck(sampleManager.data, 'status');
@@ -76,9 +76,9 @@ describe('SampleManager', function() {
         });
 
         it('manages more than one status', function() {
-            sampleManager.addStatusToIndex(0, status.ACTIVE);
-            sampleManager.addStatusToIndex(1, status.FILTERED_OUT);
-            sampleManager.addStatusToIndex([1, 2], status.SELECTED);
+            sampleManager.setStatusToIndex(0, status.ACTIVE);
+            sampleManager.setStatusToIndex(1, status.FILTERED_OUT);
+            sampleManager.setStatusToIndex([1, 2], status.SELECTED);
 
             var expected = [
                 status.ACTIVE,
@@ -92,10 +92,10 @@ describe('SampleManager', function() {
         });
 
         it('maintains correct statuses', function() {
-            sampleManager.addStatusToIndex(0, status.ACTIVE);
-            sampleManager.addStatusToIndex([2, 3], status.SELECTED);
-            sampleManager.addStatusToIndex(1, status.ACTIVE);
-            sampleManager.addStatusToIndex([0, 2], status.SELECTED);
+            sampleManager.setStatusToIndex(0, status.ACTIVE);
+            sampleManager.setStatusToIndex([2, 3], status.SELECTED);
+            sampleManager.setStatusToIndex(1, status.ACTIVE);
+            sampleManager.setStatusToIndex([0, 2], status.SELECTED);
 
             var expected = [
                 status.SELECTED,

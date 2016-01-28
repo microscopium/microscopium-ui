@@ -131,7 +131,7 @@ NeighbourPlotCanvas.prototype.updateFilter = function(filterOutIndex) {
         filterOutIndex = [];
     }
 
-    this.sampleManager.addStatusToIndex(filterOutIndex, status.FILTERED_OUT);
+    this.sampleManager.setStatusToIndex(filterOutIndex, status.FILTERED_OUT);
 
     // redraw
     this.pointsDrawer.draw(this.sampleManager, null);
@@ -156,8 +156,8 @@ NeighbourPlotCanvas.prototype.updatePoint = function(sampleId) {
             neighbourIndex = this.sampleManager.getIndexFromID(neighbourIDs);
 
             // update sample manager
-            this.sampleManager.addStatusToIndex(selectedIndex, status.ACTIVE);
-            this.sampleManager.addStatusToIndex(neighbourIndex, status.NEIGHBOUR);
+            this.sampleManager.setStatusToIndex(selectedIndex, status.ACTIVE);
+            this.sampleManager.setStatusToIndex(neighbourIndex, status.NEIGHBOUR);
 
             // redraw
             this.pointsDrawer.draw(this.sampleManager, null);

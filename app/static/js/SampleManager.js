@@ -121,13 +121,16 @@ SampleManager.prototype.setScale = function(xScale, yScale) {
 };
 
 /**
- * addStatusToIndex: Add a status flag to a set of indices.
+ * setStatusToIndex: Set a status flag to a set of indices.
+ *
+ * Remove the status flag from all samples, and add the status
+ * flag to samples with the given index (or indices).
  *
  * @param index {number|Array} - The index or indices to update.
  * @param status {number} The status to add to a sample. Should be from the
  *    sampleStatus enum.
  */
-SampleManager.prototype.addStatusToIndex = function(index, status) {
+SampleManager.prototype.setStatusToIndex = function(index, status) {
     // TODO: optimise this
     // can probably optimise this by remembering the last indices
     // that had this flag added to them and removing those, rather
