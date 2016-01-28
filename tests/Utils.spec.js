@@ -146,7 +146,10 @@ describe('Utils', function() {
     describe('euclideanDistance', function() {
         it('finds correct distance between two points', function() {
             var actual = Utils.euclideanDistance(1, 1, 2, 2);
-            expect(actual).toBeCloseTo(Math.sqrt(2), 5);
+
+            var expected = Math.sqrt(2);
+            var precision = 5;
+            expect(actual).toBeCloseTo(expected, precision);
         });
     });
 });
