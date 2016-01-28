@@ -94,7 +94,7 @@ NeighbourPlotCanvas.prototype.reset = function () {
     this.navigateBehaviour
         .translate([0, 0])
         .scale(1);
-    this.pointsDrawer.draw(this.sampleManager, null);
+    this.pointsDrawer.redraw(this.sampleManager, null);
 };
 
 // TODO: might be easier to manage scales in a global variable?
@@ -134,7 +134,7 @@ NeighbourPlotCanvas.prototype.updateFilter = function(filterOutIndex) {
     this.sampleManager.setStatusToIndex(filterOutIndex, status.FILTERED_OUT);
 
     // redraw
-    this.pointsDrawer.draw(this.sampleManager, null);
+    this.pointsDrawer.redraw(this.sampleManager, null);
 };
 
 /**
@@ -160,7 +160,7 @@ NeighbourPlotCanvas.prototype.updatePoint = function(sampleId) {
             this.sampleManager.setStatusToIndex(neighbourIndex, status.NEIGHBOUR);
 
             // redraw
-            this.pointsDrawer.draw(this.sampleManager, null);
+            this.pointsDrawer.redraw(this.sampleManager, null);
         }.bind(this)
     });
 };
@@ -197,7 +197,7 @@ NeighbourPlotCanvas.prototype.updateView = function(view) {
     this.mainSvg.call(this.navigateBehaviour);
 
     // redraw the new point
-    this.pointsDrawer.draw(this.sampleManager, null);
+    this.pointsDrawer.redraw(this.sampleManager, null);
 };
 
 /**
@@ -309,7 +309,7 @@ NeighbourPlotCanvas.prototype._onNavigate = function() {
     this.yAxisSvg.call(this.yAxis);
 
     // draw subset of data while pan/zooming taking place
-    this.pointsDrawer.draw(this.sampleManager, this.randomIndex);
+    this.pointsDrawer.redraw(this.sampleManager, this.randomIndex);
 };
 
 /**
@@ -323,7 +323,7 @@ NeighbourPlotCanvas.prototype._onNavigateEnd = function() {
         // delay the time between zoom/panning taking place and the
         // full plot being re-drawn
         this.navigateTimeoutFunction = setTimeout(function() {
-            this.pointsDrawer.draw(this.sampleManager);
+            this.pointsDrawer.redraw(this.sampleManager);
         }.bind(this), config.navigateTimeout);
 
         this.NAVIGATING = false;

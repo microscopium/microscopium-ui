@@ -16,7 +16,7 @@ function PointsDrawer(canvas) {
 }
 
 /**
- * draw: Clear the current canvas context and draw the desired points.
+ * redraw: Clear the current canvas context and draw the desired points.
  *
  * After clearing the canvas context, this function checks the current
  * status of each sample (active, selected, etc.), and updates the context
@@ -25,14 +25,14 @@ function PointsDrawer(canvas) {
  * @param data {SampleManager} - A SampleManager object wrapping the data.
  * @param indices {Array} - The indices of the samples to be drawn.
  */
-PointsDrawer.prototype.draw = function(data, indices) {
+PointsDrawer.prototype.redraw = function (data, indices) {
     this.context.clearRect(0, 0, this.width, this.height);
     var i, ii, point, drawIndex, active;
     var neighbours = [];
-    var notFilteredOut = [];
+    var unStyled = [];
     var filteredOut = [];
 
-    if(indices) {
+    if(!_.isNull(indices) && !_.isUndefined(indices)) {
         // if a set of indices has been supplied, set the drawIndex
         // variable to reference the supplied indices
         drawIndex = indices;
@@ -42,11 +42,12 @@ PointsDrawer.prototype.draw = function(data, indices) {
         drawIndex = data.dataRange;
     }
 
-    // iterate through points
-    // active points and neighbours are added
-    // to a queue to be drawn last -- this is done to ensure
-    // they're drawn last, and to reduce the number of calls made to the
-    // canvas context to change the style of the currently selected point
+    // the indices of points are iterated and stored in different arrays
+    // according to the their current stylings. this done for two reasons
+    // a) the reduce the number of calls to the canvas context (this enables
+    //    (for faster drawing in the canvas)
+    // b) to enforce a draw order, we want active and neighbouring
+    //    points to be drawn last so they appear at the "top" of the scatterplot
     for(i = 0; i < drawIndex.length; i++) {
         ii = drawIndex[i];
         point = data.data[ii];
@@ -58,38 +59,27 @@ PointsDrawer.prototype.draw = function(data, indices) {
             neighbours.push(ii);
         }
         else if(!byteFlag.check(point.status, status.FILTERED_OUT)) {
-            notFilteredOut.push(ii);
+            unStyled.push(ii);
         }
         else {
             filteredOut.push(ii);
         }
     }
 
-    // draw points in desired order - filtered out points, not filtered out points,
-    // neighbours of the selected point and finally the active point
-    if(filteredOut) {
-        this.context.fillStyle = 'steelblue';
-        this.context.strokeStyle = 'white';
-        this.context.strokeWidth = 1;
-        this.context.globalAlpha = 0.1;
-        this._drawPoints(data, filteredOut, config.inactivePointRadius);
+    if(filteredOut.length > 0) {
+        this._drawPoints(data, filteredOut, config.pointStyle.filteredOut);
     }
 
-    if(notFilteredOut) {
-        this.context.fillStyle = 'steelblue';
-        this.context.strokeStyle = 'white';
-        this.context.globalAlpha = 1;
-        this._drawPoints(data, notFilteredOut, config.inactivePointRadius);
+    if(unStyled.length > 0) {
+        this._drawPoints(data, unStyled, config.pointStyle.defaultStyle);
     }
 
-    if(neighbours) {
-        this.context.fillStyle = 'yellow';
-        this._drawPoints(data, neighbours, config.inactivePointRadius);
+    if(neighbours.length > 0) {
+        this._drawPoints(data, neighbours, config.pointStyle.neighbours);
     }
 
-    if(active) {
-        this.context.fillStyle = 'red';
-        this._drawPoint(data.data[active], config.activePointRadius);
+    if(!_.isNull(active) && !_.isUndefined(active)) {
+        this._drawPoints(data, [active], config.pointStyle.active);
     }
 };
 
@@ -145,16 +135,25 @@ PointsDrawer.prototype._drawPoint = function(point, r) {
  *
  * @param data {SampleManager} - A SampleManager object wrapping the data.
  * @param indices {Array} - The indices of the samples to be drawn.
- * @param r {Number} - The radius of the points to be drawn.
+ * @param style {object} - An object with properties fillStyle, strokeStyle,
+ *     strokeWidth, globalAlpha and radius. These determine the style of the points
+ *     that will be drawn by this function.
  * @private
  */
-PointsDrawer.prototype._drawPoints = function(data, indices, r) {
+PointsDrawer.prototype._drawPoints = function(data, indices, style) {
     var i, ii, point;
+
+    // update the canvas context before the points are drawn, this reduces
+    // the number of style changes made to the canvas context
+    this.context.fillStyle = style.fillStyle;
+    this.context.strokeStyle = style.strokeStyle;
+    this.context.strokeWidth = style.strokeWidth;
+    this.context.globalAlpha = style.globalAlpha;
 
     for(i = 0; i < indices.length; i++) {
         ii = indices[i];
         point = data.data[ii];
-        this._drawPoint(point, r);
+        this._drawPoint(point, style.radius);
     }
 };
 
