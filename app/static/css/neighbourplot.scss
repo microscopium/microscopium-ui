@@ -1,27 +1,7 @@
 /* NEIGHBOUR PLOT CSS */
 
-#main-svg {
-  z-index: 3;
-}
-
-#points-canvas {
-  z-index: 2;
-}
-
-#axis-svg {
-  z-index: 1;
-}
-
 #neighbourplot {
   position: relative;
-}
-
-#axis-svg {
-  position: absolute;
-}
-
-#points-canvas, #main-svg  {
-  position: absolute;
 }
 
 .tick line {
