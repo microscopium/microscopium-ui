@@ -68,7 +68,8 @@ module.exports = {
                 globalAlpha: 1,
                 radius: 5
             }
-        }
+        },
+        scaleExtent: [1, 10]
     },
     featureVectorlinePlot: {
         // create space between the x and y axis. this value is a pct of the
