@@ -285,7 +285,7 @@ SampleFilter.prototype.updateGeneList = function() {
     var genesToDisplay;
 
     if(pattern) {
-        genesToDisplay = _.filter(this.genes, utils.regexFilter(pattern));
+        genesToDisplay = _.filter(this.genes, Utils.regexFilter(pattern));
     }
     else {
         genesToDisplay = this.genes;
