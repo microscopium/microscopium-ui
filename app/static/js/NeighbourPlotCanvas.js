@@ -9,15 +9,26 @@ require('d3-tip')(d3); // add d3-tip tooltip plugin
 /**
  * NeighbourPlotCanvas: Canvas based version of the scatterplot.
  *
- * @param screenID {string}
- * @param sampleData {array}
+ * @param {string} screenID - The _id of the screen currently being displayed.
+ * @param {array} sampleData - The sample data for the screen. Each element
+ *     in the array is an instance of a Sample document.
+ * @param {string} element - The ID of the target div for this plot.
+ *     All plot elements will be created as children of this div.
  * @constructor
  */
 function NeighbourPlotCanvas(screenID, sampleData, element) {
     // find width of container div
     this.screenID = screenID;
+    this.element = element;
     this.fullWidth = $(element).width();
     this.fullHeight = Math.round(this.fullWidth * (9/16));
+
+    // manually set height of container div
+    // this needs to be done as we're using absolute positioning
+    // (see createCanvasSVGSelectors). this will prevent the height
+    // of the container div from inheriting from its children
+    $(element).height(this.fullHeight);
+
     this.margin = config.margin;
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
@@ -27,44 +38,20 @@ function NeighbourPlotCanvas(screenID, sampleData, element) {
     this.navigateTimeoutFunction = null;
     this.idleMouseTimeoutFunction = null;
 
-    // create tool-tip
-    this.toolTip = this._createToolTip();
-
-    // mount all canvas objects
-    this.mainSvg = d3.select('#main-svg')
-        .attr('width', this.width - 1)
-        .attr('height', this.height)
-        .attr('transform', 'translate(' + (this.margin.left + 1) + ',' +
-        this.margin.top + ')')
-        .style('transform', 'translate(' + (this.margin.left + 1) +
-            'px' + ',' + (this.margin.top) + 'px)');
-
-    var pointsCanvas = d3.select('#points-canvas')
-        .attr('width', this.width - 1)
-        .attr('height', this.height)
-        .style('transform', 'translate(' + (this.margin.left + 1) +
-            'px' + ',' + (this.margin.top) + 'px)');
-
-    this.axisSvg = d3.select('#axis-svg')
-        .attr('width', this.fullWidth)
-        .attr('height', this.fullHeight)
-        .append('g')
-        .attr('transform', 'translate(' + this.margin.left + ',' +
-            this.margin.top + ')');
+    this._createCanvasSVGSelectors();
 
     // create point drawing object
-    this.pointsDrawer = new PointsDrawer(pointsCanvas);
+    this.pointsDrawer = new PointsDrawer(this.pointsCanvas);
 
     // create sample manager object
     this.sampleManager = new SampleManager(sampleData);
 
-    // create tool-tip
-    this.tip = d3.tip()
-        .attr('class', 'd3-tip');
+    // create tool-tip and attach it to the main svg
+    this.tooltip = d3.tip().attr('class', 'd3-tip');
+    this.mainSvg.call(this.tooltip);
 
-    this.mainSvg.call(this.tip);
-
-    var self = this; // shoot me
+    // attach click and mousemove behaviours to the main svg element
+    var self = this;
     this.mainSvg
         .on('click', function() {
             self._onClickHandler(d3.mouse(this));
@@ -124,6 +111,14 @@ NeighbourPlotCanvas.prototype.setScale = function() {
         .domain([yRange[0] - yMargin, yRange[1] + yMargin]);
 };
 
+/**
+ * updateFilter: Update the filtering styled applied by the filter.
+ *
+ * Called when the 'updateFilter' event fires.
+ *
+ * @param {array} filterOutIndex - Array of sample indices corresponding to
+ *     which samples are being filtered out.
+ */
 NeighbourPlotCanvas.prototype.updateFilter = function(filterOutIndex) {
     // if no filtering is to be applied, passed the addStatusToIndex function
     // an empty array so it'll remove the FILTERED_OUT status from every sample
@@ -140,11 +135,11 @@ NeighbourPlotCanvas.prototype.updateFilter = function(filterOutIndex) {
 /**
  * updatePoint: Update the currently active point.
  *
- * @param sampleId {string} - The ID of the currently selected sample.
+ * @param {string} sampleId - The ID of the currently selected sample.
  */
 NeighbourPlotCanvas.prototype.updatePoint = function(sampleId) {
     var selectedIndex = this.sampleManager.getIndexFromID(sampleId);
-    var neighbourIndex;
+    var neighbourIndices;
 
     $.ajax({
         type: 'GET',
@@ -153,11 +148,13 @@ NeighbourPlotCanvas.prototype.updatePoint = function(sampleId) {
         success: function (data) {
             // get neighbour IDs from database
             var neighbourIDs = data[0].neighbours;
-            neighbourIndex = this.sampleManager.getIndexFromID(neighbourIDs);
+            neighbourIndices = this.sampleManager.getIndexFromID(neighbourIDs);
 
             // update sample manager
-            this.sampleManager.setStatusToIndex(selectedIndex, status.ACTIVE);
-            this.sampleManager.setStatusToIndex(neighbourIndex, status.NEIGHBOUR);
+            this.sampleManager.setStatusToIndex(selectedIndex,
+                status.ACTIVE);
+            this.sampleManager.setStatusToIndex(neighbourIndices,
+                status.NEIGHBOUR);
 
             // redraw
             this.pointsDrawer.redraw(this.sampleManager, null);
@@ -169,9 +166,9 @@ NeighbourPlotCanvas.prototype.updatePoint = function(sampleId) {
  * updateView: Update the current scatterplot view.
  *
  * Choose the dimensionality reduction method used to display points
- * in 2D space i.e.e PCA or TSNE.
+ * in 2D space e.g. PCA or TSNE.
  *
- * @param view {string} - The scatterplot view. Should be one of 'pca' or
+ * @param {string} view - The scatterplot view. Should be one of 'pca' or
  *     'tsne'.
  */
 NeighbourPlotCanvas.prototype.updateView = function(view) {
@@ -186,7 +183,7 @@ NeighbourPlotCanvas.prototype.updateView = function(view) {
     this.pointsDrawer.setScale(this.xScale, this.yScale);
     this.pointsDrawer.setView(view);
 
-    // update the sample manager with the new sca;e
+    // update the sample manager with the new scale
     this.sampleManager.setScale(this.xScale, this.yScale);
     this.sampleManager.setView(view);
 
@@ -201,40 +198,96 @@ NeighbourPlotCanvas.prototype.updateView = function(view) {
 };
 
 /**
+ * createCanvasSVGSelectors: Create SVG and Canvas elements used in plot drawing.
+ *
+ * Required SVG and canvas elements needed to draw the plot are all created
+ * in this function. These elements are added as children to the DOM node
+ * specific in the 'element' property.
+ *
+ * @private
+ */
+NeighbourPlotCanvas.prototype._createCanvasSVGSelectors = function() {
+    var parentDiv = d3.select(this.element);
+
+    // note all elements below must be positioned absolutely so
+    // they'll be rendered on top of eachother
+
+    // create svg element and set height and translation for the SVG used
+    // to draw the plot axis. these are drawn using SVG because it's much
+    // better at drawing crisp lines and text, and d3's svg axis module
+    // handles all the the heavy lifting for drawing and updating the axis
+    //
+    // this is drawn to the full height and width of the scatterplot
+    this.axisSvg = parentDiv.append('svg')
+        .attr('width', this.fullWidth)
+        .attr('height', this.fullHeight)
+        .style('z-index', 1)
+        .style('position', 'absolute')
+        .append('g')
+        .attr('transform', 'translate(' + this.margin.left + ',' +
+            this.margin.top + ')');
+
+    // create canvas element and set height and translation of the canvas
+    // used to draw the plot points -- the height and width is set to
+    // the full height and width minus the margins, and is translated so it
+    // sits 'above' the plot axis. the canvas is shifted up one pixel
+    // to prevent any artefacts from the canvas and axis avg overlapping
+    this.pointsCanvas = parentDiv.append('canvas')
+        .attr('width', this.width - 1)
+        .attr('height', this.height - 1)
+        .style('transform', 'translate(' + (this.margin.left + 1) +
+            'px' + ',' + (this.margin.top + 1) + 'px)')
+        .style('z-index', 2)
+        .style('position', 'absolute');
+
+    // create an svg element that sits on top of the points canvas we
+    // just defined above
+    // this SVG catches events and is used to draw the tooltip element
+    this.mainSvg = parentDiv.append('svg')
+        .attr('width', this.width - 1)
+        .attr('height', this.height - 1)
+        .style('transform', 'translate(' + (this.margin.left + 1) +
+            'px' + ',' + (this.margin.top + 1) + 'px)')
+        // an svg transform should be applied to the SVG element too
+        // as we've shifted its position using CSS.
+        // note we don't specify pixels -- it's not a CSS transformation
+        .attr('transform', 'translate(' + (this.margin.left + 1) + ',' +
+            (this.margin.top + 1) + ')')
+        // this element should have the greatest z-index so it catches
+        // mouse events
+        .style('z-index', 3)
+        .style('position', 'absolute');
+};
+
+/**
  * createNavigateBehaviour: Define the behaviour used for plot navigation.
  *
  * Creates and returns a d3.behaviour.zoom() object. Behaviour during
  * the zoom/navigate event is defined by the onNavigate function, and
  * onNavigateEnd for when the event ends.
+ * see: https://github.com/mbostock/d3/wiki/Zoom-Behavior
  *
- * @returns {*}
+ * @returns {function} - An instance of a d3.behaviour.zoom() function.
  * @private
  */
 NeighbourPlotCanvas.prototype._createNavigateBehaviour = function() {
     return d3.behavior.zoom()
         .x(this.xScale)
         .y(this.yScale)
-        .scaleExtent([1, 10])
+        .scaleExtent(config.scaleExtent)
         .on('zoom', this._onNavigate.bind(this))
         .on('zoomend', this._onNavigateEnd.bind(this));
 };
 
 /**
- * CREATE!!!!
+ * mouseMoveHandler: Handles event for when the mouse moves over the plot.
  *
- * @returns {*}
- * @private
- */
-NeighbourPlotCanvas.prototype._createToolTip = function() {
-    return d3.tip()
-        .attr('class', 'd3-tip')
-        .html(function() {
-            return "Congratulations. You just played yourself.";
-        })
-};
-
-/**
- * mouseMoveHandler
+ * When the mouse has been idle for the time specified in
+ * config.tooltip.timeout, a query is made to find the closest point to the
+ * mouse cursor. If the cursor is over a point, a tooltip appears over the
+ * point.
+ *
+ * The timeout resets every time the mouse is moved.
  *
  * @param mouse
  * @private
@@ -244,27 +297,31 @@ NeighbourPlotCanvas.prototype._mouseMoveHandler = function(mouse, args) {
         clearTimeout(this.idleMouseTimeoutFunction);
     }
 
-    this.tip.hide();
+    this.tooltip.hide();
 
+    // timeout function will be called when mouse has been idle
+    // for the time specified in config.tooltip.timeout.
     this.idleMouseTimeoutFunction = setTimeout(function() {
         var index = this.sampleManager.findSampleFromMouse(mouse,
             config.activePointRadius);
 
         if(index !== -1) {
+            // get position of point in plot space to display the tooltip
+            // above
             var d = this.sampleManager.data[index];
             var x = this.xScale(d.dimension_reduce[this.view][0]);
             var y = this.yScale(d.dimension_reduce[this.view][1]);
 
-            this.tip
+            // create text for tooltip
+            var treatment = d.treatment || d.gene_name;
+            var tooltipText = '<p>ID: ' + d._id + '</p>' +
+                '<p>Treatment: ' + treatment + '</p>';
+
+            this.tooltip
                 .offset([y + config.tooltip.offset.top, x])
-                .html(function() {
-                    var treatment = d.treatment || d.gene_name;
+                .html(tooltipText);
 
-                    return '<p>ID: ' + d._id + '</p>' +
-                        '<p>Treatment: ' + treatment + '</p>';
-                });
-
-            this.tip.show.apply(null, args);
+            this.tooltip.show.apply(null, args);
         }
 
     }.bind(this), config.tooltip.timeout);
@@ -304,7 +361,7 @@ NeighbourPlotCanvas.prototype._onNavigate = function() {
         clearTimeout(this.navigateTimeoutFunction);
     }
 
-    // update all svg axis
+    // update svg for x and y axis
     this.xAxisSvg.call(this.xAxis);
     this.yAxisSvg.call(this.yAxis);
 
@@ -319,7 +376,6 @@ NeighbourPlotCanvas.prototype._onNavigate = function() {
  */
 NeighbourPlotCanvas.prototype._onNavigateEnd = function() {
     if(this.NAVIGATING) {
-
         // delay the time between zoom/panning taking place and the
         // full plot being re-drawn
         this.navigateTimeoutFunction = setTimeout(function() {
@@ -333,8 +389,7 @@ NeighbourPlotCanvas.prototype._onNavigateEnd = function() {
 /**
  * setAxis: Create/update the plot axis.
  *
- * Method should be called during plot creation, change of view and
- * during navigation/zoom events.
+ * Method should be called during plot creation and changes of view.
  *
  * @private
  */
@@ -354,22 +409,20 @@ NeighbourPlotCanvas.prototype._setAxis = function() {
         .outerTickSize(0)
         .orient('left');
 
-    // remove previous axis
-    if(this.xAxisSvg) {
-        this.xAxisSvg.remove();
+    // create the axes SVG elements if they don't exist yet
+    if(!this.xAxisSvg) {
+        this.xAxisSvg = this.axisSvg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + this.height + ')')
     }
-    if(this.yAxisSvg) {
-        this.yAxisSvg.remove();
+    if(!this.yAxisSvg) {
+        this.yAxisSvg = this.axisSvg.append('g')
+            .attr('class', 'y axis')
     }
 
-    this.xAxisSvg = this.axisSvg.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + this.height + ')')
-        .call(this.xAxis);
-
-    this.yAxisSvg = this.axisSvg.append('g')
-        .attr('class', 'y axis')
-        .call(this.yAxis);
+    // apply the axes
+    this.xAxisSvg.call(this.xAxis);
+    this.yAxisSvg.call(this.yAxis);
 };
 
 module.exports = NeighbourPlotCanvas;
