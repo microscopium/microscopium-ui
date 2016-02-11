@@ -92,6 +92,10 @@ $(document).ready(function() {
             uiController.forward();
         });
 
+        $('#reset-button').on('click', function () {
+            uiController.reset();
+        });
+
         $body.on('updateFeature', function(event, activeFeature) {
             uiController.updateFeature(activeFeature);
         });
@@ -115,7 +119,7 @@ $(document).ready(function() {
                 $(this).addClass('active');
 
                 // handle plot/ui update logic
-                uiController.updateDimensionReduction(val);
+                uiController.updateView(val);
             }
         });
 
@@ -124,7 +128,6 @@ $(document).ready(function() {
         });
 
         // default select first point
-        $body.trigger('updateSample', sampleData[0]._id);
+        $body.trigger('updateSample', sampleData[1]._id);
     }
-
 });

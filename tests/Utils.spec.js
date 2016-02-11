@@ -1,7 +1,13 @@
 // test suite for the Utils object
 // below are Jasmine methods passed to Karma for testing
 describe('Utils', function() {
+    var _ = require('lodash');
     var Utils = require('../app/static/js/utils/Utils.js');
+
+    // add findByValues function as lodash mixin so we can test its behaviour in lodash chains
+    _.mixin({
+        'findByValues': Utils.findByValues
+    });
 
     var testObjects = [{
         'letter': 'A',
@@ -40,7 +46,7 @@ describe('Utils', function() {
     });
 
     describe('findByValues', function() {
-        it('passes if objects with letter value A or C are returned', function() {
+        it('returns expected values', function() {
             var expected = [{
                 'letter': 'A',
                 'number': 1
@@ -55,6 +61,64 @@ describe('Utils', function() {
                 'number': 3
             }];
             var testQuery = Utils.findByValues(testObjects, 'letter', ['A', 'C']);
+            expect(testQuery).toEqual(expected);
+        });
+
+        it('returns expected values with invert option', function() {
+            var expected = [{
+                'letter': 'B',
+                'number': 1
+            }, {
+                'letter': 'B',
+                'number': 3
+            }];
+            var testQuery = Utils.findByValues(testObjects, 'letter',
+                ['A', 'C'], true);
+            expect(testQuery).toEqual(expected);
+        });
+
+        it('behaves as expected when used in chain', function() {
+            var expected = [{
+                'letter': 'A',
+                'number': 1
+            }];
+
+            var result = _.chain(testObjects)
+                .findByValues('letter', ['A'])
+                .findByValues('number', [1]);
+            var testQuery = result.value();
+
+            expect(testQuery).toEqual(expected);
+        });
+
+        it('behaves as expected when used in chain with invert option', function() {
+            var expected = [{
+                'letter': 'C',
+                'number': 2
+            }];
+
+            var result = _.chain(testObjects)
+                .findByValues('letter', ['A', 'B'], true)
+                .findByValues('number', [1], true);
+            var testQuery = result.value();
+
+            expect(testQuery).toEqual(expected);
+        });
+
+        it('behaves as expected in chain with and without invert option', function() {
+            var expected = [{
+                'letter': 'A',
+                'number': 3
+            }, {
+                'letter': 'B',
+                'number': 3
+            }];
+
+            var result = _.chain(testObjects)
+                .findByValues('letter', ['A', 'B'])
+                .findByValues('number', [1, 2], true);
+            var testQuery = result.value();
+
             expect(testQuery).toEqual(expected);
         });
     });
@@ -77,5 +141,15 @@ describe('Utils', function() {
             var actual = Utils.makeSelector('#element');
             expect(actual).toEqual('#element');
         });
-    })
+    });
+
+    describe('euclideanDistance', function() {
+        it('finds correct distance between two points', function() {
+            var actual = Utils.euclideanDistance(1, 1, 2, 2);
+
+            var expected = Math.sqrt(2);
+            var precision = 5;
+            expect(actual).toBeCloseTo(expected, precision);
+        });
+    });
 });

@@ -34,10 +34,42 @@ module.exports = {
             height: 9
         },
         // offset the tooltip relative to the
-        toolTipOffset: {
-            top: -10,
-            left: 0
-        }
+        tooltip: {
+            timeout: 500,
+            offset: { top: -10, left: 0 }
+        },
+        navigateTimeout: 350,
+        pointStyle: {
+            defaultStyle: {
+                fillStyle: 'steelblue',
+                strokeStyle: 'white',
+                strokeWidth: 1,
+                globalAlpha: 1,
+                radius: 5
+            },
+            filteredOut: {
+                fillStyle: 'steelblue',
+                strokeStyle: 'white',
+                strokeWidth: 1,
+                globalAlpha: 0.2,
+                radius: 5
+            },
+            active: {
+                fillStyle: 'red',
+                strokeStyle: 'white',
+                strokeWidth: 1,
+                globalAlpha: 1,
+                radius: 7
+            },
+            neighbours: {
+                fillStyle: 'yellow',
+                strokeStyle: 'white',
+                strokeWidth: 1,
+                globalAlpha: 1,
+                radius: 5
+            }
+        },
+        scaleExtent: [1, 10]
     },
     featureVectorlinePlot: {
         // create space between the x and y axis. this value is a pct of the

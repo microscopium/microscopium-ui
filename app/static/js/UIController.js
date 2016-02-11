@@ -2,7 +2,7 @@ var History = require('./History.js');
 var Filter = require('./Filter.js');
 var FeatureDistributionHistogram = require('./FeatureDistributionHistogram.js');
 var FeatureVectorLineplot = require('./FeatureVectorLineplot.js');
-var NeighbourPlot = require('./NeighbourPlot.js');
+var NeighbourPlotCanvas = require('./NeighbourPlotCanvas.js');
 var NeighbourImages = require('./NeighbourImages.js');
 
 /**
@@ -29,9 +29,9 @@ UIController.prototype._mountPlots = function(screenData, sampleData) {
         new FeatureDistributionHistogram(screenData, '#histplot');
     this.featureVectorLineplot =
         new FeatureVectorLineplot(screenData._id, '#lineplot');
-    this.neighbourPlot =
-        new NeighbourPlot(screenData._id, sampleData, '#neighbourplot');
-    this.filter = new Filter(sampleData, this.neighbourPlot);
+    this.neighbourPlotCanvas =
+        new NeighbourPlotCanvas(screenData._id, sampleData, '#neighbourplot');
+    this.filter = new Filter(sampleData, this.neighbourPlotCanvas);
 };
 
 /**
@@ -43,7 +43,7 @@ UIController.prototype.back = function() {
     var backId = this.history.back();
     if(backId) {
         this.featureVectorLineplot.drawLineplot(backId);
-        this.neighbourPlot.updatePoint(backId);
+        this.neighbourPlotCanvas.updatePoint(backId);
         this.neighbourImages.getImages(backId);
     }
 };
@@ -57,9 +57,16 @@ UIController.prototype.forward = function() {
     var forwardId = this.history.forward();
     if(forwardId) {
         this.featureVectorLineplot.drawLineplot(forwardId);
-        this.neighbourPlot.updatePoint(forwardId);
+        this.neighbourPlotCanvas.updatePoint(forwardId);
         this.neighbourImages.getImages(forwardId);
     }
+};
+
+/**
+ * reset: Reset scatterplot to default position.
+ */
+UIController.prototype.reset = function() {
+    this.neighbourPlotCanvas.reset();
 };
 
 /**
@@ -80,12 +87,12 @@ UIController.prototype.updateSample = function(sampleId) {
     this.history.add(sampleId);
 
     this.featureVectorLineplot.drawLineplot(sampleId);
-    this.neighbourPlot.updatePoint(sampleId);
+    this.neighbourPlotCanvas.updatePoint(sampleId);
     this.neighbourImages.getImages(sampleId);
 };
 
-UIController.prototype.updateDimensionReduction = function(dimension) {
-    this.neighbourPlot.update(dimension);
+UIController.prototype.updateView = function(dimension) {
+    this.neighbourPlotCanvas.updateView(dimension);
 };
 
 /**
@@ -94,12 +101,7 @@ UIController.prototype.updateDimensionReduction = function(dimension) {
  * @this {UIController}
  */
 UIController.prototype.updateFilter = function(filterOutId) {
-    if(filterOutId) {
-        this.neighbourPlot.applyFilterStyling(filterOutId);
-    }
-    else {
-        this.neighbourPlot.removeFilterStyling();
-    }
+    this.neighbourPlotCanvas.updateFilter(filterOutId);
 };
 
 module.exports = UIController;

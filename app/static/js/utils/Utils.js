@@ -38,11 +38,20 @@ Utils.uniqueData = function(data, field) {
  * @param {array} collection - An array of objects.
  * @param {string} property - The object property to filter on.
  * @param {array} values - An array of values to filter the data.
+ * @param {boolean} invert - If true, return objects not satisfying the
+ *     query values.
  */
-Utils.findByValues = function(collection, property, values) {
-    return _.filter(collection, function(item) {
-        return _.contains(values, item[property]);
-    });
+Utils.findByValues = function(collection, property, values, invert) {
+    if(invert === true) {
+        return _.filter(collection, function(item) {
+            return !_.contains(values, item[property]);
+        });
+    }
+    else {
+        return _.filter(collection, function(item) {
+            return _.contains(values, item[property]);
+        });
+    }
 };
 
 /**
@@ -64,6 +73,19 @@ Utils.sortedPush = function(array, value) {
  */
 Utils.makeSelector = function(element) {
     return element.charAt(0) === '#' ? element : '#' + element;
+};
+
+/**
+ * euclideanDistance: Find the Euclidean distance between two points.
+ *
+ * @param x1 {number} - X co-ordinate of first point.
+ * @param y1 {number} - Y co-ordinate of first point.
+ * @param x2 {number} - X co-ordinate of second point.
+ * @param y2 {number} - Y co-ordinate of second point.
+ * @returns {number} - The Euclidean distance.
+ */
+Utils.euclideanDistance = function(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 };
 
 module.exports = Utils;
