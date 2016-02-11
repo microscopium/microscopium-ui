@@ -122,7 +122,7 @@ NeighbourPlotCanvas.prototype.setScale = function() {
 NeighbourPlotCanvas.prototype.updateFilter = function(filterOutIndex) {
     // if no filtering is to be applied, passed the addStatusToIndex function
     // an empty array so it'll remove the FILTERED_OUT status from every sample
-    if(!filterOutIndex) {
+    if(_.isNull(filterOutIndex) || _.isUndefined(filterOutIndex)) {
         filterOutIndex = [];
     }
 
