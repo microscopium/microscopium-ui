@@ -88,4 +88,67 @@ Utils.euclideanDistance = function(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 };
 
+/**
+ * linspace: Return a linearly spaced array.
+ *
+ * Like Numpy/MATLABs linspace method, this generates an array
+ * of n evenly spaced values in the range [start, end]. The start
+ * and end values are always included in the output.
+ *
+ * @param start {number} - The first value.
+ * @param end {number} - The last value.
+ * @param n - {number}
+ * @returns {Array} - The linearly spaced array.
+ */
+Utils.linspace = function(start, end, n) {
+    var out = [];
+    var delta = (end - start) / (n - 1);
+
+    var i = 0;
+    while(i < (n - 1)) {
+        out.push(start + (i * delta));
+        i++;
+    }
+
+    out.push(end);
+    return out;
+};
+
+/**
+ * percentile: Return the n-th percentile of a sorted array.
+ *
+ * Given a sorted array of numbers, find the n-th percentile. This function
+ * finds the linear interpolation by closest ranks method.
+ *
+ * @param data {Array} - The query Array. This is assumed to be sorted.
+ * @param percentile {number} - Number in the range [0.0, 1.0]. The percentile
+ *     to find.
+ * @returns {number} - The percentile value.
+ */
+Utils.percentile = function(data, percentile) {
+    var index = percentile * (data.length - 1);
+    var r = index % 1;
+    var lower = data[Math.floor(index)];
+    var upper = data[Math.ceil(index)];
+    return r * lower + (1 - r) * upper;
+};
+
+/**
+ * getPercentile: Get the percentiles of an array.
+ *
+ * Given an array of numbers, find the given percentiles. E.g
+ * getPercentiles(queryArray, [0.25, 0.5, 0.75]) will find the 25th,
+ * median and 75th percentile values.
+ *
+ * @param data - {Array} - The query Array. Does not need to be sorted.
+ * @param percentiles {Array} - An array of percentile values to find.
+ * @returns {Array} - The array of percentile values.
+ */
+Utils.getPercentiles = function(data, percentiles) {
+    var sorted = data.sort(function(a, b) { return a - b });
+    return percentiles.map(function(d) {
+        return Utils.percentile(sorted, d);
+    });
+};
+
 module.exports = Utils;
