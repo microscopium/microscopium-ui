@@ -1,6 +1,37 @@
 var _ = require('lodash');
 var d3 = require('d3');
+
 var config = require('../config/plots').neighbourPlot;
+
+// browserify can't load modules dynamically due to the way it statically
+// analyses paths when creating the output bundle. in other words, no variables
+// or concatenated strings can be used in required paths.
+// this switch is inelegant and should be replaced with something nicer
+// maybe this could be configured server-side maybe when matplotlib 1.5 is
+// released and these colour scales become available??
+// TODO replace this whole godfawful switch
+var colourMap;
+switch(config.colourScale) {
+    case 'inferno':
+        colourMap = require('scale-color-perceptual/hex/inferno');
+        break;
+    case 'magma':
+        colourMap = require('scale-color-perceptual/hex/magma');
+        break;
+    case 'plasma':
+        colourMap = require('scale-color-perceptual/hex/plasma');
+        break;
+    case 'viridis':
+        colourMap = require('scale-color-perceptual/hex/viridis');
+        break;
+    default:
+        colourMap = require('scale-color-perceptual/hex/viridis');
+        break;
+}
+
+var Utils = require('./utils/Utils.js');
+var legendConfig = require('../config/plots').neighbourPlotLegend;
+var PlotLegend = require('./PlotLegend.js');
 var PointsDrawer = require('./PointsDrawer.js');
 var SampleManager = require('./SampleManager.js');
 var status = require('./enums/sampleStatus.js');
@@ -33,6 +64,7 @@ function NeighbourPlotCanvas(screenID, sampleData, element) {
     this.width = this.fullWidth - this.margin.left - this.margin.right;
     this.height = this.fullHeight - this.margin.top - this.margin.bottom;
 
+    this.overlay = 'None';
     this.view = 'tsne';
     this.NAVIGATING = false;
     this.navigateTimeoutFunction = null;
@@ -49,6 +81,9 @@ function NeighbourPlotCanvas(screenID, sampleData, element) {
     // create tool-tip and attach it to the main svg
     this.tooltip = d3.tip().attr('class', 'd3-tip');
     this.mainSvg.call(this.tooltip);
+
+    // create plot legend
+    this.plotLegend = new PlotLegend(this.legendSvg);
 
     // attach click and mousemove behaviours to the main svg element
     var self = this;
@@ -109,6 +144,30 @@ NeighbourPlotCanvas.prototype.setScale = function() {
     this.yScale = d3.scale.linear()
         .range([this.height, 0])
         .domain([yRange[0] - yMargin, yRange[1] + yMargin]);
+};
+
+NeighbourPlotCanvas.prototype.updateOverlay = function(overlay) {
+    var colourScale;
+    var scaleMin = config.colourScaleExtent[0];
+    var scaleMax = config.colourScaleExtent[1];
+
+    // no scale selected
+    if(overlay === "None") {
+        colourScale = null;
+    }
+    else {
+        colourScale = d3.scale.linear()
+            .domain(Utils.linspace(scaleMin, scaleMax, colourMap.length))
+            .range(colourMap)
+            .clamp(true);
+    }
+
+    // new new colourscale to pointsdrawer
+    this.pointsDrawer.setColourScale(colourScale);
+    this.plotLegend.setColourScale(colourScale);
+
+    this.pointsDrawer.overlay = overlay;
+    this.pointsDrawer.redraw(this.sampleManager, null);
 };
 
 /**
@@ -257,6 +316,15 @@ NeighbourPlotCanvas.prototype._createCanvasSVGSelectors = function() {
         // mouse events
         .style('z-index', 3)
         .style('position', 'absolute');
+
+    // SVG for drawing legend
+    this.legendSvg = parentDiv.append('svg')
+        .attr('width', legendConfig.width)
+        .attr('height', legendConfig.height)
+        .style('transform', 'translate(' + (this.margin.left + 1 + this.width
+            - legendConfig.width - 5) + 'px' + ',' + (this.margin.top + 5) + 'px)')
+        .style('z-index', 4)
+        .style('position', 'absolute');
 };
 
 /**
@@ -274,7 +342,7 @@ NeighbourPlotCanvas.prototype._createNavigateBehaviour = function() {
     return d3.behavior.zoom()
         .x(this.xScale)
         .y(this.yScale)
-        .scaleExtent(config.scaleExtent)
+        .scaleExtent(config.zoomExtent)
         .on('zoom', this._onNavigate.bind(this))
         .on('zoomend', this._onNavigateEnd.bind(this));
 };
