@@ -69,7 +69,20 @@ module.exports = {
                 radius: 5
             }
         },
-        scaleExtent: [1, 10]
+        // the minimum/maxium scale factor allowed when zooming into the scatterplot
+        zoomExtent: [1, 12],
+        // the colourscale to use when plotting overlays to the neighbourplot
+        // should be one of the new matplot scales: inferno, magma, plasma or viridis
+        // see: https://bids.github.io/colormap/
+        colourScale: 'viridis',
+        // the minimum and maximum z scores to display on the colourmap
+        // outside the range will be clamped
+        colourScaleExtent: [-4, 4]
+    },
+    neighbourPlotLegend: {
+        width: 230,
+        height: 50,
+        margin: {top: 5, bottom: 20, left: 5, right: 5}
     },
     featureVectorlinePlot: {
         // create space between the x and y axis. this value is a pct of the
