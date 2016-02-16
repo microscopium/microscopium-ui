@@ -82,6 +82,7 @@ UIController.prototype.updateFeature = function(activeFeature) {
  * updatePoint: Handle view/plot updates when 'updateSample' event triggered.
  *
  * @this {UIController}
+ * @param sampleId {string} - The sample_id of the new sample to display.
  */
 UIController.prototype.updateSample = function(sampleId) {
     this.history.add(sampleId);
@@ -91,6 +92,26 @@ UIController.prototype.updateSample = function(sampleId) {
     this.neighbourImages.getImages(sampleId);
 };
 
+/**
+ * updateOverlay: Handle view/plot updates when 'updateOverlay' event triggered.
+ *
+ * @param overlay {string} - The new overlay to use to colour the points on the plot.
+ *     Will default to "None" and remove any overlay if this argument isn't passed.
+ */
+UIController.prototype.updateOverlay = function(overlay) {
+    if(_.isNull(overlay) || _.isUndefined(overlay)) {
+        overlay = "None";
+    }
+    this.neighbourPlotCanvas.updateOverlay(overlay);
+};
+
+/**
+ * updateView: Handle view/plot updates when 'updateView' event triggered.
+
+ * @this {UIController}
+ * @param dimension {string} - The dimensionality reduction method to use when
+ *     displaying the plot points.
+ */
 UIController.prototype.updateView = function(dimension) {
     this.neighbourPlotCanvas.updateView(dimension);
 };
