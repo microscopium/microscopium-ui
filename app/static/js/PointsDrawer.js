@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var d3 = require('d3');
 var byteFlag = require('./utils/Byteflag.js');
 var status = require('./enums/sampleStatus.js');
 var config = require('../config/plots').neighbourPlot;
@@ -13,6 +14,17 @@ function PointsDrawer(canvas) {
     this.width = canvas.node().width;
     this.height = canvas.node().height;
     this.context = canvas.node().getContext('2d');
+
+    this.overlay = 'None';
+
+    // default colourscale
+    // this colourscale is used when no overlay is active
+    this.defaultColourScale = d3.scale.linear()
+        .domain([-3, 3])
+        .range([config.pointStyle.defaultStyle.fillStyle,
+            config.pointStyle.defaultStyle.fillStyle])
+        .clamp(true);
+    this.colourScale = this.defaultColourScale;
 }
 
 /**
@@ -75,11 +87,21 @@ PointsDrawer.prototype.redraw = function (data, indices) {
     }
 
     if(neighbours.length > 0) {
-        this._drawPoints(data, neighbours, config.pointStyle.neighbours);
+        this._drawPoints(data, neighbours, config.pointStyle.neighbours, true);
     }
 
     if(!_.isNull(active) && !_.isUndefined(active)) {
-        this._drawPoints(data, [active], config.pointStyle.active);
+        this._drawPoints(data, [active], config.pointStyle.active, true);
+    }
+};
+
+PointsDrawer.prototype.setColourScale = function(colourScale) {
+    // if no custom colour scale provided, use the default
+    if(_.isNull(colourScale) || _.isUndefined(colourScale)) {
+        this.colourScale = this.defaultColourScale;
+    }
+    else {
+        this.colourScale = colourScale;
     }
 };
 
@@ -115,6 +137,10 @@ PointsDrawer.prototype.setScale = function(xScale, yScale) {
 /**
  * drawPoint: Draw a point using the current scale and canvas context.
  *
+ * The fillStyle of the point is taken from the canvas context prior
+ * to calling the function, OR from the current overlay colour scale
+ * if defined.
+ *
  * @param point {object} - The point to draw.
  * @param r {number} - The radius of the point to draw.
  * @private
@@ -122,6 +148,16 @@ PointsDrawer.prototype.setScale = function(xScale, yScale) {
 PointsDrawer.prototype._drawPoint = function(point, r) {
     var cx = this.xScale(point.dimension_reduce[this.view][0]);
     var cy = this.yScale(point.dimension_reduce[this.view][1]);
+
+    // use point overlay score if it's defined
+    if(!_.isNull(point.overlays) && !_.isUndefined(point.overlays)) {
+        this.context.fillStyle =
+            this.colourScale(point.overlays[this.overlay]);
+    }
+    // otherwise use the fill style fed to the function
+    else {
+        this.context.fillStyle = fill;
+    }
 
     this.context.beginPath();
     this.context.arc(cx, cy, r, 0, 2 * Math.PI);
@@ -141,7 +177,7 @@ PointsDrawer.prototype._drawPoint = function(point, r) {
  * @private
  */
 PointsDrawer.prototype._drawPoints = function(data, indices, style) {
-    var i, ii, point;
+    var i, ii;
 
     // update the canvas context before the points are drawn, this reduces
     // the number of style changes made to the canvas context
@@ -152,8 +188,7 @@ PointsDrawer.prototype._drawPoints = function(data, indices, style) {
 
     for(i = 0; i < indices.length; i++) {
         ii = indices[i];
-        point = data.data[ii];
-        this._drawPoint(point, style.radius);
+        this._drawPoint(data.data[ii], style.radius);
     }
 };
 
