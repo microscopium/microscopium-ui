@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var History = require('./History.js');
 var Filter = require('./Filter.js');
 var FeatureDistributionHistogram = require('./FeatureDistributionHistogram.js');
