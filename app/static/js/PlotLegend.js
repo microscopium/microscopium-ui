@@ -22,7 +22,6 @@ function PlotLegend(svg) {
 PlotLegend.prototype.setColourScale = function(scale) {
     this.svg.selectAll('*').remove();
 
-
     // if no scale is passed to the function, we're happy
     // just to remove the SVG elements and return out of the function
     if(_.isNull(scale) || _.isUndefined(scale)) {
