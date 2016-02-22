@@ -207,4 +207,18 @@ describe('Utils', function() {
             expect(actual).toEqual(expected)
         });
     });
+
+    describe('translateString', function() {
+        it('returns a translate string with the expected format', function() {
+            var expected = 'translate(100, 75)';
+            var actual = Utils.translateString(100, 75, false);
+            expect(actual).toEqual(expected);
+        });
+
+        it('returns a translate string with the expected format (with px)', function() {
+            var expected = 'translate(100px, 75px)';
+            var actual = Utils.translateString(100, 75, true);
+            expect(actual).toEqual(expected);
+        });
+    });
 });
