@@ -6,10 +6,6 @@ var config = require('../config/plots').neighbourPlot;
 // browserify can't load modules dynamically due to the way it statically
 // analyses paths when creating the output bundle. in other words, no variables
 // or concatenated strings can be used in required paths.
-// this switch is inelegant and should be replaced with something nicer
-// maybe this could be configured server-side maybe when matplotlib 1.5 is
-// released and these colour scales become available??
-// TODO replace this whole godfawful switch
 var colourMap;
 switch(config.colourScale) {
     case 'inferno':
@@ -162,7 +158,7 @@ NeighbourPlotCanvas.prototype.updateOverlay = function(overlay) {
             .clamp(true);
     }
 
-    // new new colourscale to pointsdrawer
+    // send new colourscale to pointsdrawer
     this.pointsDrawer.setColourScale(colourScale);
     this.plotLegend.setColourScale(colourScale);
 
@@ -283,46 +279,53 @@ NeighbourPlotCanvas.prototype._createCanvasSVGSelectors = function() {
         .style('z-index', 1)
         .style('position', 'absolute')
         .append('g')
-        .attr('transform', 'translate(' + this.margin.left + ',' +
-            this.margin.top + ')');
+        .attr('transform',
+            Utils.translateString(this.margin.left, this.margin.top, false));
 
     // create canvas element and set height and translation of the canvas
     // used to draw the plot points -- the height and width is set to
     // the full height and width minus the margins, and is translated so it
     // sits 'above' the plot axis. the canvas is shifted up one pixel
     // to prevent any artefacts from the canvas and axis avg overlapping
+    var pointsLeft = this.margin.left + 1;
+    var pointsTop = this.margin.top + 1;
     this.pointsCanvas = parentDiv.append('canvas')
         .attr('width', this.width - 1)
         .attr('height', this.height - 1)
-        .style('transform', 'translate(' + (this.margin.left + 1) +
-            'px' + ',' + (this.margin.top + 1) + 'px)')
+        .style('transform', Utils.translateString(pointsLeft, pointsTop, true))
         .style('z-index', 2)
         .style('position', 'absolute');
 
     // create an svg element that sits on top of the points canvas we
     // just defined above
     // this SVG catches events and is used to draw the tooltip element
+    var mainLeft = this.margin.left + 1;
+    var mainTop = this.margin.top + 1;
     this.mainSvg = parentDiv.append('svg')
         .attr('width', this.width - 1)
         .attr('height', this.height - 1)
-        .style('transform', 'translate(' + (this.margin.left + 1) +
-            'px' + ',' + (this.margin.top + 1) + 'px)')
+        .style('transform', Utils.translateString(mainLeft, mainTop, true))
         // an svg transform should be applied to the SVG element too
         // as we've shifted its position using CSS.
         // note we don't specify pixels -- it's not a CSS transformation
-        .attr('transform', 'translate(' + (this.margin.left + 1) + ',' +
-            (this.margin.top + 1) + ')')
+        .attr('transform', Utils.translateString(mainLeft, mainTop, false))
         // this element should have the greatest z-index so it catches
         // mouse events
         .style('z-index', 3)
         .style('position', 'absolute');
 
     // SVG for drawing legend
+    // want to translate the legend left the width of the scatterplot
+    // less some margin so there's space to the right of it
+    var legendLeft = this.width + this.margin.left -
+        legendConfig.width - legendConfig.margin.right;
+    // want to translate the legend down slightly so there's space above it
+    var legendTop = this.margin.top + legendConfig.margin.top;
     this.legendSvg = parentDiv.append('svg')
         .attr('width', legendConfig.width)
         .attr('height', legendConfig.height)
-        .style('transform', 'translate(' + (this.margin.left + 1 + this.width
-            - legendConfig.width - 5) + 'px' + ',' + (this.margin.top + 5) + 'px)')
+        .style('transform',
+            Utils.translateString(legendLeft, legendTop, true))
         .style('z-index', 4)
         .style('position', 'absolute');
 };
