@@ -101,16 +101,14 @@ Utils.euclideanDistance = function(x1, y1, x2, y2) {
  * @returns {Array} - The linearly spaced array.
  */
 Utils.linspace = function(start, end, n) {
-    var out = [];
+    var out = new Array(n - 1);
     var delta = (end - start) / (n - 1);
 
-    var i = 0;
-    while(i < (n - 1)) {
-        out.push(start + (i * delta));
-        i++;
+    for(var i = 0; i < (n - 1); i++) {
+        out[i] = start + (i * delta);
     }
 
-    out.push(end);
+    out[n - 1] = end;
     return out;
 };
 
