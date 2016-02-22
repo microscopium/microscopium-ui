@@ -77,7 +77,7 @@ module.exports = {
         colourScale: 'viridis',
         // the minimum and maximum z scores to display on the colourmap
         // outside the range will be clamped
-        colourScaleExtent: [-4, 4]
+        colourScaleExtent: [-3, 3]
     },
     neighbourPlotLegend: {
         width: 230,
