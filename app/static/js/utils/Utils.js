@@ -91,24 +91,23 @@ Utils.euclideanDistance = function(x1, y1, x2, y2) {
 /**
  * linspace: Return a linearly spaced array.
  *
- * Like Numpy/MATLABs linspace method, this generates an array
+ * Like the Numpy/MATLABs linspace method, this generates an array
  * of n evenly spaced values in the range [start, end]. The start
  * and end values are always included in the output.
  *
  * @param start {number} - The first value.
  * @param end {number} - The last value.
- * @param n - {number}
- * @returns {Array} - The linearly spaced array.
+ * @param n {number} - The length of the linearly spaced array.
+ * @returns out {Array} - The linearly spaced array.
  */
 Utils.linspace = function(start, end, n) {
-    var out = new Array(n - 1);
+    var out = new Array(n);
     var delta = (end - start) / (n - 1);
 
-    for(var i = 0; i < (n - 1); i++) {
+    for(var i = 0; i < n; i++) {
         out[i] = start + (i * delta);
     }
 
-    out[n - 1] = end;
     return out;
 };
 
