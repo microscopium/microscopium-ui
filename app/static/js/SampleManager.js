@@ -1,7 +1,8 @@
+'use strict';
+
 var _ = require('lodash');
 var d3 = require('d3');
 var byteFlag = require('./utils/Byteflag.js');
-var status = require('./enums/sampleStatus');
 var utils = require('./utils/Utils.js');
 
 /**
@@ -23,8 +24,8 @@ function SampleManager(data) {
     this.allIndices = _.range(this.data.length);
 
     this.data.forEach(function(d, i) {
-        // add index as property to all items -- need these to preserve original ordering
-        // of data from input array
+        // add index as property to all items -- need these to preserve
+        // original ordering of data from input array
         d.i = i;
 
         // add status byteflag -- init as 0
@@ -49,7 +50,8 @@ function SampleManager(data) {
  *     the x position of the mouse, second co-ordinate represents the y
  *     co-ordinate.
  * @param r {number} - The radius to search in.
- * @returns {number} - Index of query sample, -1 if not sample found in query radius.
+ * @returns {number} - Index of query sample, -1 if not sample found in
+ *     query radius.
  */
 SampleManager.prototype.findSampleFromMouse = function(mouse, r) {
     // find closest point to given (xd, yd) pair
@@ -76,8 +78,8 @@ SampleManager.prototype.findSampleFromMouse = function(mouse, r) {
 /**
  * getIndexFromID: Return array indices from sampleID(s).
  *
- * @param sampleID {string|Array} - A string to get the index for a single sampleID,
- *     or an array of strings to query multiple indices.
+ * @param sampleID {string|Array} - A string to get the index for a
+ *     single sampleID, or an array of strings to query multiple indices.
  * @returns {Number|Array} - The query index or indices.
  */
 SampleManager.prototype.getIndexFromID = function(sampleID) {
