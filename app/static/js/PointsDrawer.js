@@ -16,14 +16,6 @@ function PointsDrawer(canvas) {
     this.context = canvas.node().getContext('2d');
 
     this.overlay = 'None';
-
-    // default colourscale
-    // this colourscale is used when no overlay is active
-    this.defaultColourScale = d3.scale.linear()
-        .range([config.pointStyle.defaultStyle.fillStyle,
-            config.pointStyle.defaultStyle.fillStyle])
-        .clamp(true);
-    this.colourScale = this.defaultColourScale;
 }
 
 /**
@@ -98,12 +90,11 @@ PointsDrawer.prototype.redraw = function (data, indices) {
 };
 
 PointsDrawer.prototype.setColourScale = function(colourScale) {
-    // if no custom colour scale provided, use the default
     if(_.isNull(colourScale) || _.isUndefined(colourScale)) {
         this.colourScale = this.defaultColourScale;
     }
     else {
-        this.colourScale = colourScale;
+        this.colourScale = null;
     }
 };
 
@@ -154,19 +145,22 @@ PointsDrawer.prototype._drawPoint = function(point, r, fill) {
     var cx = this.xScale(point.dimension_reduce[this.view][0]);
     var cy = this.yScale(point.dimension_reduce[this.view][1]);
 
-    // if a fill has not been explicitly defined, use the colourscale
     if(_.isNull(fill) || _.isUndefined(fill)) {
-        // if no overlay defined, pass a value to the default colour scale
+        // if a fill has not been explicitly defined, use the colourscale if it's
+        // defined
         if(!_.isNull(point.overlays) && !_.isUndefined(point.overlays)) {
             this.context.fillStyle =
                 this.colourScale(point.overlays[this.overlay] || 0);
         }
+        // otherwise use the default fill style
         else {
             this.context.fillStyle =
-                this.colourScale(0);
+                config.pointStyle.defaultStyle.fillStyle;
         }
     }
     else {
+        // if a fill style is passed to the function, use it when styling
+        // the point
         this.context.fillStyle = fill;
     }
 
