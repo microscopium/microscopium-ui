@@ -1,7 +1,8 @@
+'use strict';
+
 var _ = require('lodash');
-var d3 = require('d3');
 var byteFlag = require('./utils/Byteflag.js');
-var status = require('./enums/sampleStatus.js');
+var pointStatus = require('./enums/sampleStatus.js');
 var config = require('../config/plots').neighbourPlot;
 
 /**
@@ -55,13 +56,13 @@ PointsDrawer.prototype.redraw = function (data, indices) {
         ii = drawIndex[i];
         point = data.data[ii];
 
-        if(byteFlag.check(point.status, status.ACTIVE)) {
+        if(byteFlag.check(point.status, pointStatus.ACTIVE)) {
             active = ii;
         }
-        else if(byteFlag.check(point.status, status.NEIGHBOUR)) {
+        else if(byteFlag.check(point.status, pointStatus.NEIGHBOUR)) {
             neighbours.push(ii);
         }
-        else if(!byteFlag.check(point.status, status.FILTERED_OUT)) {
+        else if(!byteFlag.check(point.status, pointStatus.FILTERED_OUT)) {
             unStyled.push(ii);
         }
         else {
@@ -91,10 +92,10 @@ PointsDrawer.prototype.redraw = function (data, indices) {
 
 PointsDrawer.prototype.setColourScale = function(colourScale) {
     if(_.isNull(colourScale) || _.isUndefined(colourScale)) {
-        this.colourScale = this.defaultColourScale;
+        this.colourScale = null;
     }
     else {
-        this.colourScale = null;
+        this.colourScale = colourScale;
     }
 };
 
@@ -146,9 +147,9 @@ PointsDrawer.prototype._drawPoint = function(point, r, fill) {
     var cy = this.yScale(point.dimension_reduce[this.view][1]);
 
     if(_.isNull(fill) || _.isUndefined(fill)) {
-        // if a fill has not been explicitly defined, use the colourscale if it's
-        // defined
-        if(!_.isNull(point.overlays) && !_.isUndefined(point.overlays)) {
+        // if a fill has not been explicitly defined, use the colourscale
+        // if it's defined
+        if(!_.isNull(this.colourScale) && !_.isUndefined(this.colourScale)) {
             this.context.fillStyle =
                 this.colourScale(point.overlays[this.overlay] || 0);
         }
@@ -177,13 +178,14 @@ PointsDrawer.prototype._drawPoint = function(point, r, fill) {
  * @param data {SampleManager} - A SampleManager object wrapping the data.
  * @param indices {Array} - The indices of the samples to be drawn.
  * @param style {object} - An object with properties fillStyle, strokeStyle,
- *     strokeWidth, globalAlpha and radius. These determine the style of the points
- *     that will be drawn by this function.
+ *     strokeWidth, globalAlpha and radius. These determine the style of the
+ *     points that will be drawn by this function.
  * @param overrideFill {bool} - If true, this call to the canvas will ignore
  *     the colourScale and use the fillStyle for this point.
  * @private
  */
-PointsDrawer.prototype._drawPoints = function(data, indices, style, overrideFill) {
+PointsDrawer.prototype._drawPoints = function(data, indices, style,
+                                              overrideFill) {
     var i, ii;
 
     // update the canvas context before the points are drawn, this reduces
