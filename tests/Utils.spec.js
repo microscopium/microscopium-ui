@@ -1,10 +1,12 @@
+'use strict';
 // test suite for the Utils object
 // below are Jasmine methods passed to Karma for testing
 describe('Utils', function() {
     var _ = require('lodash');
     var Utils = require('../app/static/js/utils/Utils.js');
 
-    // add findByValues function as lodash mixin so we can test its behaviour in lodash chains
+    // add findByValues function as lodash mixin so we can test its behaviour
+    // in lodash chains
     _.mixin({
         'findByValues': Utils.findByValues
     });
@@ -60,7 +62,8 @@ describe('Utils', function() {
                 'letter': 'A',
                 'number': 3
             }];
-            var testQuery = Utils.findByValues(testObjects, 'letter', ['A', 'C']);
+            var testQuery = Utils.findByValues(testObjects, 'letter',
+                ['A', 'C']);
             expect(testQuery).toEqual(expected);
         });
 
@@ -91,36 +94,40 @@ describe('Utils', function() {
             expect(testQuery).toEqual(expected);
         });
 
-        it('behaves as expected when used in chain with invert option', function() {
-            var expected = [{
-                'letter': 'C',
-                'number': 2
-            }];
+        it('behaves as expected when used in chain with invert option',
+            function() {
+                var expected = [{
+                    'letter': 'C',
+                    'number': 2
+                }];
 
-            var result = _.chain(testObjects)
-                .findByValues('letter', ['A', 'B'], true)
-                .findByValues('number', [1], true);
-            var testQuery = result.value();
+                var result = _.chain(testObjects)
+                    .findByValues('letter', ['A', 'B'], true)
+                    .findByValues('number', [1], true);
+                var testQuery = result.value();
 
-            expect(testQuery).toEqual(expected);
-        });
+                expect(testQuery).toEqual(expected);
+            }
+        );
 
-        it('behaves as expected in chain with and without invert option', function() {
-            var expected = [{
-                'letter': 'A',
-                'number': 3
-            }, {
-                'letter': 'B',
-                'number': 3
-            }];
+        it('behaves as expected in chain with and without invert option',
+            function() {
+                var expected = [{
+                    'letter': 'A',
+                    'number': 3
+                }, {
+                    'letter': 'B',
+                    'number': 3
+                }];
 
-            var result = _.chain(testObjects)
-                .findByValues('letter', ['A', 'B'])
-                .findByValues('number', [1, 2], true);
-            var testQuery = result.value();
+                var result = _.chain(testObjects)
+                    .findByValues('letter', ['A', 'B'])
+                    .findByValues('number', [1, 2], true);
+                var testQuery = result.value();
 
-            expect(testQuery).toEqual(expected);
-        });
+                expect(testQuery).toEqual(expected);
+            }
+        );
     });
 
     describe('sortedPush', function() {
@@ -154,27 +161,32 @@ describe('Utils', function() {
     });
 
     describe('linspace', function() {
-        it('finds the linearly spaced vector as expected (ascending)', function() {
-            var actual = Utils.linspace(-5, 5, 7);
-            var expected = [-5, -3.33333, -1.66667, 0, 1.66667, 3.33333, 5];
-            var precision = 5;
+        it('finds the linearly spaced vector as expected (ascending)',
+            function() {
+                var actual = Utils.linspace(-5, 5, 7);
+                var expected = [-5, -3.33333, -1.66667, 0, 1.66667,
+                    3.33333, 5];
+                var precision = 5;
 
-            // no "array close to" equivilant method, so just check
-            // each element individually
-            for(var i = 0; i < actual.length; i++) {
-                expect(actual[i]).toBeCloseTo(expected[i], precision);
+                // no "array close to" equivilant method, so just check
+                // each element individually
+                for(var i = 0; i < actual.length; i++) {
+                    expect(actual[i]).toBeCloseTo(expected[i], precision);
+                }
             }
-        });
+        );
 
-        it('finds the linearly spaced vector as expected (descending)', function() {
-            var actual = Utils.linspace(5, -5, 7);
-            var expected = [5, 3.33333, 1.66667, 0, -1.66667, -3.33333, -5];
-            var precision = 5;
+        it('finds the linearly spaced vector as expected (descending)',
+            function() {
+                var actual = Utils.linspace(5, -5, 7);
+                var expected = [5, 3.33333, 1.66667, 0, -1.66667, -3.33333, -5];
+                var precision = 5;
 
-            for(var i = 0; i < actual.length; i++) {
-                expect(actual[i]).toBeCloseTo(expected[i], precision);
+                for(var i = 0; i < actual.length; i++) {
+                    expect(actual[i]).toBeCloseTo(expected[i], precision);
+                }
             }
-        });
+        );
     });
 
     describe('percentile', function() {
@@ -204,7 +216,7 @@ describe('Utils', function() {
             var percentiles = [0.05, 0.25, 0.5, 0.75, 0.95];
             var expected = [0.5, 2.5, 5, 7.5, 9.5];
             var actual = Utils.getPercentiles(data, percentiles);
-            expect(actual).toEqual(expected)
+            expect(actual).toEqual(expected);
         });
     });
 
@@ -215,10 +227,12 @@ describe('Utils', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('returns a translate string with the expected format (with px)', function() {
-            var expected = 'translate(100px, 75px)';
-            var actual = Utils.translateString(100, 75, true);
-            expect(actual).toEqual(expected);
-        });
+        it('returns a translate string with the expected format (with px)',
+            function() {
+                var expected = 'translate(100px, 75px)';
+                var actual = Utils.translateString(100, 75, true);
+                expect(actual).toEqual(expected);
+            }
+        );
     });
 });
