@@ -1,3 +1,5 @@
+'use strict';
+
 var d3 = require('d3');
 var _ = require('lodash');
 var Utils = require('./utils/Utils.js');
@@ -89,7 +91,8 @@ PlotLegend.prototype._addLegendGradient = function() {
         .attr('x', config.margin.left)
         .attr('y', config.margin.top)
         .attr('width', config.width - config.margin.left - config.margin.right)
-        .attr('height', config.height - config.margin.top - config.margin.bottom)
+        .attr('height', config.height - config.margin.top -
+            config.margin.bottom)
         .style('fill', 'url(#gradient)');
 };
 
@@ -108,13 +111,13 @@ PlotLegend.prototype._setAxis = function() {
 
     var legendAxis = d3.svg.axis()
         .scale(legendScale)
-        .orient("bottom")
+        .orient('bottom')
         .ticks(3);
 
-    this.svg.append("g")
-        .attr("class", "legend axis")
-        .attr("transform", "translate(" + config.margin.left + ", " +
-            (config.height - config.margin.bottom) + ")")
+    this.svg.append('g')
+        .attr('class', 'legend axis')
+        .attr('transform', 'translate(' + config.margin.left + ', ' +
+            (config.height - config.margin.bottom) + ')')
         .call(legendAxis);
 };
 
