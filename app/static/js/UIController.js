@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash');
 var History = require('./History.js');
 var Filter = require('./Filter.js');
@@ -96,12 +98,13 @@ UIController.prototype.updateSample = function(sampleId) {
 /**
  * updateOverlay: Handle view/plot updates when 'updateOverlay' event triggered.
  *
- * @param overlay {string} - The new overlay to use to colour the points on the plot.
- *     Will default to "None" and remove any overlay if this argument isn't passed.
+ * @param overlay {string} - The new overlay to use to colour the points
+ *     on the plot. Will default to "None" and remove any overlay if this
+ *     argument isn't passed.
  */
 UIController.prototype.updateOverlay = function(overlay) {
     if(_.isNull(overlay) || _.isUndefined(overlay)) {
-        overlay = "None";
+        overlay = 'None';
     }
     this.neighbourPlotCanvas.updateOverlay(overlay);
 };
