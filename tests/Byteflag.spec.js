@@ -23,11 +23,13 @@ describe('Byteflag', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should return the original bitflag when bit isn\'t there', function() {
-            var expected = (0x01 | 0x02);
-            var actual = Byteflag.remove((0x01 | 0x02), 0x04);
-            expect(actual).toEqual(expected);
-        });
+        it('should return the original bitflag when bit isn\'t there',
+            function() {
+                var expected = (0x01 | 0x02);
+                var actual = Byteflag.remove((0x01 | 0x02), 0x04);
+                expect(actual).toEqual(expected);
+            }
+        );
     });
 
     describe('check', function() {
