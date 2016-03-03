@@ -1,6 +1,6 @@
 'use strict';
 var SampleManager = require('../app/static/js/SampleManager.js');
-var status = require('../app/static/js/enums/sampleStatus.js');
+var sampleStatus = require('../app/static/js/enums/sampleStatus.js');
 var d3 = require('d3');
 var _ = require('lodash');
 
@@ -58,32 +58,36 @@ describe('SampleManager', function() {
 
     describe('setStatusToIndex', function() {
         it('should add the correct status to a single index', function() {
-            sampleManager.setStatusToIndex(0, status.ACTIVE);
+            sampleManager.setStatusToIndex(0, sampleStatus.ACTIVE);
 
-            var expected = [status.ACTIVE, 0, 0, 0];
+            var expected = [sampleStatus.ACTIVE, 0, 0, 0];
             var actual = _.pluck(sampleManager.data, 'status');
 
             expect(actual).toEqual(expected);
         });
 
-        it('should add the correct status to a set of indices', function() {
-            sampleManager.setStatusToIndex([0, 2], status.FILTERED_OUT);
+        it('should add the correct status to a set of indices',
+            function() {
+                sampleManager.setStatusToIndex([0, 2],
+                    sampleStatus.FILTERED_OUT);
 
-            var expected = [status.FILTERED_OUT, 0, status.FILTERED_OUT, 0];
-            var actual = _.pluck(sampleManager.data, 'status');
+                var expected = [sampleStatus.FILTERED_OUT, 0,
+                    sampleStatus.FILTERED_OUT, 0];
+                var actual = _.pluck(sampleManager.data, 'status');
 
-            expect(actual).toEqual(expected);
-        });
+                expect(actual).toEqual(expected);
+            }
+        );
 
         it('manages more than one status', function() {
-            sampleManager.setStatusToIndex(0, status.ACTIVE);
-            sampleManager.setStatusToIndex(1, status.FILTERED_OUT);
-            sampleManager.setStatusToIndex([1, 2], status.SELECTED);
+            sampleManager.setStatusToIndex(0, sampleStatus.ACTIVE);
+            sampleManager.setStatusToIndex(1, sampleStatus.FILTERED_OUT);
+            sampleManager.setStatusToIndex([1, 2], sampleStatus.SELECTED);
 
             var expected = [
-                status.ACTIVE,
-                status.SELECTED | status.FILTERED_OUT,
-                status.SELECTED,
+                sampleStatus.ACTIVE,
+                sampleStatus.SELECTED | sampleStatus.FILTERED_OUT,
+                sampleStatus.SELECTED,
                 0
             ];
             var actual = _.pluck(sampleManager.data, 'status');
@@ -92,15 +96,15 @@ describe('SampleManager', function() {
         });
 
         it('maintains correct statuses', function() {
-            sampleManager.setStatusToIndex(0, status.ACTIVE);
-            sampleManager.setStatusToIndex([2, 3], status.SELECTED);
-            sampleManager.setStatusToIndex(1, status.ACTIVE);
-            sampleManager.setStatusToIndex([0, 2], status.SELECTED);
+            sampleManager.setStatusToIndex(0, sampleStatus.ACTIVE);
+            sampleManager.setStatusToIndex([2, 3], sampleStatus.SELECTED);
+            sampleManager.setStatusToIndex(1, sampleStatus.ACTIVE);
+            sampleManager.setStatusToIndex([0, 2], sampleStatus.SELECTED);
 
             var expected = [
-                status.SELECTED,
-                status.ACTIVE,
-                status.SELECTED,
+                sampleStatus.SELECTED,
+                sampleStatus.ACTIVE,
+                sampleStatus.SELECTED,
                 0
             ];
             var actual = _.pluck(sampleManager.data, 'status');
