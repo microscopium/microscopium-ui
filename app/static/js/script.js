@@ -26,7 +26,7 @@ $(document).ready(function() {
     var sampleQuery = $.ajax({
         type: 'GET',
         url: '/api/' + SCREEN_ID + '/samples?' + $.param({
-            'select': ['row', 'column', 'plate', 'gene_name', 'dimension_reduce']
+            'select': ['row', 'column', 'plate', 'gene_name', 'dimension_reduce', 'overlays']
         }, true),
         dataType: 'json',
         async: true,
@@ -121,6 +121,13 @@ $(document).ready(function() {
                 // handle plot/ui update logic
                 uiController.updateView(val);
             }
+        });
+
+        $('#overlay-select a').on('click', function() {
+            $('#overlay-select i').addClass('fa-hidden');
+            $(this).children().removeClass('fa-hidden');
+            var val = $(this).text().trim();
+            uiController.updateOverlay(val);
         });
 
         $('a.navbar-brand').on('click', function() {

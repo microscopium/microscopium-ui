@@ -28,13 +28,17 @@ def load_screen(screen_id):
         flash("Unable to find screen %s." % screen_id)
         return redirect(url_for(".index"))
 
+    # get the overlays object if it exists
+    overlays = screen_result.get("available_overlays")
+
     # get list of screens in database, exclude "screen_features" field as
     # we don't need it here
     screens = mongo.db.screens.find({}, fields={"screen_features": False})
 
     return render_template("screen_ui.html",
                            screen_id=screen_id,
-                           screens=screens)
+                           screens=screens,
+                           overlays=overlays)
 
 @main.after_request
 def minify_html_response(response):

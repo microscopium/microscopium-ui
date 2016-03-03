@@ -7,6 +7,7 @@
     "d3-tip": "~0.6.7",
     "lodash": "~3.10.0",
     "lodash-deep": "~1.5.3",
+    "scale-color-perceptual": "^1.1.2",
     "spin.js": "~2.0.2"
   },
   "devDependencies": {

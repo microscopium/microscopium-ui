@@ -9,7 +9,9 @@ Prerequisites
 * NPM package manager
 * Bower package manager
 * MongoDB version > 2.6
-* A modern browser, at least IE10+ or equivalent.
+* A modern browser. The interface is tested as working on 
+    latest Chrome, Firefox, Edge and IE11. Due to the heavy use of the HTML5Canvas API,
+    performance is best on Chrome.
 
 Install Instructions (Development)
 ----------------------------------
@@ -71,9 +73,14 @@ following format:
 var Screen = {
     _id: String, // A short ID for the screen.
     screen_desc: String, // A description of the screen.
-    number_samples: Number // The number of
-    screen_features: Array // An array of strings labelling each feature used in
+    number_samples: Number, // The number of
+    screen_features: Array, // An array of strings labelling each feature used in
                            // the screen.
+    available_overlays: Array // An optional field. An array of additional overlay
+                              // information available for samples in this screen.
+                              // e.g. if samples have ``screen_run`` and ``z_score``
+                              // overlay information, this array should be 
+                              // ["screen_run", "z_score"]
 }
 ```
 
@@ -89,7 +96,7 @@ var Sample = {
                             // applied to the sample.
         feature_vector: Array,  // An array of Numbers, the vector of
                                 // unstandardised features
-        featute_vector_std: Array  // An array of Numbers, the vector of standardised
+        feature_vector_std: Array  // An array of Numbers, the vector of standardised
                                    // features.
         neighbours: Array  // An array of sample_id strings, the 25 nearest
                            // neighbours of the sample.
@@ -101,10 +108,11 @@ var Sample = {
             pca: Array // the co-ordinates for the sample's point after PCA dimension reduction
             tsne: Array // the co-ordinates for the sample's point after TSNE dimension reduction
         },
-        image: ObjectID, // image_id  The ID of the samples image document
-                         // (see below).
-        cluster_member: Array // Array of integers showing cluster memberships
-                              // for clustering scheme k=2..20
+        overlays: Object // An object of the additional screen overlay information
+                         // for this sample. This information is optional. If no 
+                         // overlay information is available, the corresponding
+                         // sample document should no, or an empty, ``available_overlays``
+                         // field. Currently supports numeric and Date data.
     }
 ```
 

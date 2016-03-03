@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var d3 = require('d3');
 var byteFlag = require('./utils/Byteflag.js');
 var status = require('./enums/sampleStatus.js');
 var config = require('../config/plots').neighbourPlot;
@@ -13,6 +14,8 @@ function PointsDrawer(canvas) {
     this.width = canvas.node().width;
     this.height = canvas.node().height;
     this.context = canvas.node().getContext('2d');
+
+    this.overlay = 'None';
 }
 
 /**
@@ -75,11 +78,23 @@ PointsDrawer.prototype.redraw = function (data, indices) {
     }
 
     if(neighbours.length > 0) {
-        this._drawPoints(data, neighbours, config.pointStyle.neighbours);
+        // pass true as the override argument as neighbourpoints should
+        // use their fill defined in the config, not as the colourscale
+        this._drawPoints(data, neighbours, config.pointStyle.neighbours, true);
     }
 
     if(!_.isNull(active) && !_.isUndefined(active)) {
-        this._drawPoints(data, [active], config.pointStyle.active);
+        // as above, active point should always be styled
+        this._drawPoints(data, [active], config.pointStyle.active, true);
+    }
+};
+
+PointsDrawer.prototype.setColourScale = function(colourScale) {
+    if(_.isNull(colourScale) || _.isUndefined(colourScale)) {
+        this.colourScale = this.defaultColourScale;
+    }
+    else {
+        this.colourScale = null;
     }
 };
 
@@ -115,13 +130,39 @@ PointsDrawer.prototype.setScale = function(xScale, yScale) {
 /**
  * drawPoint: Draw a point using the current scale and canvas context.
  *
+ * The fillStyle of the point is taken from the canvas context prior
+ * to calling the function, OR from the current overlay colour scale
+ * if defined.
+ *
  * @param point {object} - The point to draw.
  * @param r {number} - The radius of the point to draw.
+ * @param [fill] {string} - Optional, if a fill style is explicitly
+ *     defined here the colourscale will be ignored and the point
+ *     will be filled with this style.
  * @private
  */
-PointsDrawer.prototype._drawPoint = function(point, r) {
+PointsDrawer.prototype._drawPoint = function(point, r, fill) {
     var cx = this.xScale(point.dimension_reduce[this.view][0]);
     var cy = this.yScale(point.dimension_reduce[this.view][1]);
+
+    if(_.isNull(fill) || _.isUndefined(fill)) {
+        // if a fill has not been explicitly defined, use the colourscale if it's
+        // defined
+        if(!_.isNull(point.overlays) && !_.isUndefined(point.overlays)) {
+            this.context.fillStyle =
+                this.colourScale(point.overlays[this.overlay] || 0);
+        }
+        // otherwise use the default fill style
+        else {
+            this.context.fillStyle =
+                config.pointStyle.defaultStyle.fillStyle;
+        }
+    }
+    else {
+        // if a fill style is passed to the function, use it when styling
+        // the point
+        this.context.fillStyle = fill;
+    }
 
     this.context.beginPath();
     this.context.arc(cx, cy, r, 0, 2 * Math.PI);
@@ -138,22 +179,28 @@ PointsDrawer.prototype._drawPoint = function(point, r) {
  * @param style {object} - An object with properties fillStyle, strokeStyle,
  *     strokeWidth, globalAlpha and radius. These determine the style of the points
  *     that will be drawn by this function.
+ * @param overrideFill {bool} - If true, this call to the canvas will ignore
+ *     the colourScale and use the fillStyle for this point.
  * @private
  */
-PointsDrawer.prototype._drawPoints = function(data, indices, style) {
-    var i, ii, point;
+PointsDrawer.prototype._drawPoints = function(data, indices, style, overrideFill) {
+    var i, ii;
 
     // update the canvas context before the points are drawn, this reduces
     // the number of style changes made to the canvas context
-    this.context.fillStyle = style.fillStyle;
     this.context.strokeStyle = style.strokeStyle;
     this.context.strokeWidth = style.strokeWidth;
     this.context.globalAlpha = style.globalAlpha;
 
     for(i = 0; i < indices.length; i++) {
         ii = indices[i];
-        point = data.data[ii];
-        this._drawPoint(point, style.radius);
+
+        if(overrideFill === true) {
+            this._drawPoint(data.data[ii], style.radius, style.fillStyle);
+        }
+        else {
+            this._drawPoint(data.data[ii], style.radius);
+        }
     }
 };
 

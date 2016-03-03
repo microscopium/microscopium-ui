@@ -9,6 +9,28 @@
                 <button type="button" class="btn btn-sm btn-primary btn-dim-select" value="pca">PCA</button>
             </div>
             <button type="button" id="reset-button" class="btn btn-sm btn-primary" value="Reset">Reset</button>
+            {% if overlays %}
+                <b>Sample Overlay: </b>
+                <div id="overlay-select" class="btn-group">
+                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown">
+                        Select <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-check"></i>
+                                None
+                            </a>
+                        </li>
+                        {% for overlay in overlays %}
+                            <li><a href="#">
+                                <i class="fa fa-check fa-hidden"></i>
+                                {{ overlay }}
+                            </a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
     <div class="row">
