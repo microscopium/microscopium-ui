@@ -19,6 +19,9 @@
   // Allow use of console.log, alert, etc.
   "devel": true,
 
+  // Define the globals exposed by jasmine
+  "jasmine": true,
+
   /*
    * ENFORCING OPTIONS
    * =================
