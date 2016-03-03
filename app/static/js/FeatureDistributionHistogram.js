@@ -1,3 +1,5 @@
+'use strict';
+
 var config = require('../config/plots').featureDistributionHistogram;
 var d3 = require('d3');
 
@@ -55,7 +57,7 @@ FeatureDistributionHistogram.prototype.drawHistogram = function(feature) {
             $.param(featureQuery, true),
         dataType: 'json',
         success: function(data) {
-            this.featureDist = data[0].feature_dist_std,
+            this.featureDist = data[0].feature_dist_std;
             this.feature = feature;
             d3.select(this.element + ' > svg').remove();
             this._addBackground();
