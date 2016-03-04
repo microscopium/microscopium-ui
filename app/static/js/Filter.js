@@ -1,6 +1,7 @@
+'use strict';
+
 var _ = require('lodash');
 var Utils = require('./utils/Utils.js');
-
 var key = require('./enums/keyboard.js');
 
 // add findByValues and uniqueData functions to lodash namespace
@@ -30,12 +31,9 @@ var $filterRemove = $('#filter-remove');
  * @constructor
  * @param {array} sampleData - The sample data for the screen. Each element
  *     in the array is an instance of a Sample document.
- * @param {NeighbourPlot} neighbourPlot - The NeighbourPlot object that this
- *     filter acts upon.
  */
-function SampleFilter(sampleData, neighbourPlot) {
+function SampleFilter(sampleData) {
     this.data = sampleData;
-    this.neighbourPlot = neighbourPlot;
     this.uniqueCol = _.uniqueData(this.data, 'column');
     this.uniqueRow = _.uniqueData(this.data, 'row');
     this.uniquePlate = _.uniqueData(this.data, 'plate');
@@ -77,7 +75,9 @@ function SampleFilter(sampleData, neighbourPlot) {
  *     'A' 'C' 'E'
  *     'B' 'D' 'F'
  */
-SampleFilter.prototype.mountFilterComponent = function(uniqueValues, label, numberCols) {
+SampleFilter.prototype.mountFilterComponent =
+    function(uniqueValues, label, numberCols) {
+
     var bootstrapColSize = 12/numberCols;
     var displayCols = Math.ceil(uniqueValues.length/numberCols);
     var i;
@@ -193,7 +193,7 @@ SampleFilter.prototype.mountEventListeners = function() {
     });
 
     // update filter when checkbox (un)selected
-    $('#filter-form input[type="checkbox"]').on('change', function(event) {
+    $('#filter-form input[type="checkbox"]').on('change', function() {
         self.applyFilter();
     });
 
@@ -203,8 +203,11 @@ SampleFilter.prototype.mountEventListeners = function() {
     });
 
     $('a[href*="gene-menu"]').on('click', function() {
-        // see http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
+        // ignore long text in URL
+        /* jshint ignore:start */
+        // http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
         // for an explanation of this hack
+        /* jshint ignore:end */
         setTimeout(function() {
             $geneFilterText.focus();
         }, 400);
@@ -348,10 +351,11 @@ SampleFilter.prototype.applyFilter = function() {
             .findByValues('row', rows, false)
             .findByValues('plate', plates, false);
 
-         // want which genes are NOT in the list, so we invert the results here
-         if(geneActive) {
-             result = result.findByValues('gene_name', this.selectedGenes, true);
-         }
+        // want which genes are NOT in the list, so we invert the results here
+        if(geneActive) {
+            result = result.findByValues('gene_name',
+                this.selectedGenes, true);
+        }
 
         // create list of sample indices to be filtered out and
         // send the list to the updateFilter event

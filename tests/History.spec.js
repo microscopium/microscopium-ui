@@ -1,3 +1,5 @@
+'use strict';
+
 var History = require('../app/static/js/History.js');
 
 describe('History', function() {
@@ -30,7 +32,7 @@ describe('History', function() {
             history.add('B');
             actual.push(history.back());
             actual.push(history.back());
-            expect(actual).toEqual(['A', null])
+            expect(actual).toEqual(['A', null]);
         });
 
         it('should return items in expected order', function() {
@@ -71,19 +73,21 @@ describe('History', function() {
             expect(actual).toEqual(['A', 'B', null]);
         });
 
-        it('it should return the expected order going back, forward and adding', function() {
-            var actual = [];
-            ['A', 'B', 'C'].forEach(function(value) {
-                history.add(value);
-            });
-            history.back();
-            history.add('D');
-            actual.push(history.back());
-            actual.push(history.back());
-            actual.push(history.forward());
-            actual.push(history.forward());
-            expect(actual).toEqual(['B', 'A', 'B', 'D']);
-        });
+        it('should return the expected order going back, forward and adding',
+            function() {
+                var actual = [];
+                ['A', 'B', 'C'].forEach(function(value) {
+                    history.add(value);
+                });
+                history.back();
+                history.add('D');
+                actual.push(history.back());
+                actual.push(history.back());
+                actual.push(history.forward());
+                actual.push(history.forward());
+                expect(actual).toEqual(['B', 'A', 'B', 'D']);
+            }
+        );
     });
 
     describe('reset', function() {

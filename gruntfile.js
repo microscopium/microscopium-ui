@@ -2,11 +2,9 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            all: ['app/static/js/*.js'],
+            all: ['app/static/js/**/*.js', 'tests/*.spec.js'],
             options: {
-                white: false,
-                indent: 4,
-                force: true
+                jshintrc: '.jshintrc'
             }
         },
 

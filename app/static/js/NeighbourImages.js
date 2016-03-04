@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash');
 
 /**
@@ -10,14 +12,15 @@ function NeighbourImages(screenID) {
 
     var self = this;
     this.neighbours = [];
-    this.selectedImage = "";
+    this.selectedImage = '';
     this.neighbourImages = [];
 
     // When a jQuery selector is called, the DOM must be traversed in order
-    // to find the element. if the selector is saved to a variable (ie cached), the
-    // element is remembered thus the DOM doesn't need to be traversed on subsequent
-    // calls. Frequently used selectors are cached in the object constructor so the
-    // selectors are cached when the object is created.
+    // to find the element. if the selector is saved to a variable
+    // (i.e cached), the element is remembered thus the DOM doesn't need to be
+    // traversed on subsequent calls. Frequently used selectors are cached in
+    // the object constructor so selectors are cached when the object is
+    // created.
     this.selectors = {
         $nebula0: $('#nebula-0'),
         // create an array of jquery selectors for all the neighbour images
@@ -104,8 +107,8 @@ NeighbourImages.prototype.getImages = function(sample_id) {
 /**
  * setImages: Convert base64 encoded strings to images and set them in the DOM.
  *
- * Clicking on 'neighbour' images sets the corresponding point in the PCA plot as the
- * active point.
+ * Clicking on 'neighbour' images sets the corresponding point in the PCA
+ * plot as the active point.
  *
  * @this {NeighbourImages}
  */
@@ -141,23 +144,12 @@ NeighbourImages.prototype.setImages = function() {
 
     // iterate through all found images and add them to the gallery
     for(var i = 0; i < self.neighbourImages.length; i++) {
-
         this.selectors.$nebula[i]
             .attr('src', 'data:image/jpg;base64,' +
                 self.neighbourImages[i].image_thumb.$binary)
             .attr('title', self.neighbourImages[i].sample_id);
         this.selectors.$nebula[i].unbind('click');
-
-        // use IIFE (immediately invoked function expression)
-        // here as a closure is being called in a loop
-        // see http://www.mennovanslooten.nl/blog/post/62 for additional details
-        (function(j) {
-            self.selectors.$nebula[i].on('click', function(event) {
-                event.preventDefault();
-                self.selectors.$body.trigger('updateSample',
-                    self.neighbourImages[j].sample_id);
-            });
-        })(i);
+        this._makeClickHandler(i);
     }
 };
 
@@ -175,8 +167,9 @@ NeighbourImages.prototype.openFullModal = function() {
     };
     $.ajax({
         type: 'GET',
-        url: '/api/' + this.screenID + '/samples/' + this.selectedImage.sample_id +
-            '/images?' + $.param(imageQuery, true),
+        url: '/api/' + this.screenID + '/samples/' +
+            this.selectedImage.sample_id + '/images?' +
+            $.param(imageQuery, true),
         dataType: 'json',
         success: function(data) {
             console.log(data[0]);
@@ -195,6 +188,24 @@ NeighbourImages.prototype.openFullModal = function() {
             $('#image-modal').modal('show');
         }
     });
+};
+
+/**
+ * makeClickHandler: Attach onclick behaviour to image.
+ *
+ * See setImages
+ *
+ * @param {int} i - The index of the image that's being
+ *     added to the gallery and having click behaviour
+ *     bound to it.
+ * @private
+ */
+NeighbourImages.prototype._makeClickHandler = function(i) {
+    this.selectors.$nebula[i].on('click', function(event) {
+        event.preventDefault();
+        this.selectors.$body.trigger('updateSample',
+            this.neighbourImages[i].sample_id);
+    }.bind(this));
 };
 
 module.exports = NeighbourImages;

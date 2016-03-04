@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * History: Keep track of user's sample history.
  *

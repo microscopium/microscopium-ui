@@ -1,0 +1,69 @@
+{
+  /*
+   * ENVIRONMENTS
+   * =================
+   */
+
+  // Define globals exposed by modern browsers.
+  "browser": true,
+
+  // Define globals exposed by jQuery.
+  "jquery": true,
+
+  // Define globals exposed by Node.js.
+  "node": true,
+
+  // Allow ES6.
+  "esnext": false,
+
+  // Allow use of console.log, alert, etc.
+  "devel": true,
+
+  // Define the globals exposed by jasmine
+  "jasmine": true,
+
+  /*
+   * ENFORCING OPTIONS
+   * =================
+   */
+
+  // do not enfore camelcase for lower caps variables
+  // many variables from the database use snake_case
+  "camelcase": false,
+
+  // Prohibit use of == and != in favor of === and !==.
+  "eqeqeq": true,
+
+  // Enforce tab width of 4 spaces.
+  "indent": 4,
+
+  // Allow variable use before definition (fine as long as hoisted
+  // functions are used this way)
+  "latedef": false,
+
+  // Enforce line length to 80 characters
+  "maxlen": 80,
+
+  // Require capitalized names for constructor functions.
+  "newcap": true,
+
+  // Enforce use of single quotation marks for strings.
+  "quotmark": "single",
+
+  // Enforce placing 'use strict' at the top function scope
+  "strict": true,
+
+  // Prohibit use of explicitly undeclared variables.
+  "undef": true,
+
+  // Warn when variables are defined but never used.
+  "unused": true,
+
+  /*
+   * RELAXING OPTIONS
+   * =================
+   */
+
+  // Suppress warnings about == null comparisons.
+  "eqnull": true
+}

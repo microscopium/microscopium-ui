@@ -1,6 +1,7 @@
+'use strict';
+
 var _ = require('lodash');
 var d3 = require('d3');
-
 var config = require('../config/plots').neighbourPlot;
 
 // browserify can't load modules dynamically due to the way it statically
@@ -30,7 +31,7 @@ var legendConfig = require('../config/plots').neighbourPlotLegend;
 var PlotLegend = require('./PlotLegend.js');
 var PointsDrawer = require('./PointsDrawer.js');
 var SampleManager = require('./SampleManager.js');
-var status = require('./enums/sampleStatus.js');
+var sampleStatus = require('./enums/sampleStatus.js');
 require('d3-tip')(d3); // add d3-tip tooltip plugin
 
 /**
@@ -148,7 +149,7 @@ NeighbourPlotCanvas.prototype.updateOverlay = function(overlay) {
     var scaleMax = config.colourScaleExtent[1];
 
     // no scale selected
-    if(overlay === "None") {
+    if(overlay === 'None') {
         colourScale = null;
     }
     else {
@@ -181,7 +182,8 @@ NeighbourPlotCanvas.prototype.updateFilter = function(filterOutIndex) {
         filterOutIndex = [];
     }
 
-    this.sampleManager.setStatusToIndex(filterOutIndex, status.FILTERED_OUT);
+    this.sampleManager.setStatusToIndex(filterOutIndex,
+        sampleStatus.FILTERED_OUT);
 
     // redraw
     this.pointsDrawer.redraw(this.sampleManager, null);
@@ -207,9 +209,9 @@ NeighbourPlotCanvas.prototype.updatePoint = function(sampleId) {
 
             // update sample manager
             this.sampleManager.setStatusToIndex(selectedIndex,
-                status.ACTIVE);
+                sampleStatus.ACTIVE);
             this.sampleManager.setStatusToIndex(neighbourIndices,
-                status.NEIGHBOUR);
+                sampleStatus.NEIGHBOUR);
 
             // redraw
             this.pointsDrawer.redraw(this.sampleManager, null);
@@ -253,7 +255,7 @@ NeighbourPlotCanvas.prototype.updateView = function(view) {
 };
 
 /**
- * createCanvasSVGSelectors: Create SVG and Canvas elements used in plot drawing.
+ * createCanvasSVGSelectors: Create SVG and Canvas elements for plot drawing.
  *
  * Required SVG and canvas elements needed to draw the plot are all created
  * in this function. These elements are added as children to the DOM node
@@ -484,11 +486,11 @@ NeighbourPlotCanvas.prototype._setAxis = function() {
     if(!this.xAxisSvg) {
         this.xAxisSvg = this.axisSvg.append('g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + this.height + ')')
+            .attr('transform', 'translate(0,' + this.height + ')');
     }
     if(!this.yAxisSvg) {
         this.yAxisSvg = this.axisSvg.append('g')
-            .attr('class', 'y axis')
+            .attr('class', 'y axis');
     }
 
     // apply the axes

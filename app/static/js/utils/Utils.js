@@ -1,3 +1,4 @@
+'use strict';
 // various utility functions
 var _ = require('lodash');
 
@@ -142,7 +143,7 @@ Utils.percentile = function(data, percentile) {
  * @returns {Array} - The array of percentile values.
  */
 Utils.getPercentiles = function(data, percentiles) {
-    var sorted = data.sort(function(a, b) { return a - b });
+    var sorted = data.sort(function(a, b) { return a - b; });
     return percentiles.map(function(d) {
         return Utils.percentile(sorted, d);
     });
@@ -152,14 +153,14 @@ Utils.getPercentiles = function(data, percentiles) {
  * translateString: Create a translate param string for CSS/SVG manipulation.
  *
  * In many D3/jQuery functions it's necessary to create a string of the format
- * "translate(x, y)". This is usually fed to a function that manipulates the
+ * 'translate(x, y)'. This is usually fed to a function that manipulates the
  * SVG attribute or DOM element style. It gets a little messy creating this
  * string every time with string concatenation, so this function creates the
  * string from parameters.
  *
  * @param left {Number} - The left/x translation.
  * @param top {Number} - The right/y translation.
- * @param px {bool} - Whether or not to add the "px" suffix to the
+ * @param px {bool} - Whether or not to add the 'px' suffix to the
  *     left and right params. This is needed for CSS translations as the
  *     unit of translation must be  given explicitly. This should always be
  *     false for SVG manipulation as SVG only works in px.
@@ -168,12 +169,12 @@ Utils.translateString = function(left, top, px) {
     var out = [];
     out.push('translate(');
     out.push(left);
-    out.push(px ? "px" : "");
-    out.push(", ");
+    out.push(px ? 'px' : '');
+    out.push(', ');
     out.push(top);
-    out.push(px ? "px" : "");
-    out.push(")");
-    return out.join("");
+    out.push(px ? 'px' : '');
+    out.push(')');
+    return out.join('');
 };
 
 module.exports = Utils;

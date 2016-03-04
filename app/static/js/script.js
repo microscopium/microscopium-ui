@@ -1,3 +1,4 @@
+'use strict';
 // SCREEN_ID is a global variable read the HTML of the screen UI,
 // add a globals definition here to prevent linters from complaining
 // about the use of an undeclared variable
@@ -26,7 +27,8 @@ $(document).ready(function() {
     var sampleQuery = $.ajax({
         type: 'GET',
         url: '/api/' + SCREEN_ID + '/samples?' + $.param({
-            'select': ['row', 'column', 'plate', 'gene_name', 'dimension_reduce', 'overlays']
+            'select': ['row', 'column', 'plate', 'gene_name',
+                'dimension_reduce', 'overlays']
         }, true),
         dataType: 'json',
         async: true,

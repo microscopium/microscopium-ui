@@ -1,9 +1,11 @@
+'use strict';
+
 var config = require('../config/plots').featureVectorlinePlot;
 var d3 = require('d3');
 var key = require('./enums/keyboard.js');
 
 /**
- * FeatureVectorLineplot: Object to draw lineplot of sample feature distribution.
+ * FeatureVectorLineplot: Object to draw lineplot of feature distribution.
  *
  * A lineplot is drawn to represent the distribution of the features for
  * a particular sample. The features are mapped to the x-axis such that the
@@ -57,7 +59,8 @@ FeatureVectorLineplot.prototype.drawLineplot = function(sampleId) {
     };
     $.ajax({
         type: 'GET',
-        url: '/api/' + this.screenID + '/samples/' + sampleId + '?' + $.param(query, true),
+        url: '/api/' + this.screenID + '/samples/' + sampleId + '?' +
+            $.param(query, true),
         dataType: 'json',
         success: function(data) {
             this.featureVector = data[0].feature_vector_std;
@@ -238,7 +241,6 @@ FeatureVectorLineplot.prototype._onClickUpdate = function (d3Mouse) {
  * @this {FeatureVectorLineplot}
  * @param {number} keyCode - The Javascript character code for the
  *     pressed key.
- *     See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
  * @private
  */
 FeatureVectorLineplot.prototype._onKeydownUpdate = function(keyCode) {
