@@ -28,7 +28,7 @@ def get_images(screen_id, sample_id):
     find_query = {"sample_id": sample_id}
     select_query = request.args.getlist("select")
 
-    result = mongo.db.images.find(find_query, fields=select_query)
+    result = mongo.db.images.find(find_query, projection=select_query)
 
     return dumps(result)
 
@@ -58,12 +58,12 @@ def get_images_neighbours(screen_id, sample_id):
     select_query = request.args.getlist("select")
 
     neighbours = mongo.db.samples.find(find_query,
-                                       fields={"_id": False,
-                                               "neighbours": True})
+                                       projection={"_id": False,
+                                                   "neighbours": True})
     neighbours = neighbours[0]['neighbours']
 
     result = mongo.db.images.find({"sample_id": {"$in": neighbours}},
-                                  fields=select_query)
+                                  projection=select_query)
 
     return dumps(result)
 
@@ -89,7 +89,7 @@ def get_feature(screen_id, feature):
     find_query = {"screen": screen_id, "feature_name": feature}
     select_query = request.args.getlist("select")
 
-    result = mongo.db.features.find(find_query, fields=select_query)
+    result = mongo.db.features.find(find_query, projection=select_query)
 
     return dumps(result)
 
@@ -115,7 +115,7 @@ def get_samples(screen_id):
     find_query = {"screen": screen_id}
     select_query = request.args.getlist("select")
 
-    result = mongo.db.samples.find(find_query, fields=select_query)
+    result = mongo.db.samples.find(find_query, projection=select_query)
 
     return dumps(result)
 
@@ -139,7 +139,7 @@ def get_sample(screen_id, sample_id):
     find_query = {"screen": screen_id, "_id": sample_id}
     select_query = request.args.getlist("select")
 
-    result = mongo.db.samples.find(find_query, fields=select_query)
+    result = mongo.db.samples.find(find_query, projection=select_query)
 
     return dumps(result)
 
@@ -164,7 +164,7 @@ def get_samples_neighbours(screen_id, sample_id):
     find_query = {"screen": screen_id, "_id": sample_id}
 
     result = mongo.db.samples.find(find_query,
-                                   fields={"_id": False, "neighbours": True})
+                                   projection={"_id": False, "neighbours": True})
 
     return dumps(result)
 
@@ -182,7 +182,7 @@ def get_screens():
     """
     select_query = request.args.getlist("select")
 
-    result = mongo.db.screens.find({}, fields=select_query)
+    result = mongo.db.screens.find({}, projection=select_query)
 
     return dumps(result)
 
@@ -208,6 +208,6 @@ def get_screen(screen_id):
     find_query = {"_id": screen_id}
     select_query = request.args.getlist("select")
 
-    result = mongo.db.screens.find(find_query, fields=select_query)
+    result = mongo.db.screens.find(find_query, projection=select_query)
 
     return dumps(result)

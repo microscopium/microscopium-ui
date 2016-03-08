@@ -11,7 +11,7 @@ def index():
     """
     # get list of screens in database, exclude "screen_features" field as
     # we don't need it here
-    screens = mongo.db.screens.find({}, fields={"screen_features": False})
+    screens = mongo.db.screens.find({}, projection={"screen_features": False})
     return render_template("index.html", screens=screens)
 
 @main.route("/<screen_id>")
@@ -33,7 +33,7 @@ def load_screen(screen_id):
 
     # get list of screens in database, exclude "screen_features" field as
     # we don't need it here
-    screens = mongo.db.screens.find({}, fields={"screen_features": False})
+    screens = mongo.db.screens.find({}, projection={"screen_features": False})
 
     return render_template("screen_ui.html",
                            screen_id=screen_id,
