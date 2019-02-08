@@ -1,3 +1,10 @@
+
+# :warning: This repository is obsolete :warning:
+
+[Microscopium](https://github.com/microscopium/microscopium) now features its own Bokeh-powered UI.
+
+The content below is preserved for future reference.
+
 # Microscopium User Interface
 
 The web interface for [Microscopium](https://github.com/microscopium/microscopium).
